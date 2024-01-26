@@ -14,7 +14,6 @@ buildCache { local { removeUnusedEntriesAfterDays = 10 } }
 
 includeBuild("build-logic")
 
-include("server", "server-api")
+include("server", "server-api", "web-nextjs")
 
-rootProject.name =
-    "startup-template"
+rootProject.name = "startup-template"
