@@ -27,6 +27,8 @@ springAnnotationProcessor = { module = "org.springframework.boot:spring-boot-con
 liquibase = { module = "org.liquibase:liquibase-core" }
 postgresDriver = { module = "org.postgresql:postgresql" }
 
+springDocOpenApi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version = "2.3.0" }
+
 # Kotlin related
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version = "6.0.3" }
 
