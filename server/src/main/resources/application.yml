@@ -1,0 +1,15 @@
+spring:
+  liquibase:
+    enabled: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:server}?stringtype=unspecified
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:secret}
+  docker:
+    compose:
+      file: "./server/compose.yml"
+      enabled: false
+  threads:
+    virtual:
+      enabled: true

@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "com.github.cryptojuenger.template"
-    version = readVersionFromFile(file("version.properties"))
+    version = readVersionFromFile(file("${rootProject.projectDir.resolve("version.properties")}"))
 }
 
 fun readVersionFromFile(file: File): String {

@@ -14,5 +14,7 @@ buildCache { local { removeUnusedEntriesAfterDays = 10 } }
 
 includeBuild("build-logic")
 
+include("server")
+
 rootProject.name = "startup-template"
 
