@@ -1,21 +1,21 @@
+import java.io.File
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
-    kotlin("jvm") version "1.9.22"
+    id("build.common.kotlin-conventions") apply false
 }
 
-group = "com.github.cryptojuenger.template"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
+allprojects {
+    group = "com.github.cryptojuenger.template"
+    version = readVersionFromFile(file("version.properties"))
 }
 
-dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+fun readVersionFromFile(file: File): String {
+    val fis = FileInputStream(file)
+    val prop = Properties()
+    prop.load(fis)
+
+    return prop.getProperty("version")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
-}

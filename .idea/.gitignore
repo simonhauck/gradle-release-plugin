@@ -20,4 +20,6 @@
 
 *.iml
 *.ipr
+/git_toolbox_prj.xml
+/gradle.xml
 
