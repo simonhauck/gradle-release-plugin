@@ -21,6 +21,7 @@ dependencies {
 
     implementation(libs.liquibase)
     runtimeOnly(libs.postgresDriver)
+    runtimeOnly(libs.h2Driver)
 
     developmentOnly(libs.springDevTools)
     developmentOnly(libs.springDockerCompose)
@@ -46,6 +47,8 @@ openApi {
         args.set(
             listOf(
                 "--server.port=$apiGeneratedPort",
+                "--spring.profiles.active=h2",
+                "--spring.docker.compose.enabled=false"
             )
         )
     }

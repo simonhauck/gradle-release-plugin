@@ -26,6 +26,7 @@ springAnnotationProcessor = { module = "org.springframework.boot:spring-boot-con
 
 liquibase = { module = "org.liquibase:liquibase-core" }
 postgresDriver = { module = "org.postgresql:postgresql" }
+h2Driver={module="com.h2database:h2"}
 
 springDocOpenApi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version = "2.3.0" }
 

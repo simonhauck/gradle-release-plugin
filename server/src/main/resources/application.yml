@@ -9,7 +9,8 @@ spring:
   docker:
     compose:
       file: "./server/compose.yml"
-      enabled: false
+      enabled: true
+      lifecycle-management: start_only
   threads:
     virtual:
       enabled: true
