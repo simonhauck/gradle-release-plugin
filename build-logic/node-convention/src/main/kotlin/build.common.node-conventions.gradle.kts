@@ -1,8 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 
-plugins {
-    id("com.github.node-gradle.node")
-}
+plugins { id("com.github.node-gradle.node") }
 
 val nodeDownloadDirectory = "${project.projectDir}/.cache/nodejs"
 val nodeVersion = "20.11.0"
@@ -18,6 +16,7 @@ val prepareEnvTask = tasks.register("prepareEnv")
 
 tasks.npmInstall {
     outputs.upToDateWhen { project.file("/node_modules/.package-lock.json").exists() }
+    notCompatibleWithConfigurationCache("npmInstall is not yet supported")
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -39,4 +38,3 @@ val checkFormatTask =
 
         npmCommand.set(listOf("run", "lint"))
     }
-
