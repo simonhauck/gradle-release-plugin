@@ -24,11 +24,13 @@ val generateApiBindingTask = tasks.withType<GenerateTask> { dependsOn(deleteGene
 val zipTypeScriptFetchApiTask =
     tasks.register<Zip>("zipTypeScriptFetchApi") {
         dependsOn(generateApiBindingTask)
-        from(layout.buildDirectory.dir("/generated/typescript-fetch"))
+        from(layout.buildDirectory.dir("/generated/typescript-fetch/src"))
         destinationDirectory.set(layout.buildDirectory.dir("zip"))
         archiveBaseName.set("typescript-fetch-client")
     }
 
 tasks.register("assemble") { dependsOn(zipTypeScriptFetchApiTask) }
 
-configurations.create("zip").let { artifacts.add(it.name, zipTypeScriptFetchApiTask.get()) }
+configurations.create("typescript-fetch").let {
+    artifacts.add(it.name, zipTypeScriptFetchApiTask.get())
+}
