@@ -2,13 +2,13 @@ import com.github.gradle.node.npm.task.NpmTask
 
 plugins { id("com.github.node-gradle.node") }
 
-val nodeDownloadDirectory = "${project.projectDir}/.cache/nodejs"
+val nodeDownloadDirectory: Provider<Directory> = layout.buildDirectory.dir(".cache/nodejs")
 val nodeVersion = "20.11.0"
 
 node {
     version.set(nodeVersion)
     download.set(true)
-    workDir.set(file(nodeDownloadDirectory))
+    workDir.set(nodeDownloadDirectory)
     fastNpmInstall.set(true)
 }
 

@@ -1,3 +1,5 @@
+import com.github.psxpaul.task.ExecJoin
+import com.github.psxpaul.task.JavaExecFork
 import org.springdoc.openapi.gradle.plugin.OpenApiGeneratorTask
 
 plugins {
@@ -51,3 +53,9 @@ openApi {
 
 // Run open api generate always when requested
 tasks.withType<OpenApiGeneratorTask> { outputs.upToDateWhen { false } }
+
+tasks.withType<JavaExecFork> {
+    notCompatibleWithConfigurationCache("JavaExecFork is not yet supported")
+}
+
+tasks.withType<ExecJoin> { notCompatibleWithConfigurationCache("ExecJoin is not yet supported") }
