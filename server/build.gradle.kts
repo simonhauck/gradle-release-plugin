@@ -10,9 +10,10 @@ plugins {
 
     // Generate open api doc
     alias(libs.plugins.openApiDoc)
+    `jvm-test-suite`
 }
 
-configurations { compileOnly { extendsFrom(configurations.annotationProcessor.get()) } }
+configurations.compileOnly { extendsFrom(configurations.annotationProcessor.get()) }
 
 dependencies {
     implementation(libs.bundles.springStarterWeb)
@@ -30,7 +31,35 @@ dependencies {
 
     implementation(libs.springDocOpenApi)
 
-    testImplementation(libs.bundles.springTestCore)
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Testing
+// ---------------------------------------------------------------------------------------------------------------------
+
+@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                // Alternatively check this out: https://stackoverflow.com/questions/70448998/gradle-integration-test-suite-depending-on-testimplementation-dependencies
+                implementation.bundle(libs.bundles.springTestCore)
+            }
+        }
+
+        val integrationTest by register<JvmTestSuite>("integrationTest") {
+            dependencies {
+                implementation.bundle(libs.bundles.springTestCore)
+                implementation(project())
+            }
+        }
+    }
+}
+
+@Suppress("UnstableApiUsage")
+tasks.check {
+    dependsOn(testing.suites.named("integrationTest"))
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
