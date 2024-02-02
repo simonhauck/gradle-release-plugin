@@ -18,8 +18,8 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
-      - name: Assemble ${{matrix.module}}
-        run: ./gradlew ${{matrix.module}}:assemble
+      - name: Run assemble
+        run: ./gradlew assemble
 
       - name: Run check
         run: ./gradlew check
