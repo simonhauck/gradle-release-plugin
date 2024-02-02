@@ -26,7 +26,6 @@ jobs:
             ~/.gradle/wrapper
             ./.gradle
             ./**/build
-            ./**/.cache
             ./**/node_modules
 
       - name: Run assemble
