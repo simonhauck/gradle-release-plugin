@@ -1,3 +1,5 @@
+import com.github.gradle.node.npm.task.NpmTask
+
 plugins { id("build.common.node-conventions") }
 
 val apiClient: Configuration by configurations.creating {}
@@ -12,3 +14,14 @@ val syncApiClient =
     }
 
 tasks.prepareEnv { dependsOn(tasks.npmInstall, syncApiClient) }
+
+tasks.register<NpmTask>("assemble") {
+    dependsOn(tasks.prepareEnv)
+    group = "build"
+    npmCommand.set(listOf("run", "build"))
+}
+
+tasks.register("check") {
+    dependsOn(tasks.checkFormat)
+    group = "verification"
+}

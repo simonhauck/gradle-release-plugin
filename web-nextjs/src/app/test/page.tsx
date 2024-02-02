@@ -2,6 +2,7 @@ import {
   Configuration,
   ExampleControllerApi,
 } from "@/lib/generated-server-api";
+
 import Button from "@/components/Button/button";
 
 const configuration = new Configuration({
