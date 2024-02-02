@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "automerge": true,
+  "automergeType": "branch"
+}
