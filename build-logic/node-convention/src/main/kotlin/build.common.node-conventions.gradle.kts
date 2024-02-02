@@ -14,15 +14,6 @@ node {
 
 val prepareEnvTask = tasks.register("prepareEnv")
 
-tasks.npmInstall {
-    outputs.files(
-        listOf(
-            layout.projectDirectory.file("package-lock.json"),
-            layout.projectDirectory.file("node_modules/.package-lock.json")
-        )
-    )
-}
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Formatting
 // ---------------------------------------------------------------------------------------------------------------------
