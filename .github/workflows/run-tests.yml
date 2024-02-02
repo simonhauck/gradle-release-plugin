@@ -16,7 +16,18 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./.gradle
+            ./**/build
+            ./**/.cache
+            ./**/node_modules
 
       - name: Run assemble
         run: ./gradlew assemble
