@@ -10,19 +10,31 @@ val syncApiClient =
     tasks.register<Sync>("syncApiClient") {
         dependsOn(apiClient)
         from(zipTree(apiClient.singleFile))
-        into(layout.projectDirectory.dir("src/lib/generated-server-api"))
+        into("src/lib/generated-server-api")
     }
 
 tasks.prepareEnv { dependsOn(tasks.npmInstall, syncApiClient) }
 
 tasks.register<Delete>("clean") {
     group = "build"
-    delete(layout.buildDirectory, layout.projectDirectory.dir(".next"))
+    delete(layout.buildDirectory)
 }
 
 tasks.register<NpmTask>("assemble") {
     group = "build"
     dependsOn(tasks.prepareEnv)
+    inputs.dir("src")
+    inputs.dir("public")
+    inputs.files(
+        "tsconfig.json",
+        "package.json",
+        "package-lock.json",
+        "next.config.mjs",
+        "postcss.config.js",
+        "prettierrc.json",
+        "tailwind.config.ts"
+    )
+    outputs.dir(layout.buildDirectory.dir(".next"))
     npmCommand.set(listOf("run", "build"))
 }
 
