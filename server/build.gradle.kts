@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.bundles.springStarterWeb)
     implementation(libs.springActuator)
     implementation(libs.springDataJdbc)
+    implementation(libs.kotlinLogging)
 
     implementation(libs.liquibase)
     runtimeOnly(libs.postgresDriver)
@@ -30,7 +31,6 @@ dependencies {
     annotationProcessor(libs.springAnnotationProcessor)
 
     implementation(libs.springDocOpenApi)
-
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -40,27 +40,27 @@ dependencies {
 @Suppress("UnstableApiUsage")
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
-            dependencies {
-                // Alternatively check this out: https://stackoverflow.com/questions/70448998/gradle-integration-test-suite-depending-on-testimplementation-dependencies
-                implementation.bundle(libs.bundles.springTestCore)
+        val test by
+            getting(JvmTestSuite::class) {
+                useJUnitJupiter()
+                dependencies {
+                    // Alternatively check this out:
+                    // https://stackoverflow.com/questions/70448998/gradle-integration-test-suite-depending-on-testimplementation-dependencies
+                    implementation.bundle(libs.bundles.springTestCore)
+                }
             }
-        }
 
-        val integrationTest by register<JvmTestSuite>("integrationTest") {
-            dependencies {
-                implementation.bundle(libs.bundles.springTestCore)
-                implementation(project())
+        val integrationTest by
+            register<JvmTestSuite>("integrationTest") {
+                dependencies {
+                    implementation.bundle(libs.bundles.springTestCore)
+                    implementation(project())
+                }
             }
-        }
     }
 }
 
-@Suppress("UnstableApiUsage")
-tasks.check {
-    dependsOn(testing.suites.named("integrationTest"))
-}
+@Suppress("UnstableApiUsage") tasks.check { dependsOn(testing.suites.named("integrationTest")) }
 
 // ---------------------------------------------------------------------------------------------------------------------
 // OpenAPI Swagger
