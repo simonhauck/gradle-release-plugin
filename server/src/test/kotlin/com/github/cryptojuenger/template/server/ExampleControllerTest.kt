@@ -11,8 +11,6 @@ class ExampleControllerTest {
     fun helloWorld() {
         val actual = exampleController.helloWorld()
 
-        Thread.sleep(15_000)
-
         assertThat(actual).isEqualTo(HelloWorld("CryptoJuenger are the best"))
     }
 }

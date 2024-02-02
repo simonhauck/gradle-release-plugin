@@ -5,8 +5,5 @@ import org.junit.jupiter.api.Test
 
 class ServerApplicationIT : IntegrationTest() {
 
-    @Test
-    fun contextLoads() {
-        Thread.sleep(15_000)
-    }
+    @Test fun contextLoads() {}
 }

@@ -5,8 +5,5 @@ import org.junit.jupiter.api.Test
 
 class ExampleControllerIT : IntegrationTest() {
 
-    @Test
-    fun helloWorld() {
-        Thread.sleep(1000)
-    }
+    @Test fun helloWorld() {}
 }
