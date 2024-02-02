@@ -2,7 +2,7 @@ import com.github.gradle.node.npm.task.NpmTask
 
 plugins { id("com.github.node-gradle.node") }
 
-val nodeDownloadDirectory: Provider<Directory> = layout.buildDirectory.dir(".cache/nodejs")
+val nodeDownloadDirectory: Directory = layout.projectDirectory.dir(".cache/nodejs")
 val nodeVersion = "20.11.0"
 
 node {

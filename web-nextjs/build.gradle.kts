@@ -15,13 +15,18 @@ val syncApiClient =
 
 tasks.prepareEnv { dependsOn(tasks.npmInstall, syncApiClient) }
 
-tasks.register<NpmTask>("assemble") {
-    dependsOn(tasks.prepareEnv)
+tasks.register<Delete>("clean") {
     group = "build"
+    delete(layout.buildDirectory, layout.projectDirectory.dir(".next"))
+}
+
+tasks.register<NpmTask>("assemble") {
+    group = "build"
+    dependsOn(tasks.prepareEnv)
     npmCommand.set(listOf("run", "build"))
 }
 
 tasks.register("check") {
-    dependsOn(tasks.checkFormat)
     group = "verification"
+    dependsOn(tasks.checkFormat)
 }
