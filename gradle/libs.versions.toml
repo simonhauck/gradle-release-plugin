@@ -12,7 +12,7 @@ springDependencyPlugin = { module = "io.spring.gradle:dependency-management-plug
 ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.16.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 jibPlugin = { module = "com.google.cloud.tools:jib-gradle-plugin", version = "3.4.0" }
-nodeGradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version = "7.0.1" }
+nodeGradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version = "7.0.2" }
 
 # Spring
 springStarter = { module = "org.springframework.boot:spring-boot-starter" }
