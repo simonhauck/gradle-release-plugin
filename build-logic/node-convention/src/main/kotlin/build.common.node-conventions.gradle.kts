@@ -12,6 +12,11 @@ node {
     fastNpmInstall.set(true)
 }
 
+tasks.npmInstall {
+    inputs.file("package.json")
+    outputs.files("package-lock.json", "node_modules/.package-lock.json")
+}
+
 val prepareEnvTask = tasks.register("prepareEnv")
 
 // ---------------------------------------------------------------------------------------------------------------------
