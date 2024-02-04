@@ -43,7 +43,7 @@ springStarterTest = { module = "org.springframework.boot:spring-boot-starter-tes
 cdktf = { module = "com.hashicorp:cdktf", version = "0.21.0-pre.37" }
 
 [plugins]
-openApiDoc = { id = "org.springdoc.openapi-gradle-plugin", version = "1.6.0" }
+openApiDoc = { id = "org.springdoc.openapi-gradle-plugin", version = "1.7.0" }
 openApiGenerator = { id = "org.openapi.generator", version = "7.2.0" }
 
 [bundles]
