@@ -9,7 +9,7 @@ kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.r
 springPlugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "springVersion" }
 springAllOpenPlugin = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlionVersion" }
 springDependencyPlugin = { module = "io.spring.gradle:dependency-management-plugin", version = "1.1.4" }
-ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.16.0" }
+ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.17.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 jibPlugin = { module = "com.google.cloud.tools:jib-gradle-plugin", version = "3.4.0" }
 nodeGradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version = "7.0.2" }
