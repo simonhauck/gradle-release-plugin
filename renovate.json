@@ -1,6 +1,6 @@
 {
   "extends": [
-    "config:recommended",
+    "config:base",
     ":dependencyDashboard"
   ],
   "automerge": true,
