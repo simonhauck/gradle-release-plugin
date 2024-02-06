@@ -40,7 +40,7 @@ mockitoKt = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.2.1" }
 springStarterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
 
 # Infrastructure
-cdktf = { module = "com.hashicorp:cdktf", version = "0.21.0-pre.37" }
+cdktf = { module = "com.hashicorp:cdktf", version = "0.21.0-pre.41" }
 
 [plugins]
 openApiDoc = { id = "org.springdoc.openapi-gradle-plugin", version = "1.7.0" }
