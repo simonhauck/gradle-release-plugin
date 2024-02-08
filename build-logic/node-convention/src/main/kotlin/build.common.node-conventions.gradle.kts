@@ -35,6 +35,7 @@ val checkFormatTask =
     tasks.register<NpmTask>("checkFormat") {
         group = "verification"
         dependsOn(prepareEnvTask)
+        inputs.dir("src")
         outputs.dir("src")
 
         npmCommand.set(listOf("run", "lint"))
