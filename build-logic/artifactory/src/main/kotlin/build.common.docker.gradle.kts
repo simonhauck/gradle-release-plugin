@@ -1,17 +1,24 @@
+import com.google.cloud.tools.jib.gradle.JibTask
+
 plugins { id("com.google.cloud.tools.jib") }
 
 jib {
     to {
-        val registry = ""
-        val version = "${project.version}"
-
+        val version = version.toString()
         val channel = if (version.endsWith("SNAPSHOT")) "snapshot" else "stable"
 
-        image = "$registry/${project.rootProject.name}"
         tags = setOf(version, channel)
+        // Java21 Image not yet working https://github.com/GoogleContainerTools/jib/issues/4137
+        from { image = "eclipse-temurin:21-jre" }
         auth {
-            username = System.getenv("DOCKER_USR")
-            password = System.getenv("DOCKER_PSW")
+            username = System.getenv("DOCKER_USER")
+            password = System.getenv("DOCKER_PASSWORD")
         }
     }
+}
+
+tasks.withType<JibTask> {
+    notCompatibleWithConfigurationCache(
+        "Not yet supported: https://github.com/GoogleContainerTools/jib/issues/3132"
+    )
 }
