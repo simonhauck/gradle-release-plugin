@@ -11,9 +11,7 @@ repositories {
 dependencies {
     implementation(libs.testLoggerPlugin)
     implementation(libs.kotlinPlugin)
-    implementation(libs.bundles.springBootPlugins)
 
     // Kotlin formatting
     implementation(libs.ktfmtPlugin)
-
 }

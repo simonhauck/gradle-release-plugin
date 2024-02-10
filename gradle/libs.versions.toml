@@ -1,52 +1,15 @@
 [versions]
 kotlionVersion = "1.9.22"
-springVersion = "3.2.2"
-jUnitVersion = "5.10.2"
 
 [libraries]
-# Plugins that are used in buildSrc
+# Plugins that are used in buildLogic
 kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlionVersion" }
-springPlugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "springVersion" }
-springAllOpenPlugin = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlionVersion" }
-springDependencyPlugin = { module = "io.spring.gradle:dependency-management-plugin", version = "1.1.4" }
 ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.17.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
-jibPlugin = { module = "com.google.cloud.tools:jib-gradle-plugin", version = "3.4.0" }
-nodeGradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version = "7.0.2" }
 
-# Spring
-springStarter = { module = "org.springframework.boot:spring-boot-starter" }
-springStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web" }
-kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
-jacksonModuleKotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
-springActuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
-springDataJdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
-springDevTools = { module = "org.springframework.boot:spring-boot-devtools" }
-springDockerCompose = { module = "org.springframework.boot:spring-boot-docker-compose" }
-springAnnotationProcessor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
-
-liquibase = { module = "org.liquibase:liquibase-core" }
-postgresDriver = { module = "org.postgresql:postgresql" }
-h2Driver = { module = "com.h2database:h2" }
-
-springDocOpenApi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version = "2.3.0" }
 
 # Kotlin related
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version = "6.0.3" }
 
-# Testing
-junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "jUnitVersion" }
-mockitoKt = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.2.1" }
-springStarterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
 
-# Infrastructure
-cdktf = { module = "com.hashicorp:cdktf", version = "0.21.0-pre.41" }
 
-[plugins]
-openApiDoc = { id = "org.springdoc.openapi-gradle-plugin", version = "1.8.0" }
-openApiGenerator = { id = "org.openapi.generator", version = "7.2.0" }
-
-[bundles]
-springBootPlugins = ["springPlugin", "springAllOpenPlugin", "springDependencyPlugin"]
-springStarterWeb = ["springStarterWeb", "kotlinReflect", "jacksonModuleKotlin"]
-springTestCore = ["springStarterTest", "mockitoKt", "junit"]

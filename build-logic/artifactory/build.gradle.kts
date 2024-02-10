@@ -9,5 +9,3 @@ repositories {
     gradlePluginPortal()
     mavenCentral()
 }
-
-dependencies { implementation(libs.jibPlugin) }
