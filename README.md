@@ -1,6 +1,6 @@
 ## How to start development
 
-[![Master Build](https://github.com/crypto-juenger/startup-template/actions/workflows/on-master-push.yml/badge.svg)](https://github.com/crypto-juenger/startup-template/actions/workflows/on-master-push.yml)
+[![Master](https://github.com/simonhauck/gradle-semantic-versioning/actions/workflows/on-master-push.yml/badge.svg)](https://github.com/simonhauck/gradle-semantic-versioning/actions/workflows/on-master-push.yml)
 
 ### How to use this Template
 
