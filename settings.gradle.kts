@@ -16,4 +16,4 @@ includeBuild("build-logic")
 
 include("server")
 
-rootProject.name = "startup-template"
+rootProject.name = "gradle-semantic-versioning"
