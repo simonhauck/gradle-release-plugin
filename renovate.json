@@ -4,13 +4,5 @@
     ":dependencyDashboard",
     ":automergeAll",
     ":automergeBranch"
-  ],
-  "packageRules": [
-    {
-      "groupName": "react",
-      "matchPackagePatterns": [
-        "^.*react.*$"
-      ]
-    }
   ]
 }
