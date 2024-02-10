@@ -14,6 +14,8 @@ buildCache { local { removeUnusedEntriesAfterDays = 10 } }
 
 includeBuild("build-logic")
 
-include("server")
+includeBuild("plugin")
+
+include("example")
 
 rootProject.name = "gradle-semantic-versioning"
