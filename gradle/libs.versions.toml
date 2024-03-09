@@ -1,5 +1,5 @@
 [versions]
-kotlionVersion = "1.9.22"
+kotlionVersion = "1.9.23"
 
 [libraries]
 # Plugins that are used in buildLogic
