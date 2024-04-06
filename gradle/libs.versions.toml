@@ -9,7 +9,7 @@ testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version =
 
 
 # Kotlin related
-kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version = "6.0.3" }
+kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version = "6.0.4" }
 
 
 
