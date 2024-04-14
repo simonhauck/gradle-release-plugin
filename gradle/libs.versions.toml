@@ -4,7 +4,7 @@ kotlionVersion = "1.9.23"
 [libraries]
 # Plugins that are used in buildLogic
 kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlionVersion" }
-ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.17.0" }
+ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.18.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 
 
