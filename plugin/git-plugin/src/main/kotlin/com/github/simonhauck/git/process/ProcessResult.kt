@@ -2,9 +2,11 @@ package com.github.simonhauck.git.process
 
 sealed interface ProcessResult {
 
-    data class OK(val exitCode: Int) : ProcessResult
+    val exitCode: Int?
 
-    data class Error(val exitCode: Int?, val message: String, val throwable: Throwable?) :
+    data class OK(override val exitCode: Int) : ProcessResult
+
+    data class Error(override val exitCode: Int?, val message: String, val throwable: Throwable?) :
         ProcessResult
 
     companion object {
