@@ -2,11 +2,11 @@ package com.github.simonhauck.git
 
 import com.github.simonhauck.git.process.ProcessConfig
 import com.github.simonhauck.git.process.ProcessResult
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 
 class GitCommandWrapperTest {
 

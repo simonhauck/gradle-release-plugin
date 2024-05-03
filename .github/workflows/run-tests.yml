@@ -33,8 +33,8 @@ jobs:
             ./**/build
             ./**/node_modules
 
-      - name: Run assemble
-        run: ./gradlew assemble
+      - name: Run Assemble
+        run: ./gradlew plugin:assemble assemble
 
       - name: Run check
-        run: ./gradlew check
+        run: ./gradlew plugin:check check

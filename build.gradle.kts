@@ -3,7 +3,7 @@ import java.util.*
 plugins { id("build.common.kotlin-conventions") apply false }
 
 allprojects {
-    group = "com.github.cryptojuenger.template"
+    group = "com.github.simonhauck.semantic-versioning"
     version = readVersionFromFile(file("${rootProject.projectDir.resolve("version.properties")}"))
 }
 

@@ -1,9 +1,9 @@
 package com.github.simonhauck.git.process
 
+import java.util.concurrent.TimeUnit
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.zeroturnaround.exec.ProcessExecutor
 import org.zeroturnaround.exec.stream.LogOutputStream
-import java.util.concurrent.TimeUnit
 
 internal class ProcessWrapper {
 

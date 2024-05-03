@@ -11,6 +11,6 @@ addresses some of the shortcomings and provides additional functionalities.
 
 ### Important commands and development setup
 
-- To format the code run `./gradlew format`
-- To build the project use `./gradlew assemble`
-- To run all checks use `./gradlew check`
+- To format the code run `./gradlew format` and `./gradlew plugin:format` for the plugin
+- To build the project use `./gradlew assemble` and `gradlew plugin:assemble` for the plugin
+- To run all checks use `./gradlew check` and `./gradlew plugin:check` for the plugin
