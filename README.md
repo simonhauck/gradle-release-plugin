@@ -13,4 +13,4 @@ addresses some of the shortcomings and provides additional functionalities.
 
 - To format the code run `./gradlew format`
 - To build the project use `./gradlew assemble`
-- To run all checks use `./gradlew format`
+- To run all checks use `./gradlew check`
