@@ -16,7 +16,7 @@ ztExec = { module = "org.zeroturnaround:zt-exec", version = "1.12" }
 # Testing related
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
-assertJCore = { module = "org.assertj:assertj-core", version = "3.21.0" }
+assertJCore = { module = "org.assertj:assertj-core", version = "3.25.3" }
 
 [bundles]
 junit = ["junitApi", "junitEngine", "assertJCore"]
