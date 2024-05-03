@@ -1,6 +1,3 @@
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.jvm.toolchain.JvmVendorSpec
-import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -15,7 +12,7 @@ plugins {
 
 kotlin {
     jvmToolchain {
-        this.languageVersion.set(JavaLanguageVersion.of(21))
+        this.languageVersion.set(JavaLanguageVersion.of(11))
         this.vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
@@ -53,4 +50,3 @@ tasks.register("format") {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-
