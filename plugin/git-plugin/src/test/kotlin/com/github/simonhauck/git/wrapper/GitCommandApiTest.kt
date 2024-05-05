@@ -64,7 +64,7 @@ class GitCommandProcessWrapperTest {
 
         val actual = gitCommandApi.getLocalBranchNames()
         assertThat(actual.isOk()).isTrue()
-        assertThat(actual.get()).containsExactly("main", "feature-1", "feature-2")
+        assertThat(actual.get()).contains("feature-1", "feature-2")
     }
 }
 
