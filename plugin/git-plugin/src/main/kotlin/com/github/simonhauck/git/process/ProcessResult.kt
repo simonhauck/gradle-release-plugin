@@ -1,19 +1,14 @@
 package com.github.simonhauck.git.process
 
-sealed interface ProcessResult {
+import arrow.core.Either
 
-    val exitCode: Int?
+internal typealias ProcessResult = Either<ProcessError, ProcessSuccess>
 
-    data class OK(override val exitCode: Int) : ProcessResult
+internal data class ProcessSuccess(val exitCode: Int, val output: List<String>)
 
-    data class Error(override val exitCode: Int?, val message: String, val throwable: Throwable?) :
-        ProcessResult
-
-    companion object {
-        fun fromExitCode(exitCode: Int): ProcessResult {
-            if (exitCode == 0) return OK(exitCode)
-
-            return Error(exitCode, "Process failed with exit code $exitCode", null)
-        }
-    }
-}
+internal data class ProcessError(
+    val exitCode: Int?,
+    val output: List<String>,
+    val error: Throwable,
+    val message: String
+)

@@ -1,26 +1,31 @@
 package com.github.simonhauck.git.process
 
-import java.util.concurrent.TimeUnit
+import arrow.core.Either
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.zeroturnaround.exec.ProcessExecutor
 import org.zeroturnaround.exec.stream.LogOutputStream
+import java.util.concurrent.TimeUnit
 
 internal class ProcessWrapper {
 
-    fun runCommand(command: List<String>, config: ProcessConfig = ProcessConfig()): ProcessResult {
-        return runCatching {
-                ProcessExecutor()
-                    .directory(config.workingDir)
-                    .environment(config.environment)
-                    .addOsSpecificCommands(*command.toTypedArray())
-                    .addConsolePrinter()
-                    .destroyWithDescendants()
-                    .timeout(40, TimeUnit.SECONDS)
-                    .execute()
+    fun runCommand(command: List<String>, config: ProcessConfig = ProcessConfig()): ProcessResult =
+        Either.catch {
+                val processOutputCaptor: MutableList<String> = mutableListOf()
+                val result =
+                    ProcessExecutor()
+                        .directory(config.workingDir)
+                        .environment(config.environment)
+                        .addOsSpecificCommands(*command.toTypedArray())
+                        .handleConsoleOutput(processOutputCaptor)
+                        .destroyWithDescendants()
+                        .exitValueNormal()
+                        .timeout(40, TimeUnit.SECONDS)
+                        .execute()
+
+                ProcessSuccess(exitCode = result.exitValue, output = processOutputCaptor)
             }
-            .map { ProcessResult.fromExitCode(it.exitValue) }
-            .getOrElse { ProcessResult.Error(null, "Process failed with an exception", it) }
-    }
+            // TODO Simon.Hauck 2024-05-04 - get exit code from process
+            .mapLeft { ProcessError(null, emptyList(), it, "Process failed with an exception") }
 
     private fun ProcessExecutor.addOsSpecificCommands(vararg command: String): ProcessExecutor {
         val linuxCommand = listOf(*command)
@@ -33,8 +38,11 @@ internal class ProcessWrapper {
         return this.command(commandToExecute)
     }
 
-    private fun ProcessExecutor.addConsolePrinter(): ProcessExecutor {
-        return this.redirectOutput(ProcessLogger(false)).redirectError(ProcessLogger(true))
+    private fun ProcessExecutor.handleConsoleOutput(
+        outputCaptor: MutableList<String>
+    ): ProcessExecutor {
+        return this.redirectOutput(ProcessOutputHandler(false, outputCaptor))
+            .redirectError(ProcessOutputHandler(true, outputCaptor))
     }
 
     private fun ProcessExecutor.destroyWithDescendants(): ProcessExecutor {
@@ -51,8 +59,12 @@ internal class ProcessWrapper {
         println("Process is terminated")
     }
 
-    private class ProcessLogger(private val isError: Boolean) : LogOutputStream() {
+    private class ProcessOutputHandler(
+        private val isError: Boolean,
+        private val outputCaptor: MutableList<String>
+    ) : LogOutputStream() {
         override fun processLine(line: String) {
+            outputCaptor.add(line)
             if (isError) System.err.println(line) else println(line)
         }
     }

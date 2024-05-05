@@ -4,7 +4,10 @@ plugins {
     `java-gradle-plugin`
 }
 
-dependencies { implementation(libs.ztExec) }
+dependencies {
+    implementation(libs.ztExec)
+    implementation(project(":git-plugin"))
+}
 
 gradlePlugin {
     plugins {
