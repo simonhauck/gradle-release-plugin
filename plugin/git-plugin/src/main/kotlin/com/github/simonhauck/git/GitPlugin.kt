@@ -4,7 +4,15 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class GitPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        TODO("Not yet implemented")
+    override fun apply(project: Project) {
+        val config = createConfigWithDefaultValues(project)
+
+        project.tasks.withType(BaseGitTask::class.java) { it.gitConfig.set(config) }
+    }
+
+    private fun createConfigWithDefaultValues(project: Project): GitPluginExtension {
+        val config = project.extensions.create("gitConfig", GitPluginExtension::class.java)
+        config.gitRootDirectory.convention { project.projectDir }
+        return config
     }
 }

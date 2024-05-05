@@ -8,6 +8,8 @@ dependencies {
     implementation(libs.ztExec)
     api(libs.arrowKt)
 
+    testImplementation(libs.kotlinLogging)
+    testImplementation(gradleTestKit())
     testImplementation(libs.bundles.junit)
 }
 

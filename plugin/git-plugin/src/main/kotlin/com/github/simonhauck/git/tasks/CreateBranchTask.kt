@@ -1,5 +1,6 @@
-package com.github.simonhauck.git
+package com.github.simonhauck.git.tasks
 
+import com.github.simonhauck.git.BaseGitTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -10,6 +11,6 @@ abstract class CreateBranchTask : BaseGitTask() {
 
     @TaskAction
     fun action() {
-        getGitCommandApi().createBranch(branchName.get())
+        gitCommandApi().createBranch(branchName.get()).getOrThrowGradleException()
     }
 }

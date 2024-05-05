@@ -16,6 +16,8 @@ includeBuild("build-logic")
 
 includeBuild("plugin")
 
-include("example")
+include(
+    "example",
+)
 
 rootProject.name = "gradle-semantic-versioning"
