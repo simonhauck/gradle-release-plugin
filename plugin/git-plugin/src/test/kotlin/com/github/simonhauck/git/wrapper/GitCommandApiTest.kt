@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class RevertCommandProcessWrapperTest {
+class GitCommandApiTest {
 
     @TempDir lateinit var tempDir: File
     private lateinit var gitCommandApi: GitCommandApi
