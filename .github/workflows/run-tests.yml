@@ -37,8 +37,6 @@ jobs:
             ./.gradle
             ./**/build
 
-      - name: Run Assemble
-        run: ./gradlew plugin:assemble assemble
+      - name: Run Build & Test
+        run: ./gradlew plugin:build build
 
-      - name: Run check
-        run: ./gradlew plugin:check check
