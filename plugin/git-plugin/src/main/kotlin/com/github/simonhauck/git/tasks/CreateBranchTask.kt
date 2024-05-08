@@ -1,6 +1,5 @@
 package com.github.simonhauck.git.tasks
 
-import com.github.simonhauck.git.BaseGitTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -11,6 +10,17 @@ abstract class CreateBranchTask : BaseGitTask() {
 
     @TaskAction
     fun action() {
-        gitCommandApi().createBranch(branchName.get()).getOrThrowGradleException()
+        val branch = branchName.get()
+        gitCommandApi()
+            .createBranch(branch)
+            .map { commandHistoryApi.get().registerRevertCommand(buildRevertCommand()) }
+            .onLeft { commandHistoryApi.get().revertAllCommands() }
+            .getOrThrowGradleException()
+    }
+
+    private fun buildRevertCommand(): RevertCommand {
+        val name = branchName.get()
+        val message = "Deleting branch $name"
+        return RevertCommand(message) { gitCommandApi().deleteBranch(name) }
     }
 }

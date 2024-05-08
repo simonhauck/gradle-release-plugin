@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class GitCommandProcessWrapperTest {
+class RevertCommandProcessWrapperTest {
 
     @TempDir lateinit var tempDir: File
     private lateinit var gitCommandApi: GitCommandApi
@@ -53,11 +53,7 @@ class GitCommandProcessWrapperTest {
 
     @Test
     fun `should contain the names of all local created branches`() {
-        gitCommandApi.gitInit("main")
-
-        File("$tempDir/file.txt").writeText("Hello World")
-        gitCommandApi.gitAdd("file.txt")
-        gitCommandApi.gitCommit("Initial commit")
+        setupGitRepoWithInitialCommit()
 
         gitCommandApi.createBranch("feature-1")
         gitCommandApi.createBranch("feature-2")
@@ -65,6 +61,28 @@ class GitCommandProcessWrapperTest {
         val actual = gitCommandApi.getLocalBranchNames()
         assertThat(actual.isOk()).isTrue()
         assertThat(actual.get()).contains("feature-1", "feature-2")
+    }
+
+    @Test
+    fun `should be able to delete branches`() {
+        setupGitRepoWithInitialCommit()
+
+        gitCommandApi.createBranch("feature-1")
+        gitCommandApi.createBranch("feature-2")
+
+        val actual = gitCommandApi.deleteBranch("feature-1")
+        assertThat(actual.isOk()).isTrue()
+
+        val actualBranches = gitCommandApi.getLocalBranchNames()
+        assertThat(actualBranches.get()).doesNotContain("feature-1")
+    }
+
+    private fun setupGitRepoWithInitialCommit() {
+        gitCommandApi.gitInit("main")
+
+        File("$tempDir/file.txt").writeText("Hello World")
+        gitCommandApi.gitAdd("file.txt")
+        gitCommandApi.gitCommit("Initial commit")
     }
 }
 

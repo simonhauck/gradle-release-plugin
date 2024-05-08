@@ -39,6 +39,10 @@ internal class GitCommandProcessWrapper(
         return gitVoidCommand(listOf("branch", branchName))
     }
 
+    override fun deleteBranch(branchName: String): GitVoidResult {
+        return gitVoidCommand(listOf("branch", "-D", branchName))
+    }
+
     override fun getLocalBranchNames(): GitResult<List<String>> {
         return gitCommand(listOf("--no-pager", "branch")).map { processSuccess ->
             processSuccess.output.map { it.trim() }

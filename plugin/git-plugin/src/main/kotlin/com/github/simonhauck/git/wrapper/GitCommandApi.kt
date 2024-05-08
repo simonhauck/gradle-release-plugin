@@ -7,6 +7,8 @@ interface GitCommandApi {
 
     fun createBranch(branchName: String): GitVoidResult
 
+    fun deleteBranch(branchName: String): GitVoidResult
+
     fun gitAdd(filePattern: String): GitVoidResult
 
     fun gitCommit(message: String): GitVoidResult

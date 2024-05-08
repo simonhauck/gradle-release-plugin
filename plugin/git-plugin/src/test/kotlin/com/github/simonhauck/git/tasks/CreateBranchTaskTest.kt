@@ -50,4 +50,29 @@ class CreateBranchTaskTest {
             assertThat(runner.task(":createBranch")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
             assertThat(gitCommandApi.getLocalBranchNames().get()).contains("feature/branch")
         }
+
+    @Test
+    fun `should delete revert the git changes when the second createBranchTask fails`() =
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CreateBranchTask>("createBranch") {
+                |    branchName.set("feature/branch")
+                |}
+                |
+                |tasks.register<CreateBranchTask>("createBranch2") {
+                |    dependsOn("createBranch")
+                |    branchName.set("feature/branch")
+                |}
+            """
+                    .trimMargin()
+            )
+
+            createValidGitRepository()
+
+            val runner = testKitRunner().withArguments("createBranch2", "--info").buildAndFail()
+            assertThat(runner.task(":createBranch")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(runner.task(":createBranch2")?.outcome).isEqualTo(TaskOutcome.FAILED)
+            assertThat(gitCommandApi.getLocalBranchNames().get()).doesNotContain("feature/branch")
+        }
 }
