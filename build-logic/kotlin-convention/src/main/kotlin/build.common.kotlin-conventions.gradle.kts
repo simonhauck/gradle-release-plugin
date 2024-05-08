@@ -47,6 +47,4 @@ tasks.register("format") {
 // Testing config
 // ---------------------------------------------------------------------------------------------------------------------
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+tasks.withType<Test> { useJUnitPlatform() }
