@@ -34,7 +34,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            ./.gradle
+            ./**/.gradle
             ./**/build
 
       - name: Run Build & Test
