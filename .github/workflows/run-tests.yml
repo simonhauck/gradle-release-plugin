@@ -36,7 +36,6 @@ jobs:
             ~/.gradle/wrapper
             ./.gradle
             ./**/build
-            ./**/node_modules
 
       - name: Run Assemble
         run: ./gradlew plugin:assemble assemble
