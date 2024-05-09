@@ -6,13 +6,15 @@ import java.io.File
 interface GitCommandApi {
     fun init(branchName: String): GitVoidResult
 
-    fun status(): GitVoidResult
+    fun status(): GitResult<GitStatusResult>
 
     fun createBranch(branchName: String): GitVoidResult
 
     fun deleteBranch(branchName: String): GitVoidResult
 
     fun add(filePattern: String): GitVoidResult
+
+    fun reset(filePattern: String): GitVoidResult
 
     fun commit(message: String): GitVoidResult
 

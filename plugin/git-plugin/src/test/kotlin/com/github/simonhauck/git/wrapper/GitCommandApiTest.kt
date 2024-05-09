@@ -47,6 +47,41 @@ class GitCommandApiTest {
     }
 
     @Test
+    fun `should correctly resolve the status of multiple files`() {
+        setupGitRepoWithInitialCommit()
+
+        File("$tempDir/unstaged.txt").writeText("unstaged")
+        gitCommandApi.add(".").assertIsOk()
+        gitCommandApi.commit("Commit file").assertIsOk()
+
+        File("$tempDir/untracked.txt").writeText("Untracked")
+        File("$tempDir/unstaged.txt").writeText("unstaged2")
+        File("$tempDir/staged.txt").writeText("Staged")
+        gitCommandApi.add("staged.txt").assertIsOk()
+
+        val actual = gitCommandApi.status().assertIsOk()
+        assertThat(actual.staged).containsExactly("staged.txt")
+        assertThat(actual.untracked).containsExactly("untracked.txt")
+        assertThat(actual.unstaged).containsExactly("unstaged.txt")
+    }
+
+    @Test
+    fun `should reset the local changes so that the file is untracked again`() {
+        setupGitRepoWithInitialCommit()
+
+        File("$tempDir/someFile.txt").writeText("Hello World")
+        gitCommandApi.add("someFile.txt").assertIsOk()
+        val beforeCheck = gitCommandApi.status().assertIsOk()
+        assertThat(beforeCheck.staged).containsExactly("someFile.txt")
+
+        gitCommandApi.reset("someFile.txt").assertIsOk()
+
+        val actual = gitCommandApi.status().assertIsOk()
+        assertThat(actual.staged).isEmpty()
+        assertThat(actual.untracked).containsExactly("someFile.txt")
+    }
+
+    @Test
     fun `should contain the names of all local created branches`() {
         setupGitRepoWithInitialCommit()
 

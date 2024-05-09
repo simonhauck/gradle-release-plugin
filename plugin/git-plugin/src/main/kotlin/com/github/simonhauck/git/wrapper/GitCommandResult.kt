@@ -16,3 +16,9 @@ data class GitLogEntry(
     val hash: String,
     val message: String,
 )
+
+data class GitStatusResult(
+    val staged: List<String>,
+    val unstaged: List<String>,
+    val untracked: List<String>
+)

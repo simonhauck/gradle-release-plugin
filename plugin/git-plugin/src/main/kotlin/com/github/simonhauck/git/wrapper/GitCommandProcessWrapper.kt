@@ -14,12 +14,31 @@ internal class GitCommandProcessWrapper(
         return gitVoidCommand(listOf("init", "--initial-branch=$branchName"))
     }
 
-    override fun status(): GitVoidResult {
-        return gitVoidCommand(listOf("status"))
+    override fun status(): GitResult<GitStatusResult> {
+        return gitCommand(listOf("status", "--porcelain")).map { processSuccess ->
+            val lines = processSuccess.output
+            val staged = mutableListOf<String>()
+            val unstaged = mutableListOf<String>()
+            val untracked = mutableListOf<String>()
+
+            lines.forEach { line ->
+                when {
+                    line.startsWith("??") -> untracked.add(line.drop(3))
+                    line.startsWith(" ") -> unstaged.add(line.drop(3))
+                    else -> staged.add(line.drop(3))
+                }
+            }
+
+            GitStatusResult(staged, unstaged, untracked)
+        }
     }
 
     override fun add(filePattern: String): GitVoidResult {
         return gitVoidCommand(listOf("add", filePattern))
+    }
+
+    override fun reset(filePattern: String): GitVoidResult {
+        return gitVoidCommand(listOf("reset", filePattern))
     }
 
     override fun commit(message: String): GitVoidResult {
