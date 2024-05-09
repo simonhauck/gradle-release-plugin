@@ -21,4 +21,6 @@ data class GitStatusResult(
     val staged: List<String>,
     val unstaged: List<String>,
     val untracked: List<String>
-)
+) {
+    fun allEmpty() = staged.isEmpty() && unstaged.isEmpty() && untracked.isEmpty()
+}

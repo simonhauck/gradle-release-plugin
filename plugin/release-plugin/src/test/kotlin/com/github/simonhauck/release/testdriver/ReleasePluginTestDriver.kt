@@ -46,20 +46,9 @@ class SemanticVersioningProjectBuilder(private val workDir: File) {
     fun createProjectScaffold() {
         val sourceDir = Paths.get("src/test/resources/scaffold-project")
 
-        // Define the list of files to copy
-        val filesToCopy =
-            listOf(
-                "settings.gradle.kts",
-                "build.gradle.kts",
-                "gradle.properties",
-                "version.properties"
-            )
-
-        // Copy each file to the workDir
-        filesToCopy.forEach { filePath ->
-            val sourcePath = sourceDir.resolve(filePath)
-            val targetPath = Paths.get(workDir.absolutePath, filePath)
-            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+        Files.list(sourceDir).forEach { file ->
+            val targetPath = Paths.get(workDir.absolutePath, file.fileName.toString())
+            Files.copy(file, targetPath, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 

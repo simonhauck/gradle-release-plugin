@@ -170,7 +170,7 @@ class GitCommandApiTest {
     }
 }
 
-private fun <T> Either<GitError, T>.assertIsOk(): T {
+fun <T> Either<GitError, T>.assertIsOk(): T {
     assertThat(isOk()).isTrue()
     return get()
 }
