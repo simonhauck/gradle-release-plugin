@@ -4,21 +4,29 @@ import com.github.simonhauck.git.process.ProcessConfig
 import java.io.File
 
 interface GitCommandApi {
-    fun gitInit(branchName: String): GitVoidResult
+    fun init(branchName: String): GitVoidResult
 
-    fun gitStatus(): GitVoidResult
+    fun status(): GitVoidResult
 
     fun createBranch(branchName: String): GitVoidResult
 
     fun deleteBranch(branchName: String): GitVoidResult
 
-    fun gitAdd(filePattern: String): GitVoidResult
+    fun add(filePattern: String): GitVoidResult
 
-    fun gitCommit(message: String): GitVoidResult
+    fun commit(message: String): GitVoidResult
 
-    fun gitLog(): GitResult<List<GitLogEntry>>
+    fun deleteLastCommit(): GitVoidResult
+
+    fun log(): GitResult<List<GitLogEntry>>
 
     fun getLocalBranchNames(): GitResult<List<String>>
+
+    fun tag(tagName: String, tagMessage: String): GitVoidResult
+
+    fun listTags(): GitResult<List<String>>
+
+    fun deleteLocalTag(tagName: String): GitVoidResult
 
     companion object {
         fun create(gitRootDirectory: File): GitCommandApi =

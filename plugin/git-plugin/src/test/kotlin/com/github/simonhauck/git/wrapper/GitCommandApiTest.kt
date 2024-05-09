@@ -20,34 +20,29 @@ class GitCommandApiTest {
 
     @Test
     fun `can create a git repository and correctly return the status`() {
-        val actualInit = gitCommandApi.gitInit("main")
-        assertThat(actualInit.isOk()).isTrue()
+        gitCommandApi.init("main").assertIsOk()
 
-        val actualStatus = gitCommandApi.gitStatus()
-        assertThat(actualStatus.isOk()).isTrue()
+        gitCommandApi.status().assertIsOk()
     }
 
     @Test
     fun `check that the git command fails if no git repository is available`() {
-        val actual = gitCommandApi.gitStatus()
+        val actual = gitCommandApi.status()
 
         assertThat(actual.isOk()).isFalse()
     }
 
     @Test
     fun `should be able to create a git repository and commit a file`() {
-        gitCommandApi.gitInit("main")
+        gitCommandApi.init("main")
 
         val file = File(tempDir, "file.txt")
         file.writeText("Hello World")
 
-        val actualAdd = gitCommandApi.gitAdd("file.txt")
-        assertThat(actualAdd.isOk()).isTrue()
+        gitCommandApi.add("file.txt").assertIsOk()
+        gitCommandApi.commit("Initial commit").assertIsOk()
 
-        val actualCommit = gitCommandApi.gitCommit("Initial commit")
-        assertThat(actualCommit.isOk()).isTrue()
-
-        val actual = gitCommandApi.gitLog().get().map { it.message }
+        val actual = gitCommandApi.log().get().map { it.message }
         assertThat(actual).containsExactly("Initial commit")
     }
 
@@ -55,35 +50,94 @@ class GitCommandApiTest {
     fun `should contain the names of all local created branches`() {
         setupGitRepoWithInitialCommit()
 
-        gitCommandApi.createBranch("feature-1")
-        gitCommandApi.createBranch("feature-2")
+        gitCommandApi.createBranch("feature-1").assertIsOk()
+        gitCommandApi.createBranch("feature-2").assertIsOk()
 
-        val actual = gitCommandApi.getLocalBranchNames()
-        assertThat(actual.isOk()).isTrue()
-        assertThat(actual.get()).contains("feature-1", "feature-2")
+        val actual = gitCommandApi.getLocalBranchNames().assertIsOk()
+        assertThat(actual).contains("feature-1", "feature-2")
     }
 
     @Test
     fun `should be able to delete branches`() {
         setupGitRepoWithInitialCommit()
 
-        gitCommandApi.createBranch("feature-1")
-        gitCommandApi.createBranch("feature-2")
+        gitCommandApi.createBranch("feature-1").assertIsOk()
+        gitCommandApi.createBranch("feature-2").assertIsOk()
 
-        val actual = gitCommandApi.deleteBranch("feature-1")
-        assertThat(actual.isOk()).isTrue()
+        gitCommandApi.deleteBranch("feature-1").assertIsOk()
 
-        val actualBranches = gitCommandApi.getLocalBranchNames()
-        assertThat(actualBranches.get()).doesNotContain("feature-1")
+        val actualBranches = gitCommandApi.getLocalBranchNames().assertIsOk()
+        assertThat(actualBranches).doesNotContain("feature-1")
+    }
+
+    @Test
+    fun `the file should contain the original content after the commit was deleted`() {
+        setupGitRepoWithInitialCommit()
+
+        repeat(2) {
+            File("$tempDir/newFile.txt").writeText("Commit number $it")
+            gitCommandApi.add("newFile.txt")
+            gitCommandApi.commit("commit number $it")
+        }
+
+        val commandResult = gitCommandApi.deleteLastCommit()
+        assertThat(commandResult.isOk()).isTrue()
+
+        val actual = File("$tempDir/newFile.txt").readText()
+        assertThat(actual).isEqualTo("Commit number 0")
+    }
+
+    @Test
+    fun `the file should be deleted when the commit is reverted where the file was added`() {
+        setupGitRepoWithInitialCommit()
+
+        File("$tempDir/newFile.txt").writeText("Hello World")
+        gitCommandApi.add("newFile.txt").assertIsOk()
+        gitCommandApi.commit("Add new file").assertIsOk()
+
+        gitCommandApi.deleteLastCommit().assertIsOk()
+
+        val actual = File("$tempDir/newFile.txt").exists()
+        assertThat(actual).isFalse()
+    }
+
+    @Test
+    fun `should be able to create and list tags`() {
+        setupGitRepoWithInitialCommit()
+
+        gitCommandApi.tag("v1.0", "Initial release").assertIsOk()
+        gitCommandApi.tag("v1.1", "Second release").assertIsOk()
+
+        val actual = gitCommandApi.listTags().assertIsOk()
+
+        assertThat(actual).containsExactly("v1.0", "v1.1")
+    }
+
+    @Test
+    fun `should be able to delete a tag`() {
+        setupGitRepoWithInitialCommit()
+
+        gitCommandApi.tag("v1.0", "Initial release").assertIsOk()
+        gitCommandApi.tag("v1.1", "Second release").assertIsOk()
+
+        gitCommandApi.deleteLocalTag("v1.0").assertIsOk()
+
+        val actual = gitCommandApi.listTags().assertIsOk()
+        assertThat(actual).containsExactly("v1.1")
     }
 
     private fun setupGitRepoWithInitialCommit() {
-        gitCommandApi.gitInit("main")
+        gitCommandApi.init("main")
 
         File("$tempDir/file.txt").writeText("Hello World")
-        gitCommandApi.gitAdd("file.txt")
-        gitCommandApi.gitCommit("Initial commit")
+        gitCommandApi.add("file.txt")
+        gitCommandApi.commit("Initial commit")
     }
+}
+
+private fun <T> Either<GitError, T>.assertIsOk(): T {
+    assertThat(isOk()).isTrue()
+    return get()
 }
 
 fun <T, E> Either<T, E>.get(): E {

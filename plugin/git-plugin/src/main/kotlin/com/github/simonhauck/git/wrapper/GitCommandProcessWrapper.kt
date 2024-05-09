@@ -10,23 +10,27 @@ internal class GitCommandProcessWrapper(
     private val config: ProcessConfig = ProcessConfig()
 ) : GitCommandApi {
 
-    override fun gitInit(branchName: String): GitVoidResult {
+    override fun init(branchName: String): GitVoidResult {
         return gitVoidCommand(listOf("init", "--initial-branch=$branchName"))
     }
 
-    override fun gitStatus(): GitVoidResult {
+    override fun status(): GitVoidResult {
         return gitVoidCommand(listOf("status"))
     }
 
-    override fun gitAdd(filePattern: String): GitVoidResult {
+    override fun add(filePattern: String): GitVoidResult {
         return gitVoidCommand(listOf("add", filePattern))
     }
 
-    override fun gitCommit(message: String): GitVoidResult {
+    override fun commit(message: String): GitVoidResult {
         return gitVoidCommand(listOf("commit", "-m", message))
     }
 
-    override fun gitLog(): GitResult<List<GitLogEntry>> {
+    override fun deleteLastCommit(): GitVoidResult {
+        return gitVoidCommand(listOf("reset", "--hard", "HEAD~1"))
+    }
+
+    override fun log(): GitResult<List<GitLogEntry>> {
         return gitCommand(listOf("log", "--pretty=oneline")).map { processSuccess ->
             processSuccess.output.map { line ->
                 val split = line.split(" ")
@@ -45,6 +49,20 @@ internal class GitCommandProcessWrapper(
 
     override fun getLocalBranchNames(): GitResult<List<String>> {
         return gitCommand(listOf("--no-pager", "branch")).map { processSuccess ->
+            processSuccess.output.map { it.trim() }
+        }
+    }
+
+    override fun tag(tagName: String, tagMessage: String): GitVoidResult {
+        return gitVoidCommand(listOf("tag", "-a", tagName, "-m", tagMessage))
+    }
+
+    override fun deleteLocalTag(tagName: String): GitVoidResult {
+        return gitVoidCommand(listOf("tag", "-d", tagName))
+    }
+
+    override fun listTags(): GitResult<List<String>> {
+        return gitCommand(listOf("tag")).map { processSuccess ->
             processSuccess.output.map { it.trim() }
         }
     }

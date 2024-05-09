@@ -36,11 +36,11 @@ class SemanticVersioningProjectBuilder(private val workDir: File) {
     }
 
     fun createValidGitRepository() {
-        gitCommandApi.gitInit("main")
+        gitCommandApi.init("main")
 
         File(workDir, "README.md").writeText("# Test Project")
-        gitCommandApi.gitAdd(".")
-        gitCommandApi.gitCommit("Initial commit")
+        gitCommandApi.add(".")
+        gitCommandApi.commit("Initial commit")
     }
 
     fun createProjectScaffold() {
