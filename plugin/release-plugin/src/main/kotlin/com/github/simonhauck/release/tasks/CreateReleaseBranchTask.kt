@@ -1,4 +1,4 @@
-package com.github.simonhauck.release
+package com.github.simonhauck.release.tasks
 
 import com.github.simonhauck.git.tasks.CreateBranchTask
 

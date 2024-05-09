@@ -1,5 +1,8 @@
 package com.github.simonhauck.git.wrapper
 
+import com.github.simonhauck.git.process.ProcessConfig
+import java.io.File
+
 interface GitCommandApi {
     fun gitInit(branchName: String): GitVoidResult
 
@@ -16,4 +19,9 @@ interface GitCommandApi {
     fun gitLog(): GitResult<List<GitLogEntry>>
 
     fun getLocalBranchNames(): GitResult<List<String>>
+
+    companion object {
+        fun create(gitRootDirectory: File): GitCommandApi =
+            GitCommandProcessWrapper(config = ProcessConfig(workingDir = gitRootDirectory))
+    }
 }

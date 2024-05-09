@@ -6,7 +6,11 @@ plugins {
 
 dependencies {
     implementation(libs.ztExec)
+    implementation(libs.kotlinLogging)
     implementation(project(":git-plugin"))
+
+    testImplementation(gradleTestKit())
+    testImplementation(libs.bundles.junit)
 }
 
 gradlePlugin {
