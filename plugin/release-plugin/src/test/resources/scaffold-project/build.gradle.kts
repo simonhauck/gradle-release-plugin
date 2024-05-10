@@ -1,3 +1,3 @@
-import com.github.simonhauck.git.tasks.*
+import com.github.simonhauck.release.tasks.*
 
 plugins { id("com.github.simonhauck.semantic-versioning") }

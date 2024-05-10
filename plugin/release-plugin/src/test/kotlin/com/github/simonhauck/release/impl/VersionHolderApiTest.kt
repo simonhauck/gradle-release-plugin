@@ -15,7 +15,7 @@ class VersionHolderApiTest {
         val versionFile = tempDir.resolve("version.txt").toFile()
 
         versionHolder.setVersions(versionFile, "1.0.0", "1.0.1", "1.1.0")
-        versionHolder.writeReleaseVersion()
+        versionHolder.writeReleaseVersion(versionFile)
 
         assertEquals("1.0.1", versionFile.readText())
     }
@@ -26,18 +26,19 @@ class VersionHolderApiTest {
         val versionFile = tempDir.resolve("version.txt").toFile()
 
         versionHolder.setVersions(versionFile, "1.0.0", "1.0.1", "1.1.0")
-        versionHolder.writeNextVersion()
+        versionHolder.writeNextVersion(versionFile)
 
         assertEquals("1.1.0", versionFile.readText())
     }
 
     @Test
-    fun `should throw exception when versions is null`() {
+    fun `should throw exception when versions is null`(@TempDir tempDir: Path) {
         val versionHolder = createVersionHolder()
+        val versionFile = tempDir.resolve("version.txt").toFile()
 
-        assertThrows<IllegalStateException> { versionHolder.writeReleaseVersion() }
+        assertThrows<IllegalStateException> { versionHolder.writeReleaseVersion(versionFile) }
 
-        assertThrows<IllegalStateException> { versionHolder.writeNextVersion() }
+        assertThrows<IllegalStateException> { versionHolder.writeNextVersion(versionFile) }
     }
 
     private fun createVersionHolder(): VersionHolderApi {
