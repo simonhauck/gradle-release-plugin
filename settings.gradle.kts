@@ -20,4 +20,4 @@ include(
     "example",
 )
 
-rootProject.name = "gradle-semantic-versioning"
+rootProject.name = "gradle-release-plugin"

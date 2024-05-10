@@ -1,6 +1,6 @@
 ## How to start development
 
-[![Master](https://github.com/simonhauck/gradle-semantic-versioning/actions/workflows/on-master-push.yml/badge.svg)](https://github.com/simonhauck/gradle-semantic-versioning/actions/workflows/on-master-push.yml)
+[![Master](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-master-push.yml/badge.svg)](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-master-push.yml)
 
 This plugin is inspired by the [researchgate/release-plugin](https://github.com/researchgate/gradle-release) but
 addresses some of the shortcomings and provides additional functionalities.
