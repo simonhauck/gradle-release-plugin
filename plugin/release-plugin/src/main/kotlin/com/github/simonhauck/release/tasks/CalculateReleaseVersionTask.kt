@@ -5,7 +5,6 @@ import com.github.simonhauck.release.impl.VersionHolderApi
 import com.github.simonhauck.release.impl.VersionIncrementStrategy
 import java.io.FileReader
 import java.util.Properties
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
@@ -17,10 +16,9 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 
 @DisableCachingByDefault
-abstract class CalculateReleaseVersionTask : DefaultTask() {
+abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
 
     init {
-        group = Constants.groupName
         description = "Calculate the release version and the next development version"
     }
 

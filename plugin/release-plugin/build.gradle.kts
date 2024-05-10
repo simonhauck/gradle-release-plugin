@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(libs.ztExec)
     implementation(libs.kotlinLogging)
-    implementation(project(":git-plugin"))
+    implementation(libs.arrowKt)
 
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.junit)

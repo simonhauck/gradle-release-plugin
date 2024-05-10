@@ -1,6 +1,8 @@
-package com.github.simonhauck.release.testdriver
+package com.github.simonhauck.release.git.testdriver
 
+import com.github.simonhauck.release.git.process.ProcessConfig
 import com.github.simonhauck.release.git.wrapper.GitCommandApi
+import com.github.simonhauck.release.git.wrapper.GitCommandProcessWrapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.nio.file.Files
@@ -10,22 +12,22 @@ import org.gradle.testkit.runner.GradleRunner
 
 private val log = KotlinLogging.logger {}
 
-class SemanticVersioningPluginTestDriver {
+class GitPluginTestDriver {
 
-    operator fun invoke(tmpDir: File, action: SemanticVersioningProjectBuilder.() -> Unit) {
+    operator fun invoke(tmpDir: File, action: GitPluginProjectBuilder.() -> Unit) {
         log.info { "Current test directory is $tmpDir" }
 
-        SemanticVersioningProjectBuilder(tmpDir).apply {
+        GitPluginProjectBuilder(tmpDir).apply {
             createProjectScaffold()
-            createValidGitRepository()
             action()
         }
     }
 }
 
-class SemanticVersioningProjectBuilder(private val workDir: File) {
+class GitPluginProjectBuilder(private val workDir: File) {
 
-    val gitCommandApi: GitCommandApi = GitCommandApi.create(workDir)
+    val gitCommandApi: GitCommandApi =
+        GitCommandProcessWrapper(config = ProcessConfig(workingDir = workDir))
 
     fun testKitRunner(): GradleRunner {
         return GradleRunner.create()
@@ -56,11 +58,5 @@ class SemanticVersioningProjectBuilder(private val workDir: File) {
         val buildGradlePath = Paths.get(workDir.absolutePath, "build.gradle.kts")
         val buildGradleFile = buildGradlePath.toFile()
         buildGradleFile.appendText(content)
-    }
-
-    fun updateVersionProperties(version: String) {
-        val versionPropertiesPath = Paths.get(workDir.absolutePath, "version.properties")
-        val versionPropertiesFile = versionPropertiesPath.toFile()
-        versionPropertiesFile.writeText("version=$version")
     }
 }

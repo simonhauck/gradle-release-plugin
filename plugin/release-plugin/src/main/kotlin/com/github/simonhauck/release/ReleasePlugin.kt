@@ -1,9 +1,8 @@
 package com.github.simonhauck.release
 
+import com.github.simonhauck.release.git.tasks.CommandHistoryService
 import com.github.simonhauck.release.impl.VersionHolder
-import com.github.simonhauck.release.tasks.CalculateReleaseVersionTask
-import com.github.simonhauck.release.tasks.VersionType
-import com.github.simonhauck.release.tasks.WriteVersionTask
+import com.github.simonhauck.release.tasks.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -12,8 +11,10 @@ import org.gradle.api.provider.Provider
 class ReleasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.registerExtension()
+        project.configureBaseReleaseTask(extension)
 
         val versionHolderProvider = project.registerVersionHolderService()
+        val commandHistoryService = project.registerCommandService()
 
         project.tasks.withType(CalculateReleaseVersionTask::class.java) {
             it.versionHolder.set(versionHolderProvider)
@@ -52,10 +53,24 @@ class ReleasePlugin : Plugin<Project> {
                 it.versionFile.set(extension.versionPropertyFile)
             }
 
+        project.tasks.withType(CommitAndTagTask::class.java) {
+            it.commandHistoryApi.set(commandHistoryService)
+        }
+
+        project.tasks.withType(CreateBranchTask::class.java) {
+            it.commandHistoryApi.set(commandHistoryService)
+        }
+
         project.tasks.register("release", DefaultTask::class.java) {
             it.group = "release"
             it.description = "Release the current version"
             it.dependsOn(writeNextDevVersionTask)
+        }
+    }
+
+    private fun Project.configureBaseReleaseTask(extension: ReleaseExtension) {
+        tasks.withType(BaseReleaseTask::class.java) {
+            it.gitRootDirectory.set(extension.rootGitDirectory.asFile)
         }
     }
 
@@ -68,6 +83,9 @@ class ReleasePlugin : Plugin<Project> {
 
         return extension
     }
+
+    private fun Project.registerCommandService(): Provider<CommandHistoryService> =
+        gradle.sharedServices.registerIfAbsent("commandHistory", CommandHistoryService::class.java)
 
     private fun Project.registerVersionHolderService(): Provider<VersionHolder> =
         gradle.sharedServices.registerIfAbsent("versionHolder", VersionHolder::class.java)
