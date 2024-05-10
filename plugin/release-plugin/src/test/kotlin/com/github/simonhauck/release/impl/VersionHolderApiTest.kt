@@ -1,6 +1,7 @@
 package com.github.simonhauck.release.impl
 
 import java.nio.file.Path
+import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.services.BuildServiceParameters
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -17,7 +18,7 @@ class VersionHolderApiTest {
         versionHolder.setVersions(versionFile, "1.0.0", "1.0.1", "1.1.0")
         versionHolder.writeReleaseVersion(versionFile)
 
-        assertEquals("1.0.1", versionFile.readText())
+        assertThat(versionFile.readText()).isEqualTo("version=1.0.1")
     }
 
     @Test
@@ -28,7 +29,7 @@ class VersionHolderApiTest {
         versionHolder.setVersions(versionFile, "1.0.0", "1.0.1", "1.1.0")
         versionHolder.writeNextVersion(versionFile)
 
-        assertEquals("1.1.0", versionFile.readText())
+        assertThat(versionFile.readText()).isEqualTo("version=1.1.0")
     }
 
     @Test
