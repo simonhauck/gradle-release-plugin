@@ -1,4 +1,4 @@
-package com.github.simonhauck.release.impl
+package com.github.simonhauck.release.version
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File

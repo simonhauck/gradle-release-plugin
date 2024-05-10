@@ -1,13 +1,12 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.impl.VersionHolderApi
+import com.github.simonhauck.release.version.VersionHolderApi
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.impldep.org.bouncycastle.asn1.x500.style.RFC4519Style.description
 
 abstract class WriteVersionTask : BaseReleaseTask() {
 

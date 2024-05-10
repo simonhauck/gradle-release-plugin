@@ -1,6 +1,6 @@
-package com.github.simonhauck.release
+package com.github.simonhauck.release.plugin
 
-import com.github.simonhauck.release.testdriver.SemanticVersioningPluginTestDriver
+import com.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -12,7 +12,7 @@ class ReleasePluginTest {
 
     @TempDir lateinit var tmpDir: File
 
-    private val testDriver = SemanticVersioningPluginTestDriver()
+    private val testDriver = ReleasePluginTestDriver()
 
     @Test
     fun `the version file should contain the next development version at the end`() =

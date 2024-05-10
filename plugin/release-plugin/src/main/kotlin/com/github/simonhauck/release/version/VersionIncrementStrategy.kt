@@ -1,4 +1,4 @@
-package com.github.simonhauck.release.impl
+package com.github.simonhauck.release.version
 
 import java.io.Serializable
 
@@ -8,7 +8,7 @@ sealed interface VersionIncrementStrategy {
 
     fun calculateNextDevelopmentVersion(currentVersion: String): String
 
-    data class SpecifyVersionExplicitly(
+    data class SpecifyExplicitly(
         val releaseVersion: String,
         val nextDevelopmentVersion: String,
     ) : VersionIncrementStrategy, Serializable {

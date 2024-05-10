@@ -1,9 +1,8 @@
-package com.github.simonhauck.release.impl
+package com.github.simonhauck.release.version
 
 import java.nio.file.Path
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.services.BuildServiceParameters
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir

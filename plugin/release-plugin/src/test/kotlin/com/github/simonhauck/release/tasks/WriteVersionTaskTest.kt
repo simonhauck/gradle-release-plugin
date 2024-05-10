@@ -1,6 +1,6 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.testdriver.SemanticVersioningPluginTestDriver
+import com.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.io.TempDir
 class WriteVersionTaskTest {
     @TempDir lateinit var tempDir: File
 
-    private val testDriver = SemanticVersioningPluginTestDriver()
+    private val testDriver = ReleasePluginTestDriver()
 
     @Test
     fun `should write the release version to the given file`() =

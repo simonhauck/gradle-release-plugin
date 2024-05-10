@@ -10,7 +10,7 @@ import org.gradle.testkit.runner.GradleRunner
 
 private val log = KotlinLogging.logger {}
 
-class SemanticVersioningPluginTestDriver {
+class ReleasePluginTestDriver {
 
     operator fun invoke(tmpDir: File, action: SemanticVersioningProjectBuilder.() -> Unit) {
         log.info { "Current test directory is $tmpDir" }

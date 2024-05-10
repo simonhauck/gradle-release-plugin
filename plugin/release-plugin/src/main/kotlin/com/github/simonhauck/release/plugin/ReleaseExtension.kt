@@ -1,4 +1,4 @@
-package com.github.simonhauck.release
+package com.github.simonhauck.release.plugin
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property

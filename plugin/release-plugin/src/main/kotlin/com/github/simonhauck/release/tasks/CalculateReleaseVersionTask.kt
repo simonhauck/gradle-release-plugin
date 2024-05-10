@@ -1,8 +1,8 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.impl.CommandLineParser
-import com.github.simonhauck.release.impl.VersionHolderApi
-import com.github.simonhauck.release.impl.VersionIncrementStrategy
+import com.github.simonhauck.release.version.VersionHolderApi
+import com.github.simonhauck.release.version.VersionIncrementStrategy
+import com.github.simonhauck.release.version.VersionIncrementStrategyParser
 import java.io.FileReader
 import java.util.Properties
 import org.gradle.api.GradleException
@@ -43,7 +43,7 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
 
     private fun getReleaseStrategyOrThrow(): VersionIncrementStrategy {
         // TODO Simon.Hauck 2024-05-09 - improve error message
-        return (CommandLineParser().parseVersionIncrementStrategy(commandLineParameters.get())
+        return (VersionIncrementStrategyParser().parse(commandLineParameters.get())
             ?: throw GradleException("No valid release strategy found."))
     }
 

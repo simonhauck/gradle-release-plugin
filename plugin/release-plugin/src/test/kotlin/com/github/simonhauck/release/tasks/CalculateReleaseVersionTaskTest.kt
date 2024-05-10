@@ -1,6 +1,6 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.testdriver.SemanticVersioningPluginTestDriver
+import com.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -11,7 +11,7 @@ class CalculateReleaseVersionTaskTest {
 
     @TempDir lateinit var tmpDir: File
 
-    private val testDriver = SemanticVersioningPluginTestDriver()
+    private val testDriver = ReleasePluginTestDriver()
 
     @Test
     fun `task should be successful if a valid release versions for passed as command line parameters`() =

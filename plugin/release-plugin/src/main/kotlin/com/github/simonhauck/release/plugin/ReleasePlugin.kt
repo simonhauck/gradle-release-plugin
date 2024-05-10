@@ -1,8 +1,8 @@
-package com.github.simonhauck.release
+package com.github.simonhauck.release.plugin
 
 import com.github.simonhauck.release.git.tasks.CommandHistoryService
-import com.github.simonhauck.release.impl.VersionHolder
 import com.github.simonhauck.release.tasks.*
+import com.github.simonhauck.release.version.VersionHolder
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
