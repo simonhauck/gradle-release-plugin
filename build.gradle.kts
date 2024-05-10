@@ -3,7 +3,7 @@ import java.util.*
 plugins { id("build.common.kotlin-conventions") apply false }
 
 allprojects {
-    group = "com.github.simonhauck.semantic-versioning"
+    group = "com.github.simonhauck.release"
     version = readVersionFromFile(file("${rootProject.projectDir.resolve("version.properties")}"))
 }
 

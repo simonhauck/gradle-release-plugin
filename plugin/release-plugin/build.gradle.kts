@@ -15,8 +15,8 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("semantic-versioning") {
-            id = "com.github.simonhauck.semantic-versioning"
+        create("release-plugin") {
+            id = "com.github.simonhauck.release"
             implementationClass = "com.github.simonhauck.release.SemanticVersioningPlugin"
         }
     }

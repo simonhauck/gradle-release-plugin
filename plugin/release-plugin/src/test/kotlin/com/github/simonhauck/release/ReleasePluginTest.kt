@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class SemanticVersioningPluginTest {
+class ReleasePluginTest {
 
     @TempDir lateinit var tmpDir: File
 

@@ -9,7 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 
-class SemanticVersioningPlugin : Plugin<Project> {
+class ReleasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.registerExtension()
 
@@ -59,9 +59,9 @@ class SemanticVersioningPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.registerExtension(): SemanticVersioningExtension {
+    private fun Project.registerExtension(): ReleaseExtension {
         val extension =
-            extensions.create("semanticVersioning", SemanticVersioningExtension::class.java)
+            extensions.create("semanticVersioning", ReleaseExtension::class.java)
 
         extension.versionPropertyFile.convention(layout.projectDirectory.file("version.properties"))
         extension.rootGitDirectory.convention(layout.projectDirectory.file("./"))
