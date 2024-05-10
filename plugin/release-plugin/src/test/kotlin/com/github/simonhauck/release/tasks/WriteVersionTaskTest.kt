@@ -36,7 +36,7 @@ class WriteVersionTaskTest {
             val actual = runner.task(":writeTestReleaseVersion")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(tempDir.resolve("version.properties").readText()).isEqualTo("1.0.1")
+            assertThat(tempDir.resolve("version.properties").readText()).isEqualTo("version=1.0.1")
         }
 
     @Test
@@ -63,6 +63,7 @@ class WriteVersionTaskTest {
             val actual = runner.task(":writeTestReleaseVersion")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(tempDir.resolve("version.properties").readText()).isEqualTo("1.0.2-SNAPSHOT")
+            assertThat(tempDir.resolve("version.properties").readText())
+                .isEqualTo("version=1.0.2-SNAPSHOT")
         }
 }
