@@ -14,7 +14,7 @@ buildCache { local { removeUnusedEntriesAfterDays = 10 } }
 
 includeBuild("build-logic")
 
-includeBuild("plugin")
+includeBuild("release-plugin")
 
 include(
     "example",
