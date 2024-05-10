@@ -24,7 +24,8 @@ class SemanticVersioningPlugin : Plugin<Project> {
                 "calculateReleaseVersion",
                 CalculateReleaseVersionTask::class.java
             ) {
-                val stringMap = project.properties.mapValues { value -> value.toString() }
+                val stringMap =
+                    project.properties.map { (key, value) -> key to value.toString() }.toMap()
                 it.commandLineParameters.set(stringMap)
                 it.versionPropertyFile.set(extension.versionPropertyFile)
             }
@@ -33,23 +34,28 @@ class SemanticVersioningPlugin : Plugin<Project> {
             it.versionHolderApi.set(versionHolderProvider)
         }
 
-        project.tasks.register("writeReleaseVersion", WriteVersionTask::class.java) {
-            it.dependsOn(calculateReleaseVersionTask)
-            it.versionType.set(VersionType.RELEASE)
-            it.versionHolderApi.set(versionHolderProvider)
-            it.versionFile.set(extension.versionPropertyFile)
-        }
+        val writeReleaseVersionTask =
+            project.tasks.register("writeReleaseVersion", WriteVersionTask::class.java) {
+                it.dependsOn(calculateReleaseVersionTask)
+                it.versionType.set(VersionType.RELEASE)
+                it.versionHolderApi.set(versionHolderProvider)
+                it.versionFile.set(extension.versionPropertyFile)
+            }
 
-        project.tasks.register("writeNextDevVersion", WriteVersionTask::class.java) {
-            it.versionType.set(VersionType.NEXT_DEV)
-            it.versionHolderApi.set(versionHolderProvider)
-            it.versionFile.set(extension.versionPropertyFile)
-        }
+        val writeNextDevVersionTask =
+            project.tasks.register("writeNextDevVersion", WriteVersionTask::class.java) {
+                // TODO Simon.Hauck 2024-05-10 - remove this temporary dependency to
+                // writeReleaseVersionTask
+                it.dependsOn(calculateReleaseVersionTask, writeReleaseVersionTask)
+                it.versionType.set(VersionType.NEXT_DEV)
+                it.versionHolderApi.set(versionHolderProvider)
+                it.versionFile.set(extension.versionPropertyFile)
+            }
 
         project.tasks.register("release", DefaultTask::class.java) {
             it.group = "release"
             it.description = "Release the current version"
-            it.dependsOn(calculateReleaseVersionTask)
+            it.dependsOn(writeNextDevVersionTask)
         }
     }
 

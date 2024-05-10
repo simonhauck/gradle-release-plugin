@@ -16,9 +16,9 @@ interface VersionHolderApi {
         nextDevelopmentVersion: String
     )
 
-    fun writeReleaseVersion(file: File)
+    fun writeReleaseVersion(propertyFile: File)
 
-    fun writeNextVersion(file: File)
+    fun writeNextVersion(propertyFile: File)
 }
 
 internal abstract class VersionHolder :
@@ -34,21 +34,20 @@ internal abstract class VersionHolder :
         versions = Versions(versionFile, originalVersion, releaseVersion, nextDevelopmentVersion)
     }
 
-    override fun writeReleaseVersion(file: File) {
-        writeToFile(file) { it.releaseVersion }
+    override fun writeReleaseVersion(propertyFile: File) {
+        writeToFile(propertyFile) { it.releaseVersion }
     }
 
-    override fun writeNextVersion(file: File) {
-        writeToFile(file) { it.nextVersion }
+    override fun writeNextVersion(propertyFile: File) {
+        writeToFile(propertyFile) { it.nextVersion }
     }
 
     private fun writeToFile(targetFile: File, getVersionFn: (Versions) -> String) {
         val versions = versions ?: throwException()
         val versionToWrite = getVersionFn(versions)
-        val file = targetFile
 
-        log.info { "Writing version '$versionToWrite' in ${file.absolutePath}" }
-        file.writeText(versionToWrite)
+        log.info { "Writing version '$versionToWrite' in ${targetFile.absolutePath}" }
+        targetFile.writeText("version=$versionToWrite")
     }
 
     private fun throwException(): Nothing {
