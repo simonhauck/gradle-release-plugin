@@ -24,7 +24,7 @@ class ReleasePluginTest {
                     .withArguments(
                         "release",
                         "-PreleaseVersion=1.2.0",
-                        "-PnextDevVersion=1.2.1-SNAPSHOT"
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
                     )
                     .build()
 
@@ -58,7 +58,7 @@ class ReleasePluginTest {
                 .withArguments(
                     "release",
                     "-PreleaseVersion=1.2.0",
-                    "-PnextDevVersion=1.2.1-SNAPSHOT"
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
                 )
                 .build()
 
@@ -76,7 +76,7 @@ class ReleasePluginTest {
                 .withArguments(
                     "release",
                     "-PreleaseVersion=1.2.0",
-                    "-PnextDevVersion=1.2.1-SNAPSHOT"
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
                 )
                 .build()
 
@@ -88,7 +88,7 @@ class ReleasePluginTest {
                     .withArguments(
                         "release",
                         "-PreleaseVersion=1.2.0",
-                        "-PnextDevVersion=1.3.1-SNAPSHOT"
+                        "-PpostReleaseVersion=1.3.1-SNAPSHOT"
                     )
                     .buildAndFail()
 

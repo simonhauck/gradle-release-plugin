@@ -1,52 +1,52 @@
 package io.github.simonhauck.release.version.api
 
-import io.github.simonhauck.release.version.internal.VersionHolder
-import java.nio.file.Path
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
-import org.gradle.api.services.BuildServiceParameters
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 
 class VersionHolderApiTest {
+    @TempDir lateinit var tempDir: File
 
     @Test
-    fun `should write release version to file`(@TempDir tempDir: Path) {
-        val versionHolder = createVersionHolder()
-        val versionFile = tempDir.resolve("version.txt").toFile()
+    fun `should correctly save and load the releaseVersions`() {
+        val releaseVersions = ReleaseVersions(Version("1.0.0"), Version("1.0.1"))
+        val versionHolderApi = createVersionHolder()
 
-        versionHolder.setVersions(versionFile, "1.0.0", "1.0.1", "1.1.0")
-        versionHolder.writeReleaseVersion(versionFile)
+        versionHolderApi.saveVersions(releaseVersions)
 
-        assertThat(versionFile.readText()).isEqualTo("version=1.0.1")
+        val actual = versionHolderApi.loadVersions()
+
+        assertThat(actual).isEqualTo(releaseVersions)
     }
 
     @Test
-    fun `should write next version to file`(@TempDir tempDir: Path) {
-        val versionHolder = createVersionHolder()
-        val versionFile = tempDir.resolve("version.txt").toFile()
+    fun `loadReleaseVersions should return null if file does not exist`() {
 
-        versionHolder.setVersions(versionFile, "1.0.0", "1.0.1", "1.1.0")
-        versionHolder.writeNextVersion(versionFile)
+        val versionHolderApi = createVersionHolder()
 
-        assertThat(versionFile.readText()).isEqualTo("version=1.1.0")
+        val actual = versionHolderApi.loadVersions()
+
+        assertThat(actual).isNull()
     }
 
     @Test
-    fun `should throw exception when versions is null`(@TempDir tempDir: Path) {
-        val versionHolder = createVersionHolder()
-        val versionFile = tempDir.resolve("version.txt").toFile()
+    fun `should write the given version to the properties file`() {
+        val versionHolderApi = createVersionHolder()
+        val version = Version("1.0.0")
 
-        assertThrows<IllegalStateException> { versionHolder.writeReleaseVersion(versionFile) }
+        val file = File(tempDir, "version.properties").apply { createNewFile() }
 
-        assertThrows<IllegalStateException> { versionHolder.writeNextVersion(versionFile) }
+        versionHolderApi.writeVersionPropertyToFile(file, version)
+
+        val actual = file.readText()
+
+        assertThat(actual).isEqualTo("version=1.0.0")
     }
 
     private fun createVersionHolder(): VersionHolderApi {
-        return object : VersionHolder() {
-            override fun getParameters(): BuildServiceParameters.None {
-                throw NotImplementedError("This is not used")
-            }
-        }
+        val file = tempDir.resolve("test.properties").apply { createNewFile() }
+
+        return VersionHolderApi.create(file)
     }
 }

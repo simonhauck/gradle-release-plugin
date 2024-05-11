@@ -1,18 +1,36 @@
 package io.github.simonhauck.release.version.internal
 
-import io.github.simonhauck.release.version.api.VersionIncrementStrategy
-import io.github.simonhauck.release.version.api.VersionIncrementStrategy.SpecifyExplicitly
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.simonhauck.release.version.api.ReleaseVersions
+import io.github.simonhauck.release.version.api.Version
+import io.github.simonhauck.release.version.api.VersionIncrementStrategyParserApi
+import org.gradle.api.GradleException
 
-internal class VersionIncrementStrategyParser {
+private val log = KotlinLogging.logger {}
 
-    fun parse(parameters: Map<String, String>): VersionIncrementStrategy? {
-        val releaseVersion = parameters["releaseVersion"]
-        val nextDevelopmentVersion = parameters["nextDevVersion"]
+internal class VersionIncrementStrategyParser : VersionIncrementStrategyParserApi {
 
-        if (releaseVersion != null && nextDevelopmentVersion != null) {
-            return SpecifyExplicitly(releaseVersion, nextDevelopmentVersion)
+    private val parsers =
+        listOf(
+            ManualVersionSelectionStrategy(),
+        )
+
+    override fun parseOrThrow(
+        currentVersion: Version,
+        parameters: Map<String, String>
+    ): ReleaseVersions {
+        val parsedVersion = parsers.firstNotNullOfOrNull { it.tryParse(parameters) }
+
+        if (parsedVersion == null) {
+            log.error { "No version increment strategy found" }
+            parsers.forEach {
+                log.error { "Available strategy: ${it.strategyName}" }
+                it.requiredPropertyDescription.forEach { log.error { "\t $it" } }
+            }
+
+            throw GradleException("No valid version increment strategy found.")
         }
 
-        return null
+        return parsedVersion
     }
 }

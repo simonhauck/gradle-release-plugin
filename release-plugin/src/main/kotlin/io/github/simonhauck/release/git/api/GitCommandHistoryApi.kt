@@ -2,7 +2,7 @@ package io.github.simonhauck.release.git.api
 
 import arrow.core.Either
 
-interface CommandHistoryApi {
+interface GitCommandHistoryApi {
     fun registerRevertCommand(command: RevertCommand)
 
     fun flushCommands()

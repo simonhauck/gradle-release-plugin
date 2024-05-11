@@ -23,7 +23,7 @@ class CalculateReleaseVersionTaskTest {
                     .withArguments(
                         "calculateReleaseVersion",
                         "-PreleaseVersion=1.1.0",
-                        "-PnextDevVersion=1.2.0-SNAPSHOT"
+                        "-PpostReleaseVersion=1.2.0-SNAPSHOT"
                     )
                     .build()
 
@@ -43,4 +43,6 @@ class CalculateReleaseVersionTaskTest {
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.FAILED)
         }
+
+    // TODO Simon.Hauck 2024-05-11 - add test to check for task caching
 }

@@ -1,6 +1,6 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.simonhauck.release.git.api.CommandHistoryApi
+import io.github.simonhauck.release.git.api.GitCommandHistoryApi
 import io.github.simonhauck.release.git.api.RevertCommand
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -18,7 +18,7 @@ abstract class CommitAndTagTask : BaseReleaseTask() {
     @get:Input @get:Optional abstract val tagMessage: Property<String>
     @get:Input @get:Optional abstract val tagMessagePrefix: Property<String>
 
-    @get:Internal abstract val commandHistoryApi: Property<CommandHistoryApi>
+    @get:Internal abstract val gitCommandHistoryApi: Property<GitCommandHistoryApi>
 
     init {
         description = "Add the specified files to git, commit them and optionally tag the commit"
@@ -38,17 +38,17 @@ abstract class CommitAndTagTask : BaseReleaseTask() {
         gitCommandApi()
             .add(gitAddPattern)
             .onRight {
-                commandHistoryApi
+                gitCommandHistoryApi
                     .get()
                     .registerRevertCommand(buildGitAddRevertCommand(gitAddPattern))
             }
-            .onLeft { commandHistoryApi.get().revertAllCommands() }
+            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
             .getOrThrowGradleException()
 
         gitCommandApi()
             .commit("$commitPrefix$commitMessage")
-            .map { commandHistoryApi.get().registerRevertCommand(buildGitCommitRevertCommand()) }
-            .onLeft { commandHistoryApi.get().revertAllCommands() }
+            .map { gitCommandHistoryApi.get().registerRevertCommand(buildGitCommitRevertCommand()) }
+            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
             .getOrThrowGradleException()
 
         if (tagName.isNotEmpty()) {
@@ -56,11 +56,11 @@ abstract class CommitAndTagTask : BaseReleaseTask() {
             gitCommandApi()
                 .tag(fullTagName, "$tagMessagePrefix$tagMessage")
                 .map {
-                    commandHistoryApi
+                    gitCommandHistoryApi
                         .get()
                         .registerRevertCommand(buildGitTagRevertCommand(fullTagName))
                 }
-                .onLeft { commandHistoryApi.get().revertAllCommands() }
+                .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
                 .getOrThrowGradleException()
         }
     }

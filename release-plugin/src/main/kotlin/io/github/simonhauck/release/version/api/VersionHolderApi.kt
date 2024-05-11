@@ -1,17 +1,19 @@
 package io.github.simonhauck.release.version.api
 
+import io.github.simonhauck.release.version.internal.VersionHolder
 import java.io.File
 
 interface VersionHolderApi {
 
-    fun setVersions(
-        versionFile: File,
-        originalVersion: String,
-        releaseVersion: String,
-        nextDevelopmentVersion: String
-    )
+    fun saveVersions(releaseVersions: ReleaseVersions)
 
-    fun writeReleaseVersion(propertyFile: File)
+    fun loadVersions(): ReleaseVersions?
 
-    fun writeNextVersion(propertyFile: File)
+    fun writeVersionPropertyToFile(file: File, version: Version)
+
+    companion object {
+        fun create(tmpFile: File): VersionHolderApi {
+            return VersionHolder(tmpFile)
+        }
+    }
 }

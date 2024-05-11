@@ -1,13 +1,13 @@
 package io.github.simonhauck.release.git.internal.commands
 
-import io.github.simonhauck.release.git.api.CommandHistoryApi
+import io.github.simonhauck.release.git.api.GitCommandHistoryApi
 import io.github.simonhauck.release.git.api.RevertCommand
 import java.util.*
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 
-internal abstract class CommandHistoryService :
-    BuildService<BuildServiceParameters.None>, CommandHistoryApi {
+internal abstract class GitGitCommandHistoryService :
+    BuildService<BuildServiceParameters.None>, GitCommandHistoryApi {
     private val commandStack = Stack<RevertCommand>()
 
     override fun registerRevertCommand(command: RevertCommand) {

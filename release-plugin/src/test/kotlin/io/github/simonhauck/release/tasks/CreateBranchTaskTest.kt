@@ -54,8 +54,6 @@ class CreateBranchTaskTest {
     @Test
     fun `should delete revert the git changes when the second createBranchTask fails`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
-
             appendContentToBuildGradle(
                 """
                 |tasks.register<CreateBranchTask>("createBranch") {

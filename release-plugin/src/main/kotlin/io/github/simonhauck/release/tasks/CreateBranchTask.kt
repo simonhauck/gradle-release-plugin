@@ -1,6 +1,6 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.simonhauck.release.git.api.CommandHistoryApi
+import io.github.simonhauck.release.git.api.GitCommandHistoryApi
 import io.github.simonhauck.release.git.api.RevertCommand
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -11,15 +11,15 @@ abstract class CreateBranchTask : BaseReleaseTask() {
 
     @get:Input abstract val branchName: Property<String>
 
-    @get:Internal abstract val commandHistoryApi: Property<CommandHistoryApi>
+    @get:Internal abstract val gitCommandHistoryApi: Property<GitCommandHistoryApi>
 
     @TaskAction
     fun action() {
         val branch = branchName.get()
         gitCommandApi()
             .createBranch(branch)
-            .map { commandHistoryApi.get().registerRevertCommand(buildRevertCommand()) }
-            .onLeft { commandHistoryApi.get().revertAllCommands() }
+            .map { gitCommandHistoryApi.get().registerRevertCommand(buildRevertCommand()) }
+            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
             .getOrThrowGradleException()
     }
 

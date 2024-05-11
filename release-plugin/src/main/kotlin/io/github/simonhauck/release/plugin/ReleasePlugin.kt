@@ -1,45 +1,32 @@
 package io.github.simonhauck.release.plugin
 
-import io.github.simonhauck.release.git.internal.commands.CommandHistoryService
+import io.github.simonhauck.release.git.internal.commands.GitGitCommandHistoryService
 import io.github.simonhauck.release.tasks.*
-import io.github.simonhauck.release.version.internal.VersionHolder
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 
 class ReleasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.registerExtension()
         project.configureBaseReleaseTask(extension)
 
-        val versionHolderProvider = project.registerVersionHolderService()
-        val commandHistoryService = project.registerCommandService()
+        val commandHistoryService = project.registerGitHistoryService()
 
-        project.tasks.withType(CalculateReleaseVersionTask::class.java) {
-            it.versionHolder.set(versionHolderProvider)
-        }
+        val releaseVersionStore =
+            project.layout.buildDirectory.file("release/tmpVersion.properties")
 
         val calculateReleaseVersionTask =
-            project.tasks.register(
-                "calculateReleaseVersion",
-                CalculateReleaseVersionTask::class.java
-            ) {
-                val stringMap =
-                    project.properties.map { (key, value) -> key to value.toString() }.toMap()
-                it.commandLineParameters.set(stringMap)
-                it.versionPropertyFile.set(extension.versionPropertyFile)
-            }
-
-        project.tasks.withType(WriteVersionTask::class.java) {
-            it.versionHolderApi.set(versionHolderProvider)
-        }
+            project.registerCalculateReleaseVersionTask(releaseVersionStore, extension)
 
         val writeReleaseVersionTask =
             project.tasks.register("writeReleaseVersion", WriteVersionTask::class.java) {
                 it.dependsOn(calculateReleaseVersionTask)
                 it.versionType.set(VersionType.RELEASE)
-                it.versionHolderApi.set(versionHolderProvider)
+                it.releaseVersionStore.set(releaseVersionStore)
                 it.versionFile.set(extension.versionPropertyFile)
             }
 
@@ -49,16 +36,16 @@ class ReleasePlugin : Plugin<Project> {
                 // writeReleaseVersionTask
                 it.dependsOn(calculateReleaseVersionTask, writeReleaseVersionTask)
                 it.versionType.set(VersionType.NEXT_DEV)
-                it.versionHolderApi.set(versionHolderProvider)
+                it.releaseVersionStore.set(releaseVersionStore)
                 it.versionFile.set(extension.versionPropertyFile)
             }
 
         project.tasks.withType(CommitAndTagTask::class.java) {
-            it.commandHistoryApi.set(commandHistoryService)
+            it.gitCommandHistoryApi.set(commandHistoryService)
         }
 
         project.tasks.withType(CreateBranchTask::class.java) {
-            it.commandHistoryApi.set(commandHistoryService)
+            it.gitCommandHistoryApi.set(commandHistoryService)
         }
 
         project.tasks.register("release", DefaultTask::class.java) {
@@ -67,6 +54,18 @@ class ReleasePlugin : Plugin<Project> {
             it.dependsOn(writeNextDevVersionTask)
         }
     }
+
+    private fun Project.registerCalculateReleaseVersionTask(
+        releaseVersionStore: Provider<RegularFile>,
+        extension: ReleaseExtension
+    ): TaskProvider<CalculateReleaseVersionTask> =
+        tasks.register("calculateReleaseVersion", CalculateReleaseVersionTask::class.java) {
+            val stringMap = properties.map { (key, value) -> key to value.toString() }.toMap()
+            it.commandLineParameters.set(stringMap)
+            it.releaseVersionStorePath.set(releaseVersionStore.get().asFile)
+            it.versionPropertyFile.set(extension.versionPropertyFile)
+            it.releaseVersionStore.set(releaseVersionStore)
+        }
 
     private fun Project.configureBaseReleaseTask(extension: ReleaseExtension) {
         tasks.withType(BaseReleaseTask::class.java) {
@@ -80,9 +79,9 @@ class ReleasePlugin : Plugin<Project> {
         return extension
     }
 
-    private fun Project.registerCommandService(): Provider<CommandHistoryService> =
-        gradle.sharedServices.registerIfAbsent("commandHistory", CommandHistoryService::class.java)
-
-    private fun Project.registerVersionHolderService(): Provider<VersionHolder> =
-        gradle.sharedServices.registerIfAbsent("versionHolder", VersionHolder::class.java)
+    private fun Project.registerGitHistoryService(): Provider<GitGitCommandHistoryService> =
+        gradle.sharedServices.registerIfAbsent(
+            "commandHistory",
+            GitGitCommandHistoryService::class.java
+        )
 }
