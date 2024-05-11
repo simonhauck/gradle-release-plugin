@@ -1,8 +1,9 @@
 package com.github.simonhauck.release.git.api
 
-import arrow.core.Either
 import com.github.simonhauck.release.git.internal.commands.GitCommandProcessWrapper
 import com.github.simonhauck.release.git.internal.process.ProcessConfig
+import com.github.simonhauck.release.testdriver.assertIsOk
+import com.github.simonhauck.release.testdriver.get
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -168,17 +169,5 @@ class GitCommandApiTest {
         File("$tempDir/file.txt").writeText("Hello World")
         gitCommandApi.add("file.txt")
         gitCommandApi.commit("Initial commit")
-    }
-}
-
-fun <T> Either<GitError, T>.assertIsOk(): T {
-    assertThat(isOk()).isTrue()
-    return get()
-}
-
-fun <T, E> Either<T, E>.get(): E {
-    return when (this) {
-        is Either.Left -> throw IllegalStateException("Expected Right but got Left")
-        is Either.Right -> this.value
     }
 }
