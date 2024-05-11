@@ -1,7 +1,7 @@
 package com.github.simonhauck.release.tasks
 
 import com.github.simonhauck.release.git.api.assertIsOk
-import com.github.simonhauck.release.git.testdriver.GitPluginTestDriver
+import com.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -12,7 +12,7 @@ class CommitAndTagTaskTest {
 
     @TempDir lateinit var tmpDir: File
 
-    private val testDriver = GitPluginTestDriver()
+    private val testDriver = ReleasePluginTestDriver()
 
     @Test
     fun `should add, commit and tag the selected files`() =

@@ -17,6 +17,8 @@ class ReleasePluginTest {
     @Test
     fun `the version file should contain the next development version at the end`() =
         testDriver(tmpDir) {
+            createValidGitRepository()
+
             val runner =
                 testKitRunner()
                     .withArguments(
@@ -37,6 +39,8 @@ class ReleasePluginTest {
     @Test
     fun `should revert all changes when the tag is already used`() =
         testDriver(tmpDir) {
+            createValidGitRepository()
+
             gitCommandApi.tag("1.2.0", "some message")
             testKitRunner()
                 .withArguments(

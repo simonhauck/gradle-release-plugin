@@ -17,7 +17,6 @@ class ReleasePluginTestDriver {
 
         SemanticVersioningProjectBuilder(tmpDir).apply {
             createProjectScaffold()
-            createValidGitRepository()
             action()
         }
     }

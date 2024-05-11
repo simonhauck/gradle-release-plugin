@@ -1,7 +1,7 @@
 package com.github.simonhauck.release.tasks
 
 import com.github.simonhauck.release.git.api.get
-import com.github.simonhauck.release.git.testdriver.GitPluginTestDriver
+import com.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -12,7 +12,7 @@ class CreateBranchTaskTest {
 
     @TempDir lateinit var tmpDir: File
 
-    private val testDriver = GitPluginTestDriver()
+    private val testDriver = ReleasePluginTestDriver()
 
     @Test
     fun `tasks should fail if no git repository is available`() =
@@ -54,6 +54,8 @@ class CreateBranchTaskTest {
     @Test
     fun `should delete revert the git changes when the second createBranchTask fails`() =
         testDriver(tmpDir) {
+            createValidGitRepository()
+
             appendContentToBuildGradle(
                 """
                 |tasks.register<CreateBranchTask>("createBranch") {
