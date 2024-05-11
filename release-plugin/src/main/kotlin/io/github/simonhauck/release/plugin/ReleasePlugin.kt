@@ -2,7 +2,6 @@ package io.github.simonhauck.release.plugin
 
 import io.github.simonhauck.release.git.internal.commands.GitGitCommandHistoryService
 import io.github.simonhauck.release.tasks.*
-import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
@@ -48,8 +47,7 @@ class ReleasePlugin : Plugin<Project> {
             it.gitCommandHistoryApi.set(commandHistoryService)
         }
 
-        project.tasks.register("release", DefaultTask::class.java) {
-            it.group = "release"
+        project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
             it.dependsOn(writeNextDevVersionTask)
         }

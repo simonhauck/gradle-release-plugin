@@ -65,6 +65,24 @@ class WriteVersionTaskTest {
                 .isEqualTo("version=2.0.1-SNAPSHOT")
         }
 
+    @Test
+    fun `task should be up to date when inputs are identical`() =
+        testDriver(tempDir) {
+            val storeFile = createVersionStoreFile()
+
+            appendContentToBuildGradle(
+                """
+                |
+                |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
+                |   releaseVersionStore.set(file("${storeFile.absolutePath}"))
+                |   versionType.set(VersionType.NEXT_DEV)
+                |   versionFile.set(layout.projectDirectory.file("version.properties"))
+                |}
+                 """
+                    .trimMargin()
+            )
+        }
+
     private fun createVersionStoreFile(): File {
         val storeFile = tempDir.resolve("version-store.properties").apply { createNewFile() }
         val releaseVersions = ReleaseVersions(Version("2.0.0"), Version("2.0.1-SNAPSHOT"))

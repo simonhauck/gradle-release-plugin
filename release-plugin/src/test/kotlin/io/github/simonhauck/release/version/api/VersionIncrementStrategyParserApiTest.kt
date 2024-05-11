@@ -20,5 +20,14 @@ class VersionIncrementStrategyParserApiTest {
 
         assertThat(exception.message).isEqualTo("No valid version increment strategy found.")
     }
-    // TODO Simon.Hauck 2024-05-11 - add missing tests
+
+    @Test
+    fun `should return the release and postRelease version if they are specified as parameters`() {
+        val parameters =
+            mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
+
+        val actual = versionIncrementStrategyParserApi.parseOrThrow(Version("1.0.0"), parameters)
+
+        assertThat(actual).isEqualTo(ReleaseVersions(Version("1.1.0"), Version("1.2.0-SNAPSHOT")))
+    }
 }

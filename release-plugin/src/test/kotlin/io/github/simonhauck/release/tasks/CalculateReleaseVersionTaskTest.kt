@@ -44,5 +44,24 @@ class CalculateReleaseVersionTaskTest {
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.FAILED)
         }
 
-    // TODO Simon.Hauck 2024-05-11 - add test to check for task caching
+    @Test
+    fun `task should be up to date when invoked twice`() =
+        testDriver(tmpDir) {
+            createValidGitRepository()
+
+            val args =
+                arrayOf(
+                    "calculateReleaseVersion",
+                    "-PreleaseVersion=1.1.0",
+                    "-PpostReleaseVersion=1.2.0-SNAPSHOT"
+                )
+
+            testKitRunner().withArguments(*args).build()
+            val runner = testKitRunner().withArguments(*args).build()
+
+            val actual = runner.task(":calculateReleaseVersion")
+
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.UP_TO_DATE)
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.UP_TO_DATE)
+        }
 }
