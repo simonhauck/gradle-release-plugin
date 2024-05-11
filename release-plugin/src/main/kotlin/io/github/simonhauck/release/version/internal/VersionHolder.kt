@@ -6,6 +6,7 @@ import io.github.simonhauck.release.version.api.Version
 import io.github.simonhauck.release.version.api.VersionHolderApi
 import java.io.File
 import java.util.*
+import org.gradle.api.GradleException
 
 private val log = KotlinLogging.logger {}
 
@@ -43,6 +44,13 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
             map { (key, value) -> "$key=$value" }.sorted().joinToString(System.lineSeparator())
 
         file.writeText(content)
+    }
+
+    override fun loadVersionFromFileOrThrow(file: File): Version {
+        readPropertiesFile(file).apply {
+            return getProperty("version")?.let { Version(it) }
+                ?: throw GradleException("No version property found in $file")
+        }
     }
 
     private fun readPropertiesFile(file: File): Properties {

@@ -2,6 +2,8 @@ package io.github.simonhauck.release.version.api
 
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.gradle.api.GradleException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -42,6 +44,33 @@ class VersionHolderApiTest {
         val actual = file.readText()
 
         assertThat(actual).isEqualTo("version=1.0.0")
+    }
+
+    @Test
+    fun `should return the version from the properties file`() {
+        val versionHolderApi = createVersionHolder()
+
+        val file =
+            File(tempDir, "version.properties").apply {
+                createNewFile()
+                writeText("version=1.0.0")
+            }
+
+        val actual = versionHolderApi.loadVersionFromFileOrThrow(file)
+
+        val expected = Version("1.0.0")
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should throw an exception when there is no version property`() {
+        val versionHolderApi = createVersionHolder()
+
+        val file = File(tempDir, "version.properties").apply { createNewFile() }
+
+        assertThatThrownBy { versionHolderApi.loadVersionFromFileOrThrow(file) }
+            .isInstanceOf(GradleException::class.java)
+            .hasMessage("No version property found in $file")
     }
 
     private fun createVersionHolder(): VersionHolderApi {

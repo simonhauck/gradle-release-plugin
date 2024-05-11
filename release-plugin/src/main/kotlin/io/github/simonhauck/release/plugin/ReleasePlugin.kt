@@ -28,11 +28,28 @@ class ReleasePlugin : Plugin<Project> {
                 it.versionFile.set(extension.versionPropertyFile)
             }
 
+        // TODO Simon.Hauck 2024-05-12 - WIP: Continue to add support for tags
+        val commitReleaseVersion =
+            project.tasks.register("commitReleaseVersion", CommitAndTagTask::class.java) {
+                it.dependsOn(writeReleaseVersionTask)
+                it.commitMessage.set(
+                    project.provider {
+                        println("Resolved")
+                        "Release version ${extension.versionPropertyFile.get().asFile.readText()}"
+                    }
+                )
+            }
+
+        project.provider { commitReleaseVersion.get().commitMessage }
+
         val writeNextDevVersionTask =
             project.tasks.register("writeNextDevVersion", WriteVersionTask::class.java) {
-                // TODO Simon.Hauck 2024-05-10 - remove this temporary dependency to
-                // writeReleaseVersionTask
-                it.dependsOn(calculateReleaseVersionTask, writeReleaseVersionTask)
+                // TODO Simon.Hauck 2024-05-10 - remove this temporary dependency to the commit task
+                it.dependsOn(
+                    calculateReleaseVersionTask,
+                    writeReleaseVersionTask,
+                    commitReleaseVersion
+                )
                 it.versionType.set(VersionType.NEXT_DEV)
                 it.releaseVersionStore.set(releaseVersionStore)
                 it.versionFile.set(extension.versionPropertyFile)

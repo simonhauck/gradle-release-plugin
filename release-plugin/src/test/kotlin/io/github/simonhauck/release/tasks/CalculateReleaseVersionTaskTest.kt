@@ -13,6 +13,7 @@ class CalculateReleaseVersionTaskTest {
 
     private val testDriver = ReleasePluginTestDriver()
 
+    // TODO Simon.Hauck 2024-05-12 - Rewrite tests to create task explicitly ?
     @Test
     fun `task should be successful if a valid release versions for passed as command line parameters`() =
         testDriver(tmpDir) {

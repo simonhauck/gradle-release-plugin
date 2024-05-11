@@ -11,6 +11,8 @@ interface VersionHolderApi {
 
     fun writeVersionPropertyToFile(file: File, version: Version)
 
+    fun loadVersionFromFileOrThrow(file: File): Version
+
     companion object {
         fun create(tmpFile: File): VersionHolderApi {
             return VersionHolder(tmpFile)

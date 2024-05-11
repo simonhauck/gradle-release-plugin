@@ -6,9 +6,6 @@ import io.github.simonhauck.release.version.api.Version
 import io.github.simonhauck.release.version.api.VersionHolderApi
 import io.github.simonhauck.release.version.api.VersionIncrementStrategyParserApi
 import java.io.File
-import java.io.FileReader
-import java.util.*
-import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -33,10 +30,10 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
 
     @TaskAction
     fun action() {
-        val currentVersion = readVersionProperty()
-        val releaseVersions = getReleaseVersions(currentVersion)
-
         val versionHolder = VersionHolderApi.create(releaseVersionStore.get().asFile)
+        val currentVersion =
+            versionHolder.loadVersionFromFileOrThrow(versionPropertyFile.get().asFile)
+        val releaseVersions = getReleaseVersions(currentVersion)
 
         log.info { "Determined versions $releaseVersions" }
 
@@ -46,15 +43,4 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
     private fun getReleaseVersions(currentVersion: Version): ReleaseVersions =
         VersionIncrementStrategyParserApi.create()
             .parseOrThrow(currentVersion, commandLineParameters.get())
-
-    private fun readVersionProperty(): Version {
-        val properties = Properties()
-        val versionFile = versionPropertyFile.get().asFile
-        val filePath = versionFile.absolutePath
-
-        FileReader(versionFile).use { properties.load(it) }
-
-        return properties.getProperty("version")?.let { Version(it) }
-            ?: throw GradleException("File $filePath does not contain a key 'version'")
-    }
 }
