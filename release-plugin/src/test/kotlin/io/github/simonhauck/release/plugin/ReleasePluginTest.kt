@@ -35,6 +35,36 @@ class ReleasePluginTest {
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
+    @Test
+    fun `should use the version file location specified in the release extension`() =
+        testDriver(tmpDir) {
+            createValidGitRepository()
+
+            val fileName = "myOtherVersionFile.properties"
+
+            val versionFile = File("$tmpDir/$fileName")
+            versionFile.writeText("version=1.0.0")
+
+            appendContentToBuildGradle(
+                """
+                    |release {
+                    |    versionPropertyFile.set(layout.projectDirectory.file("$fileName"))
+                    |}
+                """
+                    .trimMargin()
+            )
+
+            testKitRunner()
+                .withArguments(
+                    "release",
+                    "-PreleaseVersion=1.2.0",
+                    "-PnextDevVersion=1.2.1-SNAPSHOT"
+                )
+                .build()
+
+            assertThat(versionFile.readText()).isEqualTo("version=1.2.1-SNAPSHOT")
+        }
+
     @Disabled("This test can be enabled with the changes are commited")
     @Test
     fun `should revert all changes when the tag is already used`() =

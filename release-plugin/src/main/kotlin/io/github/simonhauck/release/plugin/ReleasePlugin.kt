@@ -75,11 +75,7 @@ class ReleasePlugin : Plugin<Project> {
     }
 
     private fun Project.registerExtension(): ReleaseExtension {
-        val extension = extensions.create("semanticVersioning", ReleaseExtension::class.java)
-
-        extension.versionPropertyFile.convention(layout.projectDirectory.file("version.properties"))
-        extension.rootGitDirectory.convention(layout.projectDirectory.file("./"))
-        extension.releaseBranchName.convention("main")
+        val extension = extensions.create("release", ReleaseExtension::class.java)
 
         return extension
     }
