@@ -1,17 +1,13 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.simonhauck.release.git.api.GitCommandHistoryApi
 import io.github.simonhauck.release.git.api.RevertCommand
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
-abstract class CreateBranchTask : BaseReleaseTask() {
+abstract class CreateBranchTask : BaseReleaseTask(), GitTask {
 
     @get:Input abstract val branchName: Property<String>
-
-    @get:Internal abstract val gitCommandHistoryApi: Property<GitCommandHistoryApi>
 
     @TaskAction
     fun action() {

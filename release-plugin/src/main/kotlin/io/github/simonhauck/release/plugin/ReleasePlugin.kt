@@ -1,6 +1,6 @@
 package io.github.simonhauck.release.plugin
 
-import io.github.simonhauck.release.git.internal.commands.GitGitCommandHistoryService
+import io.github.simonhauck.release.git.internal.commands.GitCommandHistoryService
 import io.github.simonhauck.release.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,9 +11,8 @@ import org.gradle.api.tasks.TaskProvider
 class ReleasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.registerExtension()
-        project.configureBaseReleaseTask(extension)
 
-        val commandHistoryService = project.registerGitHistoryService()
+        project.configureGitTasks(extension)
 
         val releaseVersionStore =
             project.layout.buildDirectory.file("release/tmpVersion.properties")
@@ -39,14 +38,6 @@ class ReleasePlugin : Plugin<Project> {
                 it.versionFile.set(extension.versionPropertyFile)
             }
 
-        project.tasks.withType(CommitAndTagTask::class.java) {
-            it.gitCommandHistoryApi.set(commandHistoryService)
-        }
-
-        project.tasks.withType(CreateBranchTask::class.java) {
-            it.gitCommandHistoryApi.set(commandHistoryService)
-        }
-
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
             it.dependsOn(writeNextDevVersionTask)
@@ -65,9 +56,14 @@ class ReleasePlugin : Plugin<Project> {
             it.releaseVersionStore.set(releaseVersionStore)
         }
 
-    private fun Project.configureBaseReleaseTask(extension: ReleaseExtension) {
-        tasks.withType(BaseReleaseTask::class.java) {
+    private fun Project.configureGitTasks(
+        extension: ReleaseExtension,
+    ) {
+        val commandHistoryService = project.registerGitHistoryService()
+
+        tasks.withType(GitTask::class.java) {
             it.gitRootDirectory.set(extension.rootGitDirectory.asFile)
+            it.gitCommandHistoryApi.set(commandHistoryService)
         }
     }
 
@@ -77,9 +73,9 @@ class ReleasePlugin : Plugin<Project> {
         return extension
     }
 
-    private fun Project.registerGitHistoryService(): Provider<GitGitCommandHistoryService> =
+    private fun Project.registerGitHistoryService(): Provider<GitCommandHistoryService> =
         gradle.sharedServices.registerIfAbsent(
             "commandHistory",
-            GitGitCommandHistoryService::class.java
+            GitCommandHistoryService::class.java
         )
 }

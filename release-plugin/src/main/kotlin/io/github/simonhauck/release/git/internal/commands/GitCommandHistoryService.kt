@@ -6,7 +6,7 @@ import java.util.*
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 
-internal abstract class GitGitCommandHistoryService :
+internal abstract class GitCommandHistoryService :
     BuildService<BuildServiceParameters.None>, GitCommandHistoryApi {
     private val commandStack = Stack<RevertCommand>()
 

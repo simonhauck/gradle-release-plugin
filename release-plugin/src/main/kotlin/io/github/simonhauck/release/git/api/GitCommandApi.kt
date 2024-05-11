@@ -32,7 +32,7 @@ interface GitCommandApi {
     fun deleteLocalTag(tagName: String): GitVoidResult
 
     companion object {
-        fun create(gitRootDirectory: File): GitCommandApi =
+        fun create(gitRootDirectory: File?): GitCommandApi =
             GitCommandProcessWrapper(config = ProcessConfig(workingDir = gitRootDirectory))
     }
 }

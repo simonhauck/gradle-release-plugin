@@ -62,6 +62,5 @@ class CalculateReleaseVersionTaskTest {
             val actual = runner.task(":calculateReleaseVersion")
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.UP_TO_DATE)
-            assertThat(actual?.outcome).isEqualTo(TaskOutcome.UP_TO_DATE)
         }
 }

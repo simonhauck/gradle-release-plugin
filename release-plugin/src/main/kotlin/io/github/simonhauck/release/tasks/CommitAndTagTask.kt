@@ -1,14 +1,12 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.simonhauck.release.git.api.GitCommandHistoryApi
 import io.github.simonhauck.release.git.api.RevertCommand
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
-abstract class CommitAndTagTask : BaseReleaseTask() {
+abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
 
     @get:Input abstract val commitMessage: Property<String>
     @get:Input @get:Optional abstract val gitAddFilePattern: Property<String>
@@ -17,8 +15,6 @@ abstract class CommitAndTagTask : BaseReleaseTask() {
     @get:Input @get:Optional abstract val tagPrefix: Property<String>
     @get:Input @get:Optional abstract val tagMessage: Property<String>
     @get:Input @get:Optional abstract val tagMessagePrefix: Property<String>
-
-    @get:Internal abstract val gitCommandHistoryApi: Property<GitCommandHistoryApi>
 
     init {
         description = "Add the specified files to git, commit them and optionally tag the commit"
