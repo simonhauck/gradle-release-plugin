@@ -1,5 +1,6 @@
-package com.github.simonhauck.release.version
+package com.github.simonhauck.release.version.api
 
+import com.github.simonhauck.release.version.internal.VersionHolder
 import java.nio.file.Path
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.services.BuildServiceParameters

@@ -2,7 +2,7 @@ package com.github.simonhauck.release.plugin
 
 import com.github.simonhauck.release.git.internal.commands.CommandHistoryService
 import com.github.simonhauck.release.tasks.*
-import com.github.simonhauck.release.version.VersionHolder
+import com.github.simonhauck.release.version.internal.VersionHolder
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project

@@ -1,5 +1,6 @@
-package com.github.simonhauck.release.version
+package com.github.simonhauck.release.version.internal
 
+import com.github.simonhauck.release.version.api.VersionIncrementStrategy
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

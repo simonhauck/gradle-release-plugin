@@ -1,25 +1,12 @@
-package com.github.simonhauck.release.version
+package com.github.simonhauck.release.version.internal
 
+import com.github.simonhauck.release.version.api.VersionHolderApi
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 
 private val log = KotlinLogging.logger {}
-
-interface VersionHolderApi {
-
-    fun setVersions(
-        versionFile: File,
-        originalVersion: String,
-        releaseVersion: String,
-        nextDevelopmentVersion: String
-    )
-
-    fun writeReleaseVersion(propertyFile: File)
-
-    fun writeNextVersion(propertyFile: File)
-}
 
 internal abstract class VersionHolder :
     BuildService<BuildServiceParameters.None>, VersionHolderApi {

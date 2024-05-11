@@ -1,4 +1,4 @@
-package com.github.simonhauck.release.version
+package com.github.simonhauck.release.version.api
 
 import java.io.Serializable
 

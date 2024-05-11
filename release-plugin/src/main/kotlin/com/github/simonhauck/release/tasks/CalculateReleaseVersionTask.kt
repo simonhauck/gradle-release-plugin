@@ -1,8 +1,8 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.version.VersionHolderApi
-import com.github.simonhauck.release.version.VersionIncrementStrategy
-import com.github.simonhauck.release.version.VersionIncrementStrategyParser
+import com.github.simonhauck.release.version.api.VersionHolderApi
+import com.github.simonhauck.release.version.api.VersionIncrementStrategy
+import com.github.simonhauck.release.version.internal.VersionIncrementStrategyParser
 import java.io.FileReader
 import java.util.Properties
 import org.gradle.api.GradleException

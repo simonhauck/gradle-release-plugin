@@ -1,6 +1,7 @@
-package com.github.simonhauck.release.version
+package com.github.simonhauck.release.version.internal
 
-import com.github.simonhauck.release.version.VersionIncrementStrategy.SpecifyExplicitly
+import com.github.simonhauck.release.version.api.VersionIncrementStrategy
+import com.github.simonhauck.release.version.api.VersionIncrementStrategy.SpecifyExplicitly
 
 internal class VersionIncrementStrategyParser {
 

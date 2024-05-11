@@ -1,6 +1,6 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.version.VersionHolderApi
+import com.github.simonhauck.release.version.api.VersionHolderApi
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
