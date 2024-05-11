@@ -16,8 +16,8 @@ dependencies {
 gradlePlugin {
     plugins {
         create("release-plugin") {
-            id = "com.github.simonhauck.release"
-            implementationClass = "com.github.simonhauck.release.plugin.ReleasePlugin"
+            id = "io.github.simonhauck.release"
+            implementationClass = "io.github.simonhauck.release.plugin.ReleasePlugin"
         }
     }
 }
