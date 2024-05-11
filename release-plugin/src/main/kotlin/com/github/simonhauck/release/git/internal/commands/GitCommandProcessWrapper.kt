@@ -1,9 +1,10 @@
-package com.github.simonhauck.release.git.wrapper
+package com.github.simonhauck.release.git.internal.commands
 
 import arrow.core.Either
-import com.github.simonhauck.release.git.process.ProcessConfig
-import com.github.simonhauck.release.git.process.ProcessSuccess
-import com.github.simonhauck.release.git.process.ProcessWrapper
+import com.github.simonhauck.release.git.api.*
+import com.github.simonhauck.release.git.internal.process.ProcessConfig
+import com.github.simonhauck.release.git.internal.process.ProcessSuccess
+import com.github.simonhauck.release.git.internal.process.ProcessWrapper
 
 internal class GitCommandProcessWrapper(
     private val processWrapper: ProcessWrapper = ProcessWrapper(),

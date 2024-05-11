@@ -1,7 +1,7 @@
 package com.github.simonhauck.release.tasks
 
+import com.github.simonhauck.release.git.api.get
 import com.github.simonhauck.release.git.testdriver.GitPluginTestDriver
-import com.github.simonhauck.release.git.wrapper.get
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome

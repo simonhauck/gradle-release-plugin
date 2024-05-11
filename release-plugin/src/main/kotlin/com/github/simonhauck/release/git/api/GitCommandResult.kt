@@ -1,4 +1,4 @@
-package com.github.simonhauck.release.git.wrapper
+package com.github.simonhauck.release.git.api
 
 import arrow.core.Either
 

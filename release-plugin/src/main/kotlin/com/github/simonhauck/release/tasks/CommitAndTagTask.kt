@@ -1,8 +1,7 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.git.tasks.CommandHistoryApi
-import com.github.simonhauck.release.git.tasks.RevertCommand
-import com.github.simonhauck.release.git.tasks.getOrThrowGradleException
+import com.github.simonhauck.release.git.api.CommandHistoryApi
+import com.github.simonhauck.release.git.api.RevertCommand
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal

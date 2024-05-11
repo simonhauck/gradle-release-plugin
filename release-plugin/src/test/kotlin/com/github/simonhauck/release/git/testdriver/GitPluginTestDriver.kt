@@ -1,8 +1,8 @@
 package com.github.simonhauck.release.git.testdriver
 
-import com.github.simonhauck.release.git.process.ProcessConfig
-import com.github.simonhauck.release.git.wrapper.GitCommandApi
-import com.github.simonhauck.release.git.wrapper.GitCommandProcessWrapper
+import com.github.simonhauck.release.git.api.GitCommandApi
+import com.github.simonhauck.release.git.internal.commands.GitCommandProcessWrapper
+import com.github.simonhauck.release.git.internal.process.ProcessConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.nio.file.Files

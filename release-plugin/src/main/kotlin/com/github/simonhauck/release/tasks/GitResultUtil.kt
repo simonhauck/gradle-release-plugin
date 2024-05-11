@@ -1,7 +1,7 @@
-package com.github.simonhauck.release.git.tasks
+package com.github.simonhauck.release.tasks
 
 import arrow.core.Either
-import com.github.simonhauck.release.git.wrapper.GitError
+import com.github.simonhauck.release.git.api.GitError
 import org.gradle.api.GradleException
 
 internal fun <T> Either<GitError, T>.getOrThrowGradleException(): T {

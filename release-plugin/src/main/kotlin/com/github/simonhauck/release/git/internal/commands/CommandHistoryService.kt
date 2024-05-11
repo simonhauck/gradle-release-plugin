@@ -1,20 +1,10 @@
-package com.github.simonhauck.release.git.tasks
+package com.github.simonhauck.release.git.internal.commands
 
-import arrow.core.Either
-import com.github.simonhauck.release.git.wrapper.GitError
+import com.github.simonhauck.release.git.api.CommandHistoryApi
+import com.github.simonhauck.release.git.api.RevertCommand
 import java.util.*
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-
-data class RevertCommand(val message: String, val revertCommand: () -> Either<GitError, *>)
-
-interface CommandHistoryApi {
-    fun registerRevertCommand(command: RevertCommand)
-
-    fun flushCommands()
-
-    fun revertAllCommands()
-}
 
 internal abstract class CommandHistoryService :
     BuildService<BuildServiceParameters.None>, CommandHistoryApi {

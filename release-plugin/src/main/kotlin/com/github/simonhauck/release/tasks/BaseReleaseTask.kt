@@ -1,6 +1,6 @@
 package com.github.simonhauck.release.tasks
 
-import com.github.simonhauck.release.git.wrapper.GitCommandApi
+import com.github.simonhauck.release.git.api.GitCommandApi
 import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property

@@ -1,4 +1,4 @@
-package com.github.simonhauck.release.git.process
+package com.github.simonhauck.release.git.internal.process
 
 import arrow.core.Either
 

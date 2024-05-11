@@ -1,6 +1,6 @@
 package com.github.simonhauck.release.testdriver
 
-import com.github.simonhauck.release.git.wrapper.GitCommandApi
+import com.github.simonhauck.release.git.api.GitCommandApi
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.nio.file.Files

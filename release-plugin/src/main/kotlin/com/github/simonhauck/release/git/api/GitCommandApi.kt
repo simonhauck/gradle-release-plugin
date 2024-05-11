@@ -1,6 +1,7 @@
-package com.github.simonhauck.release.git.wrapper
+package com.github.simonhauck.release.git.api
 
-import com.github.simonhauck.release.git.process.ProcessConfig
+import com.github.simonhauck.release.git.internal.commands.GitCommandProcessWrapper
+import com.github.simonhauck.release.git.internal.process.ProcessConfig
 import java.io.File
 
 interface GitCommandApi {
