@@ -9,6 +9,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 
 class ReleasePlugin : Plugin<Project> {
+
     override fun apply(project: Project) {
         val extension = project.registerExtension()
 
@@ -21,45 +22,72 @@ class ReleasePlugin : Plugin<Project> {
             project.registerCalculateReleaseVersionTask(releaseVersionStore, extension)
 
         val writeReleaseVersionTask =
-            project.tasks.register("writeReleaseVersion", WriteVersionTask::class.java) {
-                it.dependsOn(calculateReleaseVersionTask)
-                it.versionType.set(VersionType.RELEASE)
-                it.releaseVersionStore.set(releaseVersionStore)
-                it.versionFile.set(extension.versionPropertyFile)
-            }
+            project.registerWriteReleaseVersionTask(
+                calculateReleaseVersionTask,
+                releaseVersionStore,
+                extension
+            )
 
-        // TODO Simon.Hauck 2024-05-12 - WIP: Continue to add support for tags
         val commitReleaseVersion =
-            project.tasks.register("commitReleaseVersion", CommitAndTagTask::class.java) {
-                it.dependsOn(writeReleaseVersionTask)
-                it.commitMessage.set(
-                    project.provider {
-                        println("Resolved")
-                        "Release version ${extension.versionPropertyFile.get().asFile.readText()}"
-                    }
-                )
-            }
-
-        project.provider { commitReleaseVersion.get().commitMessage }
+            project.registerReleaseCommitTask(writeReleaseVersionTask, extension)
 
         val writeNextDevVersionTask =
             project.tasks.register("writeNextDevVersion", WriteVersionTask::class.java) {
-                // TODO Simon.Hauck 2024-05-10 - remove this temporary dependency to the commit task
-                it.dependsOn(
-                    calculateReleaseVersionTask,
-                    writeReleaseVersionTask,
-                    commitReleaseVersion
-                )
+                it.dependsOn(commitReleaseVersion)
                 it.versionType.set(VersionType.NEXT_DEV)
                 it.releaseVersionStore.set(releaseVersionStore)
                 it.versionFile.set(extension.versionPropertyFile)
             }
 
+        val commitPostReleaseVersionTask =
+            project.registerPostReleaseCommitTask(writeNextDevVersionTask, extension)
+
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
-            it.dependsOn(writeNextDevVersionTask)
+            it.dependsOn(commitPostReleaseVersionTask)
         }
     }
+
+    private fun Project.registerReleaseCommitTask(
+        writeReleaseVersionTask: TaskProvider<WriteVersionTask>,
+        extension: ReleaseExtension,
+    ): TaskProvider<CommitAndTagTask> {
+        return tasks.register("commitReleaseVersion", CommitAndTagTask::class.java) {
+            it.dependsOn(writeReleaseVersionTask)
+            it.commitMessage.set(extension.releaseCommitMessage)
+            it.commitMessagePrefix.set(extension.commitMessagePrefix)
+            it.tagName.set(extension.tagName)
+            it.stringTemplateVariables.set(extension.versionPropertyFile)
+            // TODO Simon.Hauck 2024-05-13 - solve this. Should be the file
+            it.gitAddFilePattern.set("version.properties")
+        }
+    }
+
+    private fun Project.registerPostReleaseCommitTask(
+        writePostReleaseVersion: TaskProvider<WriteVersionTask>,
+        extension: ReleaseExtension,
+    ): TaskProvider<CommitAndTagTask> {
+        return tasks.register("commitPostReleaseVersion", CommitAndTagTask::class.java) {
+            it.dependsOn(writePostReleaseVersion)
+            it.commitMessage.set(extension.postReleaseCommitMessage)
+            it.commitMessagePrefix.set(extension.commitMessagePrefix)
+            it.stringTemplateVariables.set(extension.versionPropertyFile)
+            // TODO Simon.Hauck 2024-05-13 - solve this. Should be the file
+            it.gitAddFilePattern.set(".")
+        }
+    }
+
+    private fun Project.registerWriteReleaseVersionTask(
+        calculateReleaseVersionTask: TaskProvider<CalculateReleaseVersionTask>,
+        releaseVersionStore: Provider<RegularFile>,
+        extension: ReleaseExtension
+    ): TaskProvider<WriteVersionTask> =
+        tasks.register("writeReleaseVersion", WriteVersionTask::class.java) {
+            it.dependsOn(calculateReleaseVersionTask)
+            it.versionType.set(VersionType.RELEASE)
+            it.releaseVersionStore.set(releaseVersionStore)
+            it.versionFile.set(extension.versionPropertyFile)
+        }
 
     private fun Project.registerCalculateReleaseVersionTask(
         releaseVersionStore: Provider<RegularFile>,

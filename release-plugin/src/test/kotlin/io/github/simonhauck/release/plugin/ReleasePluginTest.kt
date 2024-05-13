@@ -4,7 +4,6 @@ import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -65,7 +64,6 @@ class ReleasePluginTest {
             assertThat(versionFile.readText()).isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
-    @Disabled("This test can be enabled with the changes are commited")
     @Test
     fun `should revert all changes when the tag is already used`() =
         testDriver(tmpDir) {

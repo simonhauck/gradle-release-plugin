@@ -15,6 +15,13 @@ abstract class ReleaseExtension(
     val versionPropertyFile: RegularFileProperty =
         objects.fileProperty().convention(layout.projectDirectory.file("version.properties"))
 
-    val releaseBranchName: Property<String> =
-        objects.property(String::class.java).convention("main")
+    val releaseCommitMessage: Property<String> =
+        objects.property(String::class.java).convention("Release commit: v{version}")
+
+    val postReleaseCommitMessage: Property<String> =
+        objects.property(String::class.java).convention("Post release commit: v{version}")
+
+    val commitMessagePrefix: Property<String> = objects.property(String::class.java).convention("")
+
+    val tagName: Property<String> = objects.property(String::class.java).convention("v{version}")
 }

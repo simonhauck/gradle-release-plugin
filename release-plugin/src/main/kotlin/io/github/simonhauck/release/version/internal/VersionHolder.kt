@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.version.internal
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
 import io.github.simonhauck.release.version.api.VersionHolderApi
@@ -27,16 +28,19 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
 
         val properties = readPropertiesFile(tmpFileLocation)
 
-        val releaseVersion = properties.getProperty(RELEASE_VERSION_KEY) ?: return null
-        val postReleaseVersion = properties.getProperty(POST_RELEASE_VERSION_KEY) ?: return null
+        val releaseVersion = properties[RELEASE_VERSION_KEY] ?: return null
+        val postReleaseVersion = properties[POST_RELEASE_VERSION_KEY] ?: return null
         return ReleaseVersions(Version(releaseVersion), Version(postReleaseVersion))
     }
 
     override fun writeVersionPropertyToFile(file: File, version: Version) {
-        readPropertiesFile(file).apply {
-            setProperty("version", version.version)
-            writeToFile(file)
-        }
+        val updatedMap =
+            readPropertiesFile(file).toMutableMap().apply {
+                put("version", version.version)
+                toMap()
+            }
+
+        PropertiesFileUtil().writePropertiesFile(file, updatedMap)
     }
 
     private fun Properties.writeToFile(file: File) {
@@ -48,13 +52,13 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
 
     override fun loadVersionFromFileOrThrow(file: File): Version {
         readPropertiesFile(file).apply {
-            return getProperty("version")?.let { Version(it) }
-                ?: throw GradleException("No version property found in $file")
+            val version = getOrElse("version") { throw GradleException() }
+            return Version(version)
         }
     }
 
-    private fun readPropertiesFile(file: File): Properties {
-        return Properties().apply { file.inputStream().use { load(it) } }
+    private fun readPropertiesFile(file: File): Map<String, String> {
+        return PropertiesFileUtil().readProperties(file)
     }
 
     companion object {
