@@ -37,9 +37,7 @@ abstract class WriteVersionTask : BaseReleaseTask() {
         versionHolderApi.writeVersionPropertyToFile(versionFile.get().asFile, versionToWrite)
     }
 
-    private fun VersionHolderApi.getReleaseVersionsOrThrow(
-        tmpFileLocation: File?
-    ) =
+    private fun VersionHolderApi.getReleaseVersionsOrThrow(tmpFileLocation: File?) =
         loadVersions()
             ?: throw GradleException(
                 "No release version found in $tmpFileLocation. Did the task to write the file execute before?"

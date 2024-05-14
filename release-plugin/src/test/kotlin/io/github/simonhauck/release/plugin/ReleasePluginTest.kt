@@ -53,7 +53,6 @@ class ReleasePluginTest {
 
             createValidGitRepository()
 
-
             testKitRunner()
                 .withArguments(
                     "release",
