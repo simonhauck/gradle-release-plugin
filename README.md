@@ -2,7 +2,7 @@
 
 [![Master](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-master-push.yml/badge.svg)](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-master-push.yml)
 
-[Warning] This plugin is still in active development and not yet released.
+**[Disclaimer]** This plugin is still in active development and not yet released.
 
 The Gradle Release Plugin is a small tool designed to streamline and automate the release process for your Gradle
 projects. The plugin will increment the version number, commit, tag and push the changes to the git repository and
@@ -26,12 +26,12 @@ Here is an overview of the planned features. To vote for an feature, either crea
 existing issue.
 
 | **Feature**                           | **Description**                                                                               | **Implemented** :white_check_mark: | **Related issues**                                                   |
-|---------------------------------------|-----------------------------------------------------------------------------------------------|-----------------|----------------------------------------------------------------------|
-| Release with explicit version numbers | Release with while providing explicit version numbers                                         | :x: WIP          | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Simplified API                        | Release with a signle parameter like major, minor, patch                                      | :x:              | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
-| Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:              | No issue created yet                                                 |
-| Support Trunk based released          | The plugin can perform a release on a given branch                                            | :x:  WIP         | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.               | :x:              | No issue created yet                                                 |
+|---------------------------------------|-----------------------------------------------------------------------------------------------|------------------------------------|----------------------------------------------------------------------|
+| Release with explicit version numbers | Release with while providing explicit version numbers                                         | :x: WIP                            | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Simplified API                        | Release with a single parameter like major, minor, patch                                      | :x:                                | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
+| Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:                                | No issue created yet                                                 |
+| Support Trunk based released          | The plugin can perform a release on a given branch                                            | :x:  WIP                           | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.               | :x:                                | No issue created yet                                                 |
 
 ## How to use the plugin
 
