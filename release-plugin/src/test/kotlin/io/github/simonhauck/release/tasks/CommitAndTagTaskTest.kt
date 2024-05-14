@@ -27,7 +27,7 @@ class CommitAndTagTaskTest {
                     |tasks.register<CommitAndTagTask>("commitAndTag") {
                     |    commitMessage.set("new commit")
                     |    gitAddFilePattern.set("newFile.txt")
-                    |    commitPrefix.set("feat: ")
+                    |    commitMessagePrefix.set("feat: ")
                     |    tagName.set("1.0.0")
                     |    tagPrefix.set("v")
                     |    tagMessage.set("Initial tag")

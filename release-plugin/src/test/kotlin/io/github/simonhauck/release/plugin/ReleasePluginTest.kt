@@ -37,8 +37,6 @@ class ReleasePluginTest {
     @Test
     fun `should use the version file location specified in the release extension`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
-
             val fileName = "myOtherVersionFile.properties"
 
             val versionFile = File("$tmpDir/$fileName")
@@ -52,6 +50,9 @@ class ReleasePluginTest {
                 """
                     .trimMargin()
             )
+
+            createValidGitRepository()
+
 
             testKitRunner()
                 .withArguments(
@@ -90,9 +91,11 @@ class ReleasePluginTest {
                     )
                     .buildAndFail()
 
-            val actual = runner.task(":release")?.outcome
+            val actual = runner.task(":commitReleaseVersion")?.outcome
+            val releaseResult = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
+            assertThat(releaseResult).isEqualTo(null)
             assertThat(tmpDir.resolve("version.properties").readText())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }

@@ -70,7 +70,7 @@ class VersionHolderApiTest {
 
         assertThatThrownBy { versionHolderApi.loadVersionFromFileOrThrow(file) }
             .isInstanceOf(GradleException::class.java)
-            .hasMessage("No version property found in $file")
+            .hasMessage("No 'version' property found in $file")
     }
 
     private fun createVersionHolder(): VersionHolderApi {

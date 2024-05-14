@@ -25,7 +25,7 @@ abstract class WriteVersionTask : BaseReleaseTask() {
     fun action() {
         val tmpFileLocation = releaseVersionStore.get().asFile
         val versionHolderApi = VersionHolderApi.create(tmpFileLocation)
-        val releaseVersions = getReleaseVersionsOrThrow(versionHolderApi, tmpFileLocation)
+        val releaseVersions = versionHolderApi.getReleaseVersionsOrThrow(tmpFileLocation)
 
         val versionToWrite =
             when (versionType.get()) {
@@ -33,14 +33,14 @@ abstract class WriteVersionTask : BaseReleaseTask() {
                 VersionType.NEXT_DEV -> releaseVersions.postReleaseVersion
             }
 
+        println("$versionToWrite in file ${versionFile.get().asFile.absolutePath}")
         versionHolderApi.writeVersionPropertyToFile(versionFile.get().asFile, versionToWrite)
     }
 
-    private fun getReleaseVersionsOrThrow(
-        versionHolderApi: VersionHolderApi,
+    private fun VersionHolderApi.getReleaseVersionsOrThrow(
         tmpFileLocation: File?
     ) =
-        versionHolderApi.loadVersions()
+        loadVersions()
             ?: throw GradleException(
                 "No release version found in $tmpFileLocation. Did the task to write the file execute before?"
             )

@@ -31,8 +31,8 @@ class ReleasePlugin : Plugin<Project> {
         val commitReleaseVersion =
             project.registerReleaseCommitTask(writeReleaseVersionTask, extension)
 
-        val writeNextDevVersionTask =
-            project.tasks.register("writeNextDevVersion", WriteVersionTask::class.java) {
+        val writePostReleaseVersionTask =
+            project.tasks.register("writePostReleaseVersion", WriteVersionTask::class.java) {
                 it.dependsOn(commitReleaseVersion)
                 it.versionType.set(VersionType.NEXT_DEV)
                 it.releaseVersionStore.set(releaseVersionStore)
@@ -40,7 +40,7 @@ class ReleasePlugin : Plugin<Project> {
             }
 
         val commitPostReleaseVersionTask =
-            project.registerPostReleaseCommitTask(writeNextDevVersionTask, extension)
+            project.registerPostReleaseCommitTask(writePostReleaseVersionTask, extension)
 
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
@@ -59,7 +59,7 @@ class ReleasePlugin : Plugin<Project> {
             it.tagName.set(extension.tagName)
             it.stringTemplateVariables.set(extension.versionPropertyFile)
             // TODO Simon.Hauck 2024-05-13 - solve this. Should be the file
-            it.gitAddFilePattern.set("version.properties")
+            it.gitAddFilePattern.set(".")
         }
     }
 

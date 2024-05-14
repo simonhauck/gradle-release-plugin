@@ -15,7 +15,7 @@ internal class PropertiesFileUtil {
             values
                 .map { (key, value) -> "$key=$value" }
                 .sorted()
-                .joinToString { System.lineSeparator() }
+                .joinToString (System.lineSeparator())
 
         file.writeText(content)
     }

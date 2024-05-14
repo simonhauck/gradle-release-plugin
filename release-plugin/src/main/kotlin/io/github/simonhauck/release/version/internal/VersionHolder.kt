@@ -52,7 +52,8 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
 
     override fun loadVersionFromFileOrThrow(file: File): Version {
         readPropertiesFile(file).apply {
-            val version = getOrElse("version") { throw GradleException() }
+            val propertyName = "version"
+            val version = getOrElse(propertyName) { throw GradleException("No '$propertyName' property found in $file") }
             return Version(version)
         }
     }
