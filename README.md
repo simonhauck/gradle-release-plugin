@@ -1,6 +1,6 @@
 # Gradle Release Plugin
 
-[![Master](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-master-push.yml/badge.svg)](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-master-push.yml)
+[![Main](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-main-push.yml/badge.svg)](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-main-push.yml)
 
 **[Disclaimer]** This plugin is still in active development and not yet released.
 
