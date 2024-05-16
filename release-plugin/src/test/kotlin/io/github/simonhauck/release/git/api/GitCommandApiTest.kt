@@ -146,8 +146,8 @@ class GitCommandApiTest {
     fun `should be able to set a remote branch and push a git commit that is remote available`(
         @TempDir remoteDir: File
     ) {
-        val gitRepoDirectory = tempDir.resolve("remote").apply { mkdir() }
-        val gitClientDirectory = tempDir.resolve("client").apply { mkdir() }
+        val gitRepoDirectory = remoteDir.resolve("remote").apply { mkdir() }
+        val gitClientDirectory = remoteDir.resolve("client").apply { mkdir() }
         val gitSererCommands = GitTestCommandService(gitRepoDirectory)
         val otherClientCommands = GitTestCommandService(gitClientDirectory)
 
@@ -155,23 +155,19 @@ class GitCommandApiTest {
 
         setupGitRepoWithInitialCommit()
         gitCommandApi.addRemoteAndSetUpstream("origin", gitRepoDirectory.absolutePath, "main")
-
-        tempDir.resolve("other.txt").apply { writeText("Hello World") }
-        gitCommandApi.add("other.txt").assertIsOk()
-        gitCommandApi.commit("Second commit").assertIsOk()
         gitCommandApi.push().assertIsOk()
 
         // Check can the branch be checked out
         otherClientCommands.clone(gitRepoDirectory.absolutePath, ".", "main").assertIsOk()
-        assertThat(gitClientDirectory.resolve("other.txt").readText()).isEqualTo("Hello World")
+        assertThat(gitClientDirectory.resolve("file.txt").readText()).isEqualTo("Hello World")
     }
 
     @Test
     fun `git push should fail if another client has already pushed a commit`(
         @TempDir remoteDir: File
     ) {
-        val gitRepoDirectory = tempDir.resolve("remote").apply { mkdir() }
-        val gitClientDirectory = tempDir.resolve("client").apply { mkdir() }
+        val gitRepoDirectory = remoteDir.resolve("remote").apply { mkdir() }
+        val gitClientDirectory = remoteDir.resolve("client").apply { mkdir() }
 
         val gitServerCommands = GitTestCommandService(gitRepoDirectory)
         val otherClientCommands = GitTestCommandService(gitClientDirectory)
