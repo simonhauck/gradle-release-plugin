@@ -3,17 +3,16 @@ package io.github.simonhauck.release.tasks
 import arrow.core.fold
 import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import io.github.simonhauck.release.git.api.RevertCommand
+import java.io.File
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 
 abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
 
     @get:Input abstract val commitMessage: Property<String>
-    @get:Input @get:Optional abstract val gitAddFilePattern: Property<String>
+    @get:InputFiles abstract val gitAddFilePattern: ListProperty<File>
     @get:Input @get:Optional abstract val commitMessagePrefix: Property<String>
     @get:Input @get:Optional abstract val tagName: Property<String>
     @get:Input @get:Optional abstract val tagPrefix: Property<String>
@@ -33,22 +32,24 @@ abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
 
         val commitMessage = commitMessage.get().replaceVariables(templateVariables)
         val commitPrefix = commitMessagePrefix.getOrElse("").replaceVariables(templateVariables)
-        val gitAddPattern = gitAddFilePattern.getOrElse(".").replaceVariables(templateVariables)
 
         val tagName = tagName.getOrElse("").replaceVariables(templateVariables)
         val tagPrefix = tagPrefix.getOrElse("").replaceVariables(templateVariables)
         val tagMessage = tagMessage.getOrElse(commitMessage).replaceVariables(templateVariables)
         val tagMessagePrefix = tagMessagePrefix.getOrElse("").replaceVariables(templateVariables)
 
-        gitCommandApi()
-            .add(gitAddPattern)
-            .onRight {
-                gitCommandHistoryApi
-                    .get()
-                    .registerRevertCommand(buildGitAddRevertCommand(gitAddPattern))
-            }
-            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
-            .getOrThrowGradleException()
+        gitAddFilePattern.get().forEach {
+            val filePath = it.absolutePath
+            gitCommandApi()
+                .add(filePath)
+                .onRight {
+                    gitCommandHistoryApi
+                        .get()
+                        .registerRevertCommand(buildGitAddRevertCommand(filePath))
+                }
+                .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+                .getOrThrowGradleException()
+        }
 
         gitCommandApi()
             .commit("$commitPrefix$commitMessage")

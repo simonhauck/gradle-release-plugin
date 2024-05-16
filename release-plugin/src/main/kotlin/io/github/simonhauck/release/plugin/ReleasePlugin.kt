@@ -58,8 +58,11 @@ class ReleasePlugin : Plugin<Project> {
             it.commitMessagePrefix.set(extension.commitMessagePrefix)
             it.tagName.set(extension.tagName)
             it.stringTemplateVariables.set(extension.versionPropertyFile)
-            // TODO Simon.Hauck 2024-05-13 - solve this. Should be the file
-            it.gitAddFilePattern.set(".")
+            it.gitAddFilePattern.set(
+                extension.gitAddFiles.map { regularFiles ->
+                    regularFiles.map { regularFile -> regularFile.asFile }
+                }
+            )
         }
     }
 
@@ -72,8 +75,9 @@ class ReleasePlugin : Plugin<Project> {
             it.commitMessage.set(extension.postReleaseCommitMessage)
             it.commitMessagePrefix.set(extension.commitMessagePrefix)
             it.stringTemplateVariables.set(extension.versionPropertyFile)
-            // TODO Simon.Hauck 2024-05-13 - solve this. Should be the file
-            it.gitAddFilePattern.set(".")
+            it.gitAddFilePattern.set(
+                extension.versionPropertyFile.map { file -> listOf(file.asFile) }
+            )
         }
     }
 

@@ -15,7 +15,7 @@ class CommitAndTagTaskTest {
     private val testDriver = ReleasePluginTestDriver()
 
     @Test
-    fun `should add, commit and tag the selected files`() =
+    fun `should add, commit and tag the selected file`() =
         testDriver(tmpDir) {
             createValidGitRepository()
 
@@ -26,7 +26,7 @@ class CommitAndTagTaskTest {
                 """
                     |tasks.register<CommitAndTagTask>("commitAndTag") {
                     |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set("newFile.txt")
+                    |    gitAddFilePattern.set(listOf("newFile.txt"))
                     |    commitMessagePrefix.set("feat: ")
                     |    tagName.set("1.0.0")
                     |    tagPrefix.set("v")
@@ -49,6 +49,33 @@ class CommitAndTagTaskTest {
         }
 
     @Test
+    fun `should add and commit multiple files`() {
+        testDriver(tmpDir) {
+            createValidGitRepository()
+
+            File(tmpDir, "newFile.txt").writeText("Hello World")
+            File(tmpDir, "otherFile.txt").writeText("Hello World")
+
+            appendContentToBuildGradle(
+                """
+                    |tasks.register<CommitAndTagTask>("commitAndTag") {
+                    |    commitMessage.set("new commit")
+                    |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt"))
+                    |}
+                """
+                    .trimMargin()
+            )
+
+            val runner = testKitRunner().withArguments("commitAndTag").build()
+
+            val actual = runner.task(":commitAndTag")?.outcome
+
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(gitCommandApi.status().assertIsOk().untracked).isEmpty()
+        }
+    }
+
+    @Test
     fun `should not tag the commit if tagName is not set`() =
         testDriver(tmpDir) {
             createValidGitRepository()
@@ -59,7 +86,7 @@ class CommitAndTagTaskTest {
                 """
                     |tasks.register<CommitAndTagTask>("commitAndTag") {
                     |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set("newFile.txt")
+                    |    gitAddFilePattern.set(listOf(file("newFile.txt")))
                     |}
                 """
                     .trimMargin()
@@ -85,7 +112,7 @@ class CommitAndTagTaskTest {
                 """
                 |tasks.register<CommitAndTagTask>("commitAndTag") {
                 |    commitMessage.set("new commit")
-                |    gitAddFilePattern.set("newFile.txt")
+                |    gitAddFilePattern.set(listOf("newFile.txt"))
                 |    tagName.set("v1.0.0")
                 |}
             """

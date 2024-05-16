@@ -1,8 +1,10 @@
 package io.github.simonhauck.release.plugin
 
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 abstract class ReleaseExtension(
@@ -14,6 +16,11 @@ abstract class ReleaseExtension(
 
     val versionPropertyFile: RegularFileProperty =
         objects.fileProperty().convention(layout.projectDirectory.file("version.properties"))
+
+    val gitAddFiles: ListProperty<RegularFile> =
+        objects
+            .listProperty(RegularFile::class.java)
+            .convention(versionPropertyFile.map { listOf(it) })
 
     val releaseCommitMessage: Property<String> =
         objects.property(String::class.java).convention("Release commit: v{version}")
