@@ -2,6 +2,8 @@ package io.github.simonhauck.release.git.api
 
 import io.github.simonhauck.release.git.internal.commands.GitCommandProcessWrapper
 import io.github.simonhauck.release.git.internal.process.ProcessConfig
+import io.github.simonhauck.release.git.internal.process.ProcessWrapper
+import io.github.simonhauck.release.testdriver.GitTestCommandService
 import io.github.simonhauck.release.testdriver.assertIsOk
 import io.github.simonhauck.release.testdriver.get
 import java.io.File
@@ -14,10 +16,12 @@ class GitCommandApiTest {
 
     @TempDir lateinit var tempDir: File
     private lateinit var gitCommandApi: GitCommandApi
+    private lateinit var processWrapper: ProcessWrapper
 
     @BeforeEach
     fun setup() {
         gitCommandApi = GitCommandProcessWrapper(config = ProcessConfig(workingDir = tempDir))
+        processWrapper = ProcessWrapper()
     }
 
     @Test
@@ -136,6 +140,62 @@ class GitCommandApiTest {
 
         val actual = File("$tempDir/newFile.txt").exists()
         assertThat(actual).isFalse()
+    }
+
+    @Test
+    fun `should be able to set a remote branch and push a git commit that is remote available`(
+        @TempDir remoteDir: File
+    ) {
+        val gitRepoDirectory = tempDir.resolve("remote").apply { mkdir() }
+        val gitClientDirectory = tempDir.resolve("client").apply { mkdir() }
+        val gitSererCommands = GitTestCommandService(gitRepoDirectory)
+        val otherClientCommands = GitTestCommandService(gitClientDirectory)
+
+        gitSererCommands.initBareRepository().assertIsOk()
+
+        setupGitRepoWithInitialCommit()
+        gitCommandApi.addRemoteAndSetUpstream("origin", gitRepoDirectory.absolutePath, "main")
+
+        tempDir.resolve("other.txt").apply { writeText("Hello World") }
+        gitCommandApi.add("other.txt").assertIsOk()
+        gitCommandApi.commit("Second commit").assertIsOk()
+        gitCommandApi.push().assertIsOk()
+
+        // Check can the branch be checked out
+        otherClientCommands.clone(gitRepoDirectory.absolutePath, ".", "main").assertIsOk()
+        assertThat(gitClientDirectory.resolve("other.txt").readText()).isEqualTo("Hello World")
+    }
+
+    @Test
+    fun `git push should fail if another client has already pushed a commit`(
+        @TempDir remoteDir: File
+    ) {
+        val gitRepoDirectory = tempDir.resolve("remote").apply { mkdir() }
+        val gitClientDirectory = tempDir.resolve("client").apply { mkdir() }
+
+        val gitServerCommands = GitTestCommandService(gitRepoDirectory)
+        val otherClientCommands = GitTestCommandService(gitClientDirectory)
+
+        gitServerCommands.initBareRepository().assertIsOk()
+
+        setupGitRepoWithInitialCommit()
+        gitCommandApi.addRemoteAndSetUpstream("origin", gitRepoDirectory.absolutePath, "main")
+        gitCommandApi.push().assertIsOk()
+
+        // Push from another client
+        otherClientCommands.clone(gitRepoDirectory.absolutePath, ".", "main").assertIsOk()
+        gitClientDirectory.resolve("other.txt").apply { writeText("Hello World") }
+        otherClientCommands.add("other.txt").assertIsOk()
+        otherClientCommands.commit("Second commit").assertIsOk()
+        otherClientCommands.push().assertIsOk()
+
+        // Original client should fail
+        tempDir.resolve("something.txt").apply { writeText("Hello World") }
+        gitCommandApi.add("something.txt").assertIsOk()
+        gitCommandApi.commit("Third commit").assertIsOk()
+        val actual = gitCommandApi.push()
+
+        assertThat(actual.isLeft()).isTrue()
     }
 
     @Test

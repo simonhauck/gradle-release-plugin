@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.git.internal.commands
 
 import arrow.core.Either
+import arrow.core.flatten
 import io.github.simonhauck.release.git.api.*
 import io.github.simonhauck.release.git.internal.process.ProcessConfig
 import io.github.simonhauck.release.git.internal.process.ProcessSuccess
@@ -48,6 +49,20 @@ internal class GitCommandProcessWrapper(
 
     override fun deleteLastCommit(): GitVoidResult {
         return gitVoidCommand(listOf("reset", "--hard", "HEAD~1"))
+    }
+
+    override fun push(): GitVoidResult {
+        return gitVoidCommand(listOf("push"))
+    }
+
+    override fun addRemoteAndSetUpstream(
+        remoteName: String,
+        remoteUrl: String,
+        branchName: String
+    ): GitVoidResult {
+        return gitVoidCommand(listOf("remote", "add", remoteName, remoteUrl))
+            .map { gitVoidCommand(listOf("push", "-u", remoteName, branchName)) }
+            .flatten()
     }
 
     override fun log(): GitResult<List<GitLogEntry>> {

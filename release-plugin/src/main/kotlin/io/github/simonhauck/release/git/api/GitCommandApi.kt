@@ -19,6 +19,14 @@ interface GitCommandApi {
 
     fun commit(message: String): GitVoidResult
 
+    fun addRemoteAndSetUpstream(
+        remoteName: String,
+        remoteUrl: String,
+        branchName: String
+    ): GitVoidResult
+
+    fun push(): GitVoidResult
+
     fun deleteLastCommit(): GitVoidResult
 
     fun log(): GitResult<List<GitLogEntry>>
