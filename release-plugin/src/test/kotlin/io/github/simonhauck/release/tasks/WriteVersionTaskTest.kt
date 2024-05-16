@@ -23,7 +23,7 @@ class WriteVersionTaskTest {
             appendContentToBuildGradle(
                 """
                 |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.absolutePath}"))
+                |   releaseVersionStore.set(file("${storeFile.path}"))
                 |   versionType.set(VersionType.RELEASE)
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
@@ -48,7 +48,7 @@ class WriteVersionTaskTest {
                 """
                 |
                 |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.absolutePath}"))
+                |   releaseVersionStore.set(file("${storeFile.path}"))
                 |   versionType.set(VersionType.NEXT_DEV)
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
@@ -74,7 +74,7 @@ class WriteVersionTaskTest {
                 """
                 |
                 |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.absolutePath}"))
+                |   releaseVersionStore.set(file("${storeFile.path}"))
                 |   versionType.set(VersionType.NEXT_DEV)
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
