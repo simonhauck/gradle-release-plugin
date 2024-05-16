@@ -48,7 +48,7 @@ class WriteVersionTaskTest {
                 """
                 |
                 |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.path}"))
+                |   releaseVersionStore.set(file("${storeFile.name}"))
                 |   versionType.set(VersionType.NEXT_DEV)
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
