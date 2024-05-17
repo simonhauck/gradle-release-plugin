@@ -24,7 +24,7 @@ jobs:
       - tests
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
 
@@ -46,10 +46,10 @@ jobs:
             ./**/.gradle
             ./**/build
 
-      - name: Configure Git
+      - name: Set Git User and Email
         run: |
-          git config --global user.name 'Release Action'
-          git config --global user.email 'release@noreply.github.com'
+          git config --global user.email "no-replay@github-action.de"
+          git config --global user.name "GitHub Action"
 
       - name: Run gradle release task
-        run: ./gradlew release:build build --no-daemon
+        run: ./gradlew release -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon
