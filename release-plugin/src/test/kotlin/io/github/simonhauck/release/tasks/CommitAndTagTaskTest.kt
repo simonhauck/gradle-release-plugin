@@ -26,7 +26,7 @@ class CommitAndTagTaskTest {
                 """
                     |tasks.register<CommitAndTagTask>("commitAndTag") {
                     |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set(listOf("newFile.txt"))
+                    |    gitAddFilePattern.set(listOf(file("newFile.txt")))
                     |    commitMessagePrefix.set("feat: ")
                     |    tagName.set("1.0.0")
                     |    tagPrefix.set("v")
@@ -60,7 +60,7 @@ class CommitAndTagTaskTest {
                 """
                     |tasks.register<CommitAndTagTask>("commitAndTag") {
                     |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt"))
+                    |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
                     |}
                 """
                     .trimMargin()
@@ -112,7 +112,7 @@ class CommitAndTagTaskTest {
                 """
                 |tasks.register<CommitAndTagTask>("commitAndTag") {
                 |    commitMessage.set("new commit")
-                |    gitAddFilePattern.set(listOf("newFile.txt"))
+                |    gitAddFilePattern.set(listOf(file("newFile.txt")))
                 |    tagName.set("v1.0.0")
                 |}
             """

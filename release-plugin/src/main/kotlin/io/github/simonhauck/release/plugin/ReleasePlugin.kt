@@ -58,11 +58,7 @@ class ReleasePlugin : Plugin<Project> {
             it.commitMessagePrefix.set(extension.commitMessagePrefix)
             it.tagName.set(extension.tagName)
             it.stringTemplateVariables.set(extension.versionPropertyFile)
-            it.gitAddFilePattern.set(
-                extension.gitAddFiles.map { regularFiles ->
-                    regularFiles.map { regularFile -> regularFile.asFile }
-                }
-            )
+            it.gitAddFilePattern.set(extension.releaseCommitAddFiles)
         }
     }
 
@@ -75,9 +71,7 @@ class ReleasePlugin : Plugin<Project> {
             it.commitMessage.set(extension.postReleaseCommitMessage)
             it.commitMessagePrefix.set(extension.commitMessagePrefix)
             it.stringTemplateVariables.set(extension.versionPropertyFile)
-            it.gitAddFilePattern.set(
-                extension.versionPropertyFile.map { file -> listOf(file.asFile) }
-            )
+            it.gitAddFilePattern.set(extension.postReleaseCommitAddFiles)
         }
     }
 
