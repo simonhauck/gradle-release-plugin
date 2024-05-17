@@ -17,6 +17,7 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
     @get:Input @get:Optional abstract val disablePush: Property<Boolean>
     @get:Input @get:Optional abstract val delayBeforePushInMs: Property<Duration>
 
+    // TODO Simon.Hauck 2024-05-17 - test this task
     @TaskAction
     fun push() {
         if (disablePush.get()) {
@@ -30,6 +31,8 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
             log.lifecycle("Delay before push is set to ${delay.seconds}s. Waiting...")
 
         Thread.sleep(delay.seconds)
+
+        gitCommandApi().pullRebase()
 
         log.lifecycle("Pushing changes to remote repository")
         gitCommandApi()

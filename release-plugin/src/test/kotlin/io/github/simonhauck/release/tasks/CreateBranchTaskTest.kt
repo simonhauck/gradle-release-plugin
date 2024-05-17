@@ -43,12 +43,12 @@ class CreateBranchTaskTest {
                     .trimMargin()
             )
 
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("createBranch").build()
 
             assertThat(runner.task(":createBranch")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(gitCommandApi.getLocalBranchNames().get()).contains("feature/branch")
+            assertThat(client1Api.getLocalBranchNames().get()).contains("feature/branch")
         }
 
     @Test
@@ -68,11 +68,11 @@ class CreateBranchTaskTest {
                     .trimMargin()
             )
 
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("createBranch2", "--info").buildAndFail()
             assertThat(runner.task(":createBranch")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
             assertThat(runner.task(":createBranch2")?.outcome).isEqualTo(TaskOutcome.FAILED)
-            assertThat(gitCommandApi.getLocalBranchNames().get()).doesNotContain("feature/branch")
+            assertThat(client1Api.getLocalBranchNames().get()).doesNotContain("feature/branch")
         }
 }

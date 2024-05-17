@@ -17,10 +17,10 @@ class CommitAndTagTaskTest {
     @Test
     fun `should add, commit and tag the selected file`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
-            File(tmpDir, "newFile.txt").writeText("Hello World")
-            File(tmpDir, "otherFile.txt").writeText("Hello World")
+            File(client1WorkDir, "newFile.txt").writeText("Hello World")
+            File(client1WorkDir, "otherFile.txt").writeText("Hello World")
 
             appendContentToBuildGradle(
                 """
@@ -42,19 +42,19 @@ class CommitAndTagTaskTest {
             val actual = runner.task(":commitAndTag")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(gitCommandApi.listTags().assertIsOk()).contains("v1.0.0")
-            assertThat(gitCommandApi.status().assertIsOk().untracked).contains("otherFile.txt")
-            assertThat(gitCommandApi.log().assertIsOk().map { it.message })
+            assertThat(client1Api.listTags().assertIsOk()).contains("v1.0.0")
+            assertThat(client1Api.status().assertIsOk().untracked).contains("otherFile.txt")
+            assertThat(client1Api.log().assertIsOk().map { it.message })
                 .contains("feat: new commit")
         }
 
     @Test
     fun `should add and commit multiple files`() {
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
-            File(tmpDir, "newFile.txt").writeText("Hello World")
-            File(tmpDir, "otherFile.txt").writeText("Hello World")
+            File(client1WorkDir, "newFile.txt").writeText("Hello World")
+            File(client1WorkDir, "otherFile.txt").writeText("Hello World")
 
             appendContentToBuildGradle(
                 """
@@ -71,16 +71,16 @@ class CommitAndTagTaskTest {
             val actual = runner.task(":commitAndTag")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(gitCommandApi.status().assertIsOk().untracked).isEmpty()
+            assertThat(client1Api.status().assertIsOk().untracked).isEmpty()
         }
     }
 
     @Test
     fun `should not tag the commit if tagName is not set`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
-            File(tmpDir, "newFile.txt").writeText("Hello World")
+            File(client1WorkDir, "newFile.txt").writeText("Hello World")
 
             appendContentToBuildGradle(
                 """
@@ -97,16 +97,16 @@ class CommitAndTagTaskTest {
             val actual = runner.task(":commitAndTag")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(gitCommandApi.listTags().assertIsOk()).isEmpty()
+            assertThat(client1Api.listTags().assertIsOk()).isEmpty()
         }
 
     @Test
     fun `git tag should fail and revert the previous commands when the tag is already set`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
-            gitCommandApi.tag("v1.0.0", "Initial tag").assertIsOk()
+            createValidRepositoryWithRemote()
+            client1Api.tag("v1.0.0", "Initial tag").assertIsOk()
 
-            File(tmpDir, "newFile.txt").writeText("Hello World")
+            File(client1WorkDir, "newFile.txt").writeText("Hello World")
 
             appendContentToBuildGradle(
                 """
@@ -124,9 +124,9 @@ class CommitAndTagTaskTest {
             val actual = runner.task(":commitAndTag")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
-            assertThat(gitCommandApi.listTags().assertIsOk()).contains("v1.0.0")
-            assertThat(gitCommandApi.log().assertIsOk().map { it.message })
+            assertThat(client1Api.listTags().assertIsOk()).contains("v1.0.0")
+            assertThat(client1Api.log().assertIsOk().map { it.message })
                 .doesNotContain("new commit")
-            assertThat(gitCommandApi.status().assertIsOk().allEmpty()).isTrue()
+            assertThat(client1Api.status().assertIsOk().allEmpty()).isTrue()
         }
 }

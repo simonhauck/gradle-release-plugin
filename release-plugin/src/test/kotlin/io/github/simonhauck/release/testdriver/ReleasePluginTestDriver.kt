@@ -1,7 +1,6 @@
 package io.github.simonhauck.release.testdriver
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.github.simonhauck.release.git.api.GitCommandApi
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -10,55 +9,79 @@ import org.gradle.testkit.runner.GradleRunner
 
 private val log = KotlinLogging.logger {}
 
-class ReleasePluginTestDriver {
+internal class ReleasePluginTestDriver {
 
     operator fun invoke(tmpDir: File, action: SemanticVersioningProjectBuilder.() -> Unit) {
         log.info { "Current test directory is $tmpDir" }
 
-        SemanticVersioningProjectBuilder(tmpDir).apply {
-            createProjectScaffold()
-            action()
-        }
+        SemanticVersioningProjectBuilder(
+                tmpDir.resolve("client1"),
+                tmpDir.resolve("client2"),
+                tmpDir.resolve("server")
+            )
+            .apply {
+                createProjectScaffold()
+                action()
+            }
     }
 }
 
-class SemanticVersioningProjectBuilder(private val workDir: File) {
+internal class SemanticVersioningProjectBuilder(
+    val client1WorkDir: File,
+    val client2WorkDir: File,
+    private val serverWorkDir: File
+) {
 
-    val gitCommandApi: GitCommandApi = GitCommandApi.create(workDir)
+    init {
+        client1WorkDir.mkdirs()
+        client2WorkDir.mkdirs()
+        serverWorkDir.mkdirs()
+    }
+
+    val client1Api = GitTestCommandService(client1WorkDir)
+    val client2Api = GitTestCommandService(client2WorkDir)
+    private val serverApi = GitTestCommandService(serverWorkDir)
 
     fun testKitRunner(): GradleRunner {
         return GradleRunner.create()
-            .withProjectDir(workDir)
+            .withProjectDir(client1WorkDir)
             .withPluginClasspath()
-            .withDebug(true)
+            .withDebug(false)
             .forwardOutput()
     }
 
-    fun createValidGitRepository() {
-        gitCommandApi.init("main")
+    fun createValidRepositoryWithRemote() {
+        serverApi.initBareRepository().assertIsOk()
+        client1Api.init("main").assertIsOk()
+        client1Api.add(".").assertIsOk()
+        client1Api.commit("Initial commit").assertIsOk()
+        client1Api
+            .addRemoteAndSetUpstream("origin", serverWorkDir.absolutePath, "main")
+            .assertIsOk()
+        client1Api.push().assertIsOk()
+    }
 
-        File(workDir, "README.md").writeText("# Test Project")
-        gitCommandApi.add(".")
-        gitCommandApi.commit("Initial commit")
+    fun cloneForClient2() {
+        client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
     }
 
     fun createProjectScaffold() {
         val sourceDir = Paths.get("src/test/resources/scaffold-project")
 
         Files.list(sourceDir).forEach { file ->
-            val targetPath = Paths.get(workDir.absolutePath, file.fileName.toString())
+            val targetPath = Paths.get(client1WorkDir.absolutePath, file.fileName.toString())
             Files.copy(file, targetPath, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
     fun appendContentToBuildGradle(content: String) {
-        val buildGradlePath = Paths.get(workDir.absolutePath, "build.gradle.kts")
+        val buildGradlePath = Paths.get(client1WorkDir.absolutePath, "build.gradle.kts")
         val buildGradleFile = buildGradlePath.toFile()
         buildGradleFile.appendText(content)
     }
 
     fun updateVersionProperties(version: String) {
-        val versionPropertiesPath = Paths.get(workDir.absolutePath, "version.properties")
+        val versionPropertiesPath = Paths.get(client1WorkDir.absolutePath, "version.properties")
         val versionPropertiesFile = versionPropertiesPath.toFile()
         versionPropertiesFile.writeText("version=$version")
     }

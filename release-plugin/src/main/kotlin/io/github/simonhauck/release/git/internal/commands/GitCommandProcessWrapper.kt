@@ -64,7 +64,12 @@ internal class GitCommandProcessWrapper(
 
         val pushConfig = config.copy(environment = config.environment.plus(envToAdd))
 
-        return gitVoidCommand(listOf("push"), pushConfig)
+        return gitVoidCommand(listOf("push", "--follow-tags"), pushConfig)
+    }
+
+    // TODO Simon.Hauck 2024-05-17 - test
+    override fun pullRebase(): GitVoidResult {
+        return gitVoidCommand(listOf("pull", "--rebase"))
     }
 
     override fun addRemoteAndSetUpstream(

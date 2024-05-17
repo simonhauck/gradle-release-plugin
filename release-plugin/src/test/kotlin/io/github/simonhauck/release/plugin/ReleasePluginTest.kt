@@ -17,7 +17,7 @@ class ReleasePluginTest {
     @Test
     fun `the version file should contain the next development version at the end`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -31,14 +31,14 @@ class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(tmpDir.resolve("version.properties").readText())
+            assertThat(client1WorkDir.resolve("version.properties").readText())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
     @Test
     fun `no files should be changed, untracked or commited when the release plugin has finished successful`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -52,11 +52,11 @@ class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(gitCommandApi.status().assertIsOk().allEmpty()).isTrue()
+            assertThat(client1Api.status().assertIsOk().allEmpty()).isTrue()
         }
 
     @Test
-    fun `should successfully add additional configured values to the git push`() =
+    fun `should successfully add additional configured files to the git commit`() =
         testDriver(tmpDir) {
             appendContentToBuildGradle(
                 """
@@ -66,8 +66,8 @@ class ReleasePluginTest {
             """
                     .trimMargin()
             )
-            createValidGitRepository()
-            tmpDir.resolve("otherFile.txt").writeText("Hello World")
+            createValidRepositoryWithRemote()
+            client1WorkDir.resolve("otherFile.txt").writeText("Hello World")
 
             val runner =
                 testKitRunner()
@@ -81,8 +81,7 @@ class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            println(gitCommandApi.status())
-            assertThat(gitCommandApi.status().assertIsOk().allEmpty()).isTrue()
+            assertThat(client1Api.status().assertIsOk().allEmpty()).isTrue()
         }
 
     @Test
@@ -97,7 +96,7 @@ class ReleasePluginTest {
                     .trimMargin()
             )
 
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -146,7 +145,7 @@ class ReleasePluginTest {
                     .trimMargin()
             )
 
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -160,9 +159,9 @@ class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(gitCommandApi.status().assertIsOk().allEmpty()).isTrue()
-            assertThat(tmpDir.resolve("release-file.txt")).exists()
-            assertThat(tmpDir.resolve("post-release-file.txt")).exists()
+            assertThat(client1Api.status().assertIsOk().allEmpty()).isTrue()
+            assertThat(client1WorkDir.resolve("release-file.txt")).exists()
+            assertThat(client1WorkDir.resolve("post-release-file.txt")).exists()
         }
     }
 
@@ -171,7 +170,7 @@ class ReleasePluginTest {
         testDriver(tmpDir) {
             val fileName = "myOtherVersionFile.properties"
 
-            val versionFile = File("$tmpDir/$fileName")
+            val versionFile = client1WorkDir.resolve(fileName)
             versionFile.writeText("version=1.0.0")
 
             appendContentToBuildGradle(
@@ -183,7 +182,7 @@ class ReleasePluginTest {
                     .trimMargin()
             )
 
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
@@ -199,35 +198,29 @@ class ReleasePluginTest {
     @Test
     fun `should revert all changes when the tag is already used`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
-
-            gitCommandApi.tag("1.2.0", "some message")
-            testKitRunner()
-                .withArguments(
-                    "release",
-                    "-PreleaseVersion=1.2.0",
-                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                )
-                .build()
-
-            val initialVersion = tmpDir.resolve("version.properties").readText()
-            assertThat(initialVersion).isEqualTo("version=1.2.1-SNAPSHOT")
+            updateVersionProperties("1.0.0")
+            createValidRepositoryWithRemote()
+            client1Api.tag("v1.2.0", "this tag is already existing")
+            client1Api.push().assertIsOk()
 
             val runner =
                 testKitRunner()
                     .withArguments(
                         "release",
                         "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.3.1-SNAPSHOT"
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
                     )
                     .buildAndFail()
 
             val actual = runner.task(":commitReleaseVersion")?.outcome
-            val releaseResult = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
-            assertThat(releaseResult).isEqualTo(null)
-            assertThat(tmpDir.resolve("version.properties").readText())
-                .isEqualTo("version=1.2.1-SNAPSHOT")
+            assertThat(client1WorkDir.resolve("version.properties").readText())
+                .isEqualTo("version=1.0.0")
         }
+
+    @Test
+    fun `after a release the commited changes and tags should be remotely available`() {
+        TODO("Not yet implemented")
+    }
 }

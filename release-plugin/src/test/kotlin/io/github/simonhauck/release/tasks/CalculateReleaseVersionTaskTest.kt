@@ -17,7 +17,7 @@ class CalculateReleaseVersionTaskTest {
     @Test
     fun `task should be successful if a valid release versions for passed as command line parameters`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -36,7 +36,7 @@ class CalculateReleaseVersionTaskTest {
     @Test
     fun `task should fail if no versions are provided`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("calculateReleaseVersion").buildAndFail()
 
@@ -48,7 +48,7 @@ class CalculateReleaseVersionTaskTest {
     @Test
     fun `task should be up to date when invoked twice`() =
         testDriver(tmpDir) {
-            createValidGitRepository()
+            createValidRepositoryWithRemote()
 
             val args =
                 arrayOf(

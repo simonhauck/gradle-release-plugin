@@ -39,6 +39,8 @@ interface GitCommandApi {
 
     fun deleteLocalTag(tagName: String): GitVoidResult
 
+    fun pullRebase(): GitVoidResult
+
     companion object {
         fun create(gitRootDirectory: File?): GitCommandApi =
             GitCommandProcessWrapper(config = ProcessConfig(workingDir = gitRootDirectory))

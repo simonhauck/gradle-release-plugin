@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.tasks
 
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
+import io.github.simonhauck.release.testdriver.SemanticVersioningProjectBuilder
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
 import io.github.simonhauck.release.version.api.VersionHolderApi
@@ -36,7 +37,8 @@ class WriteVersionTaskTest {
             val actual = runner.task(":writeTestReleaseVersion")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(tempDir.resolve("version.properties").readText()).isEqualTo("version=2.0.0")
+            assertThat(client1WorkDir.resolve("version.properties").readText())
+                .isEqualTo("version=2.0.0")
         }
 
     @Test
@@ -61,7 +63,7 @@ class WriteVersionTaskTest {
             val actual = runner.task(":writeTestReleaseVersion")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(tempDir.resolve("version.properties").readText())
+            assertThat(client1WorkDir.resolve("version.properties").readText())
                 .isEqualTo("version=2.0.1-SNAPSHOT")
         }
 
@@ -83,8 +85,8 @@ class WriteVersionTaskTest {
             )
         }
 
-    private fun createVersionStoreFile(): File {
-        val storeFile = tempDir.resolve("version-store.properties").apply { createNewFile() }
+    private fun SemanticVersioningProjectBuilder.createVersionStoreFile(): File {
+        val storeFile = client1WorkDir.resolve("version-store.properties").apply { createNewFile() }
         val releaseVersions = ReleaseVersions(Version("2.0.0"), Version("2.0.1-SNAPSHOT"))
         VersionHolderApi.create(storeFile).saveVersions(releaseVersions)
         return storeFile
