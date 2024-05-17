@@ -52,4 +52,4 @@ jobs:
           git config --global user.name "GitHub Action"
 
       - name: Run gradle release task
-        run: ./gradlew release -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon
+        run: ./gradlew release -PenablePush=true -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon

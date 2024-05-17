@@ -10,4 +10,5 @@ allprojects {
     version = Version.fromPropertiesFile(rootProject.file("version.properties"))
 }
 
-release { disablePush = true }
+// To prevent accidental release commits, a separate property must be set
+release { disablePush = !project.properties["enablePush"].toString().toBoolean() }
