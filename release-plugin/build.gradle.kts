@@ -1,8 +1,12 @@
+import io.github.simonhauck.release.version.api.Version
+
 plugins {
     id("build.common.artifactory")
     id("build.common.kotlin-conventions")
     `java-gradle-plugin`
 }
+
+version = Version.fromPropertiesFile(rootProject.file("version.properties"))
 
 dependencies {
     implementation(libs.ztExec)
