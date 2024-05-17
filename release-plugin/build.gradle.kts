@@ -1,4 +1,4 @@
-import io.github.simonhauck.release.version.api.Version
+import java.util.*
 
 plugins {
     id("build.common.artifactory")
@@ -6,7 +6,9 @@ plugins {
     `java-gradle-plugin`
 }
 
-version = Version.fromPropertiesFile(rootProject.file("version.properties"))
+group = "io.github.simonhauck.release"
+
+version = readVersionFromFile(rootProject.file("../version.properties"))
 
 dependencies {
     implementation(libs.ztExec)
@@ -25,3 +27,8 @@ gradlePlugin {
         }
     }
 }
+
+private fun readVersionFromFile(file: File): String = readProperties(file).getProperty("version")
+
+private fun readProperties(propertiesFile: File) =
+    Properties().apply { propertiesFile.inputStream().use { load(it) } }

@@ -1,0 +1,21 @@
+changelog:
+  categories:
+    - title: New features
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - 'bug'
+        authors:
+          - 'renovate'
+
+    - title: Fixed bugs
+      labels:
+        - 'bug'
+      exclude:
+        authors:
+          - 'renovate'
+
+    - title: Dependency updates
+      labels:
+        - '*'

@@ -1,13 +1,13 @@
-import java.util.*
+import io.github.simonhauck.release.version.api.Version
 
-plugins { id("build.common.kotlin-conventions") apply false }
-
-allprojects {
-    group = "com.github.simonhauck.release"
-    version = readVersionFromFile(file("${rootProject.projectDir.resolve("version.properties")}"))
+plugins {
+    id("build.common.kotlin-conventions") apply false
+    id("io.github.simonhauck.release")
 }
 
-private fun readVersionFromFile(file: File): String = readProperties(file).getProperty("version")
+allprojects {
+    group = "io.github.simonhauck.release"
+    version = Version.fromPropertiesFile(rootProject.file("version.properties"))
+}
 
-private fun readProperties(propertiesFile: File) =
-    Properties().apply { propertiesFile.inputStream().use { load(it) } }
+release { disablePush = true }

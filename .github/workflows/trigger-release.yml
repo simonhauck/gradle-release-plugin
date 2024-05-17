@@ -1,0 +1,55 @@
+name: Trigger Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: 'The version with which the code should be released'
+        type: string
+        required: true
+      post-release-version:
+        description: 'The next snapshot version'
+        type: string
+        required: true
+
+
+jobs:
+  tests:
+    uses: ./.github/workflows/run-tests.yml
+
+  trigger-release:
+    runs-on: ubuntu-latest
+    name: Trigger the release
+    needs:
+      - tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+          restore-keys: |
+            ${{ runner.os }}-build-master
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./**/.gradle
+            ./**/build
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'Release Action'
+          git config --global user.email 'release@noreply.github.com'
+
+      - name: Run gradle release task
+        run: ./gradlew release:build build --no-daemon
