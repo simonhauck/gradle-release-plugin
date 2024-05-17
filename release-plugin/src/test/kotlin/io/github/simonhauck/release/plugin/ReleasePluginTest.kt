@@ -220,7 +220,39 @@ class ReleasePluginTest {
         }
 
     @Test
-    fun `after a release the commited changes and tags should be remotely available`() {
-        TODO("Not yet implemented")
-    }
+    fun `the version file should contain the snapshot version after a successful release`() =
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            testKitRunner()
+                .withArguments(
+                    "release",
+                    "-PreleaseVersion=1.2.0",
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                )
+                .build()
+
+            cloneForClient2()
+            val version = client2WorkDir.resolve("version.properties").readText()
+            assertThat(version).isEqualTo("version=1.2.1-SNAPSHOT")
+        }
+
+    @Test
+    fun `the version with the release tag should contain the release version in the version file`() =
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            testKitRunner()
+                .withArguments(
+                    "release",
+                    "-PreleaseVersion=1.2.0",
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                )
+                .build()
+
+            cloneForClient2()
+            client2Api.checkOutTag("v1.2.0").assertIsOk()
+            val version = client2WorkDir.resolve("version.properties").readText()
+            assertThat(version).isEqualTo("version=1.2.0")
+        }
 }

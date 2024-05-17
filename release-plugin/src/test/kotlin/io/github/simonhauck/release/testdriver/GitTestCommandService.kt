@@ -24,6 +24,10 @@ internal class GitTestCommandService(private val workDir: File) :
         return gitVoidCommand(listOf("clone", repositoryUrl, directoryName, "-b", branchName))
     }
 
+    fun checkOutTag(tagName: String): GitVoidResult {
+        return gitVoidCommand(listOf("checkout", tagName))
+    }
+
     private fun gitVoidCommand(command: List<String>): Either<GitError, GitOk> {
         val runCommand = gitCommand(command)
         return runCommand.map { GitOk }

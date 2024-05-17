@@ -48,7 +48,12 @@ class ReleasePlugin : Plugin<Project> {
             project.registerPostReleaseCommitTask(writePostReleaseVersionTask, extension)
 
         val pushPostRelease =
-            project.registerPushTask("pushPostRelease", extension, commitPostReleaseVersionTask)
+            project.registerPushTask(
+                "pushPostRelease",
+                extension,
+                commitPostReleaseVersionTask,
+                extension.delayBeforePush
+            )
 
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
