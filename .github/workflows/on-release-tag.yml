@@ -18,3 +18,4 @@ jobs:
         with:
           generate_release_notes: true
           append_body: false
+          make_latest: true
