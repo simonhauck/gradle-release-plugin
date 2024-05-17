@@ -25,7 +25,7 @@ interface GitCommandApi {
         branchName: String
     ): GitVoidResult
 
-    fun push(): GitVoidResult
+    fun push(sshKeyFile: File? = null): GitVoidResult
 
     fun deleteLastCommit(): GitVoidResult
 

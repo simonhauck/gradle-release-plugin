@@ -6,6 +6,7 @@ import io.github.simonhauck.release.git.api.*
 import io.github.simonhauck.release.git.internal.process.ProcessConfig
 import io.github.simonhauck.release.git.internal.process.ProcessSuccess
 import io.github.simonhauck.release.git.internal.process.ProcessWrapper
+import java.io.File
 
 internal class GitCommandProcessWrapper(
     private val processWrapper: ProcessWrapper = ProcessWrapper(),
@@ -51,8 +52,19 @@ internal class GitCommandProcessWrapper(
         return gitVoidCommand(listOf("reset", "--hard", "HEAD~1"))
     }
 
-    override fun push(): GitVoidResult {
-        return gitVoidCommand(listOf("push"))
+    // TODO Simon.Hauck 2024-05-17 - How to test the git push behavior?
+    override fun push(sshKeyFile: File?): GitVoidResult {
+        val envToAdd =
+            if (sshKeyFile != null)
+                mapOf(
+                    "GIT_SSH_VARIANT" to "ssh",
+                    "GIT_SSH_COMMAND" to "ssh -i ${sshKeyFile.absolutePath} -o IdentitiesOnly=yes"
+                )
+            else emptyMap()
+
+        val pushConfig = config.copy(environment = config.environment.plus(envToAdd))
+
+        return gitVoidCommand(listOf("push"), pushConfig)
     }
 
     override fun addRemoteAndSetUpstream(
@@ -102,13 +114,20 @@ internal class GitCommandProcessWrapper(
         }
     }
 
-    private fun gitVoidCommand(command: List<String>): Either<GitError, GitOk> {
-        val runCommand = gitCommand(command)
+    private fun gitVoidCommand(
+        command: List<String>,
+        processConfig: ProcessConfig? = null
+    ): Either<GitError, GitOk> {
+        val runCommand = gitCommand(command, processConfig)
         return runCommand.map { GitOk }
     }
 
-    private fun gitCommand(command: List<String>): Either<GitError, ProcessSuccess> {
-        val runCommand = processWrapper.runCommand(listOf("git").plus(command), config)
+    private fun gitCommand(
+        command: List<String>,
+        processConfig: ProcessConfig? = null
+    ): Either<GitError, ProcessSuccess> {
+        val runCommand =
+            processWrapper.runCommand(listOf("git").plus(command), processConfig ?: config)
         return runCommand.mapLeft { GitError(it.message, it.error) }
     }
 }

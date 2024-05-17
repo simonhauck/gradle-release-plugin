@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.plugin
 
 import java.io.File
+import java.time.Duration
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -36,4 +37,11 @@ abstract class ReleaseExtension(
     val commitMessagePrefix: Property<String> = objects.property(String::class.java).convention("")
 
     val tagName: Property<String> = objects.property(String::class.java).convention("v{version}")
+
+    val sshKeyFile: RegularFileProperty = objects.fileProperty()
+
+    val disablePush: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+
+    val delayBeforePush: Property<Duration> =
+        objects.property(Duration::class.java).convention(Duration.ZERO)
 }

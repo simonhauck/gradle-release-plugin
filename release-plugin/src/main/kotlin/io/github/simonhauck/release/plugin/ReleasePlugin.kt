@@ -2,9 +2,11 @@ package io.github.simonhauck.release.plugin
 
 import io.github.simonhauck.release.git.internal.commands.GitCommandHistoryService
 import io.github.simonhauck.release.tasks.*
+import java.time.Duration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 
@@ -31,9 +33,12 @@ class ReleasePlugin : Plugin<Project> {
         val commitReleaseVersion =
             project.registerReleaseCommitTask(writeReleaseVersionTask, extension)
 
+        val pushReleaseTask =
+            project.registerPushTask("pushRelease", extension, commitReleaseVersion)
+
         val writePostReleaseVersionTask =
             project.tasks.register("writePostReleaseVersion", WriteVersionTask::class.java) {
-                it.dependsOn(commitReleaseVersion)
+                it.dependsOn(pushReleaseTask)
                 it.versionType.set(VersionType.NEXT_DEV)
                 it.releaseVersionStore.set(releaseVersionStore)
                 it.versionFile.set(extension.versionPropertyFile)
@@ -42,11 +47,27 @@ class ReleasePlugin : Plugin<Project> {
         val commitPostReleaseVersionTask =
             project.registerPostReleaseCommitTask(writePostReleaseVersionTask, extension)
 
+        val pushPostRelease =
+            project.registerPushTask("pushPostRelease", extension, commitPostReleaseVersionTask)
+
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
-            it.dependsOn(commitPostReleaseVersionTask)
+            it.dependsOn(pushPostRelease)
         }
     }
+
+    private fun Project.registerPushTask(
+        name: String,
+        extension: ReleaseExtension,
+        dependsOn: TaskProvider<*>,
+        delay: Property<Duration> = objects.property(Duration::class.java).value(Duration.ZERO)
+    ): TaskProvider<PushTask> =
+        tasks.register(name, PushTask::class.java) {
+            it.dependsOn(dependsOn)
+            it.sshKeyFile.set(extension.sshKeyFile)
+            it.disablePush.set(extension.disablePush)
+            it.delayBeforePushInMs.set(delay)
+        }
 
     private fun Project.registerReleaseCommitTask(
         writeReleaseVersionTask: TaskProvider<WriteVersionTask>,
