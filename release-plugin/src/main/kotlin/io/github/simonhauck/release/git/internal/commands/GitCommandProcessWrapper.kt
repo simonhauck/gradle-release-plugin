@@ -84,10 +84,12 @@ internal class GitCommandProcessWrapper(
 
     override fun log(): GitResult<List<GitLogEntry>> {
         return gitCommand(listOf("log", "--pretty=oneline")).map { processSuccess ->
-            processSuccess.output.map { line ->
-                val split = line.split(" ")
-                GitLogEntry(split[0], split.drop(1).joinToString(" "))
-            }
+            processSuccess.output
+                .map { line ->
+                    val split = line.split(" ")
+                    GitLogEntry(split[0], split.drop(1).joinToString(" "))
+                }
+                .asReversed()
         }
     }
 

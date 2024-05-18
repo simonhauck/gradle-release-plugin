@@ -53,6 +53,24 @@ class GitCommandApiTest {
     }
 
     @Test
+    fun `git log should return the newest commit as last element`() {
+        gitCommandApi.init("main")
+
+        val file = File(tempDir, "file.txt")
+        file.writeText("Hello World")
+
+        gitCommandApi.add("file.txt").assertIsOk()
+        gitCommandApi.commit("Initial commit").assertIsOk()
+
+        file.writeText("new text")
+        gitCommandApi.add("file.txt").assertIsOk()
+        gitCommandApi.commit("Second commit").assertIsOk()
+
+        val actual = gitCommandApi.log().get().map { it.message }
+        assertThat(actual).containsExactly("Initial commit", "Second commit")
+    }
+
+    @Test
     fun `should correctly resolve the status of multiple files`() {
         setupGitRepoWithInitialCommit()
 

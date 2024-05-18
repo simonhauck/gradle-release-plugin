@@ -83,7 +83,7 @@ class ReleasePlugin : Plugin<Project> {
             it.commitMessage.set(extension.releaseCommitMessage)
             it.commitMessagePrefix.set(extension.commitMessagePrefix)
             it.tagName.set(extension.tagName)
-            it.stringTemplateVariables.set(extension.versionPropertyFile)
+            it.templateVariables.set(extension.versionPropertyFile)
             it.gitAddFilePattern.set(extension.releaseCommitAddFiles)
         }
     }
@@ -96,7 +96,7 @@ class ReleasePlugin : Plugin<Project> {
             it.dependsOn(writePostReleaseVersion)
             it.commitMessage.set(extension.postReleaseCommitMessage)
             it.commitMessagePrefix.set(extension.commitMessagePrefix)
-            it.stringTemplateVariables.set(extension.versionPropertyFile)
+            it.templateVariables.set(extension.versionPropertyFile)
             it.gitAddFilePattern.set(extension.postReleaseCommitAddFiles)
         }
     }
