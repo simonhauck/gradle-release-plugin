@@ -129,4 +129,51 @@ class CommitAndTagTaskTest {
                 .doesNotContain("new commit")
             assertThat(client1Api.status().assertIsOk().allEmpty()).isTrue()
         }
+
+    @Test
+    fun `should replace the template variables with the values from the properties file`() {
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CommitAndTagTask>("commitAndTag") {
+                |    commitMessage.set("{var1} message")
+                |    gitAddFilePattern.set(listOf(file(".")))
+                |    commitMessagePrefix.set("Prefix {var2}: ")
+                |    tagName.set("v-{var3}")
+                |    tagPrefix.set("{var4}-")
+                |    tagMessage.set("{var5} ")
+                |    tagMessagePrefix.set("{var6}: ")
+                |    templateVariables.set(file("variables.properties"))
+                |}
+            """
+                    .trimMargin()
+            )
+
+            client1WorkDir
+                .resolve("variables.properties")
+                .writeText(
+                    """
+                |var1=template commit
+                |var2=feat
+                |var3=some-template-version
+                |var4=tag-prefix
+                |var5=some-tag
+                |var6=some-tag-prefix
+                """
+                        .trimMargin()
+                )
+
+            val runner = testKitRunner().withArguments("commitAndTag").build()
+
+            val actual = runner.task(":commitAndTag")?.outcome
+
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(client1Api.listTags().assertIsOk())
+                .contains("tag-prefix-v-some-template-version")
+            assertThat(client1Api.log().assertIsOk().last().message)
+                .isEqualTo("Prefix feat: template commit message")
+        }
+    }
 }

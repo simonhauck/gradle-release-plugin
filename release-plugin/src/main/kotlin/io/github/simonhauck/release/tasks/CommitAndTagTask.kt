@@ -18,13 +18,11 @@ abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
     @get:Input @get:Optional abstract val tagPrefix: Property<String>
     @get:Input @get:Optional abstract val tagMessage: Property<String>
     @get:Input @get:Optional abstract val tagMessagePrefix: Property<String>
-    @get:InputFile @get:Optional abstract val stringTemplateVariables: RegularFileProperty
+    @get:InputFile @get:Optional abstract val templateVariables: RegularFileProperty
 
     init {
         description = "Add the specified files to git, commit them and optionally tag the commit"
     }
-
-    // TODO Simon.Hauck 2024-05-13 - test task with template variables
 
     @TaskAction
     fun action() {
@@ -81,7 +79,7 @@ abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
         RevertCommand("Deleting tag $fullTagName") { gitCommandApi().deleteLocalTag(fullTagName) }
 
     private fun readTemplateVariables() =
-        stringTemplateVariables.orNull?.asFile?.let { PropertiesFileUtil().readProperties(it) }
+        templateVariables.orNull?.asFile?.let { PropertiesFileUtil().readProperties(it) }
             ?: emptyMap()
 
     private fun String.replaceVariables(variables: Map<String, String>): String {

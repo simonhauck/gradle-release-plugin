@@ -6,15 +6,13 @@ We welcome and appreciate all contributions. Here's how you can participate:
 
 1. Check if the bug has already been reported in the Issues section.
 2. If not, create a new issue. Provide as much detail as possible, including steps to reproduce, the expected outcome,
-   and
-   your environment setup.
+   and your environment setup.
 
 ## Suggesting Enhancements
 
 1. For feature requests, please first check the Issues section to see if it has already been suggested.
 2. If not, feel free to open a new issue describing your feature, why you think it would be beneficial, and how it
-   should
-   work.
+   should work.
 
 ## Pull Requests
 
