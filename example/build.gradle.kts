@@ -9,12 +9,17 @@ plugins {
     id("io.github.simonhauck.release")
 }
 
+// You can set the version from the version.properties file. You can utilize this helper method
+version = Version.fromPropertiesFile(layout.projectDirectory.file("version.properties").asFile)
+
 tasks.withType<BaseReleaseTask> {
     // This is just here, because it interferes with the release task of this parent project
     val inlcude = project.path.startsWith("example")
     onlyIf { inlcude }
 }
 
-version = Version.fromPropertiesFile(layout.projectDirectory.file("version.properties").asFile)
-
-release { versionPropertyFile.set(layout.projectDirectory.file("version.properties")) }
+// This is the configuration object
+release {
+    // Here you can specify all the configuration options
+    disablePush = true
+}
