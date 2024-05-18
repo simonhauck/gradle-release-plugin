@@ -9,8 +9,8 @@ plugins {
     id("io.github.simonhauck.release")
 }
 
-// This is just here, because it interferes with the release task of this parent project
-tasks.withType<BaseReleaseTask>() {
+tasks.withType<BaseReleaseTask> {
+    // This is just here, because it interferes with the release task of this parent project
     val inlcude = project.path.startsWith("example")
     onlyIf { inlcude }
 }
