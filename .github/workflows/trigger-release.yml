@@ -14,14 +14,14 @@ on:
 
 
 jobs:
-  #  tests:
-  #    uses: ./.github/workflows/run-tests.yml
+  tests:
+    uses: ./.github/workflows/run-tests.yml
 
   trigger-release:
     runs-on: ubuntu-latest
     name: Trigger the release
-    #    needs:
-    #      - tests
+    needs:
+      - tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
