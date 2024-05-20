@@ -8,7 +8,6 @@ kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.r
 ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.18.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 
-
 # Kotlin related
 kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version = "6.0.9" }
 ztExec = { module = "org.zeroturnaround:zt-exec", version = "1.12" }
@@ -18,6 +17,9 @@ arrowKt = { module = "io.arrow-kt:arrow-core", version = "1.2.4" }
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
 assertJCore = { module = "org.assertj:assertj-core", version = "3.25.3" }
+
+[plugins]
+gradlePublish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 
 [bundles]
 junit = ["junitApi", "junitEngine", "assertJCore"]
