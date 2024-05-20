@@ -4,6 +4,7 @@ plugins {
     id("build.common.artifactory")
     id("build.common.kotlin-conventions")
     `java-gradle-plugin`
+    alias(libs.plugins.gradlePublish)
 }
 
 group = "io.github.simonhauck.release"
@@ -19,11 +20,26 @@ dependencies {
     testImplementation(libs.bundles.junit)
 }
 
+@Suppress("UnstableApiUsage")
 gradlePlugin {
+    website = "https://github.com/simonhauck/gradle-release-plugin"
+    vcsUrl = "https://github.com/simonhauck/gradle-release-plugin"
     plugins {
         create("release-plugin") {
             id = "io.github.simonhauck.release"
+            displayName = "Release"
+            description = "A gradle plugin to automate your releases with Git"
+            tags = listOf("release", "git", "automation", "release-automation")
             implementationClass = "io.github.simonhauck.release.plugin.ReleasePlugin"
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "localPluginRepository"
+            url = uri("../local-plugin-repository")
         }
     }
 }

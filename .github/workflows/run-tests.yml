@@ -30,7 +30,7 @@ jobs:
         with:
           key: ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
           restore-keys: |
-            ${{ runner.os }}-build-master
+            ${{ runner.os }}-build-main
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
