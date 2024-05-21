@@ -187,7 +187,24 @@ class GitCommandApiTest {
 
     @Test
     fun `should be able to rebase the commits if another client has already pushed changes`() =
-        testDriver(tmpDir) { TODO("Not yet implemented") }
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            cloneForClient2()
+            client2WorkDir.resolve("other.txt").apply { writeText("Hello World") }
+            client2Api.add("other.txt").assertIsOk()
+            client2Api.commit("Client2 commit")
+            client2Api.push()
+
+            appendContentToBuildGradle("some content")
+            client1Api.add(".").assertIsOk()
+            client1Api.commit("Client1 commit")
+            client1Api.pullRebase()
+
+            val messages = client1Api.log().assertIsOk().map { it.message }
+            assertThat(messages)
+                .containsExactly("Initial commit", "Client2 commit", "Client1 commit")
+        }
 
     @Test
     fun `should be able to create and list tags`() =

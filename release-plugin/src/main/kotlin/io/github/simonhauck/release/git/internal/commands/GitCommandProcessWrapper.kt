@@ -67,7 +67,6 @@ internal class GitCommandProcessWrapper(
         return gitVoidCommand(listOf("push", "--follow-tags"), pushConfig)
     }
 
-    // TODO Simon.Hauck 2024-05-17 - test
     override fun pullRebase(): GitVoidResult {
         return gitVoidCommand(listOf("pull", "--rebase"))
     }
