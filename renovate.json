@@ -2,7 +2,9 @@
   "extends": [
     "config:base",
     ":dependencyDashboard",
-    ":automergeAll",
-    ":automergeBranch"
+    ":automergeAll"
+  ],
+  "labels": [
+    "dependencies"
   ]
 }
