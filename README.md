@@ -116,7 +116,7 @@ gradle command
 You can trigger a release by running the following gradle command
 
 ```shell
-./gradlew  release -PreleaseVersion=1.0.0> -PpostReleaseVersion=1.0.1-SNAPSHOT
+./gradlew  release -PreleaseVersion=1.0.0 -PpostReleaseVersion=1.0.1-SNAPSHOT
 ```
 
 Replace the values for the `releaseVersion` and `postReleaseVersion` with your desired target values.
