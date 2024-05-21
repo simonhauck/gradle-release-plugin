@@ -20,7 +20,6 @@ abstract class WriteVersionTask : BaseReleaseTask() {
         description = "Write the new version to the version file"
     }
 
-    @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
     @TaskAction
     fun action() {
         val tmpFileLocation = releaseVersionStore.get().asFile
