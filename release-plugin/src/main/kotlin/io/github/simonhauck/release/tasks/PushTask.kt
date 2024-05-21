@@ -17,10 +17,9 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
     @get:Input @get:Optional abstract val disablePush: Property<Boolean>
     @get:Input @get:Optional abstract val delayBeforePushInMs: Property<Duration>
 
-    // TODO Simon.Hauck 2024-05-17 - test this task
     @TaskAction
     fun push() {
-        if (disablePush.get()) {
+        if (disablePush.getOrElse(false)) {
             println("Push is disabled by configuration.")
             gitCommandHistoryApi.get().flushCommands()
             return
@@ -32,12 +31,16 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
 
         Thread.sleep(delay.seconds)
 
-        gitCommandApi().pullRebase()
+        gitCommandApi()
+            .pullRebase()
+            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+            .getOrThrowGradleException()
 
         log.lifecycle("Pushing changes to remote repository")
         gitCommandApi()
             .push(sshKeyFile.orNull?.asFile)
             .onRight { gitCommandHistoryApi.get().flushCommands() }
             .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+            .getOrThrowGradleException()
     }
 }
