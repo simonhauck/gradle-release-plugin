@@ -2,6 +2,7 @@ package io.github.simonhauck.release.plugin
 
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import io.github.simonhauck.release.testdriver.assertIsOk
+import io.github.simonhauck.release.testdriver.get
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -254,5 +255,30 @@ class ReleasePluginTest {
             client2Api.checkOutTag("v1.2.0").assertIsOk()
             val version = client2WorkDir.resolve("version.properties").readText()
             assertThat(version).isEqualTo("version=1.2.0")
+        }
+
+    @Test
+    fun `should revert the version file if no valid remote is available`() =
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.0")
+
+            createLocalRepository()
+
+            val runner =
+                testKitRunner()
+                    .withArguments(
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                    )
+                    .buildAndFail()
+
+            val actual = runner.task(":pushRelease")?.outcome
+            val actualVersion = client1WorkDir.resolve("version.properties").readText()
+
+            assertThat(actual).isEqualTo(TaskOutcome.FAILED)
+            assertThat(actualVersion).isEqualTo("version=1.0.0")
+            assertThat(client1Api.log().get()).hasSize(1)
+            assertThat(client1Api.listTags().get()).isEmpty()
         }
 }
