@@ -29,7 +29,7 @@ internal class ReleasePluginTestDriver {
 internal class SemanticVersioningProjectBuilder(
     val client1WorkDir: File,
     val client2WorkDir: File,
-    private val serverWorkDir: File
+    val serverWorkDir: File
 ) {
 
     init {
@@ -40,7 +40,7 @@ internal class SemanticVersioningProjectBuilder(
 
     val client1Api = GitTestCommandService(client1WorkDir)
     val client2Api = GitTestCommandService(client2WorkDir)
-    private val serverApi = GitTestCommandService(serverWorkDir)
+    val serverApi = GitTestCommandService(serverWorkDir)
 
     fun testKitRunner(): GradleRunner {
         return GradleRunner.create()
@@ -59,6 +59,12 @@ internal class SemanticVersioningProjectBuilder(
             .addRemoteAndSetUpstream("origin", serverWorkDir.absolutePath, "main")
             .assertIsOk()
         client1Api.push().assertIsOk()
+    }
+
+    fun createLocalRepository() {
+        client1Api.init("main").assertIsOk()
+        client1Api.add(".").assertIsOk()
+        client1Api.commit("Initial commit").assertIsOk()
     }
 
     fun cloneForClient2() {
