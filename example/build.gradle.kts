@@ -14,8 +14,8 @@ version = Version.fromPropertiesFile(layout.projectDirectory.file("version.prope
 
 tasks.withType<BaseReleaseTask> {
     // This is just here, because it interferes with the release task of this parent project
-    val inlcude = project.path.startsWith("example")
-    onlyIf { inlcude }
+    val include = project.path.startsWith("example")
+    onlyIf { include }
 }
 
 // This is the configuration object

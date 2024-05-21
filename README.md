@@ -41,7 +41,7 @@ addresses some of its shortcomings and provides additional functionalities.
 
 ## Feature overview
 
-Here is an overview of the planned features. To vote for an feature, either create an issue or give a thumbs up on an
+Here is an overview of the planned features. To vote for a feature, either create an issue or give a thumbs up on an
 existing issue.
 
 | **Feature**                           | **Description**                                                                               | **Implementation Status** | **Related issues**                                                   |
@@ -85,7 +85,7 @@ version = Version.fromPropertiesFile(layout.projectDirectory.file("version.prope
 ```
 
 The plugin provides sensible defaults for the release process. If you want to customize the release process, have a look
-at the [configuration options](#parameter-configuration).
+at the [configuration options](#parameter-specification).
 
 ### Trigger a release
 
@@ -173,7 +173,7 @@ tasks.commitReleaseVersion { dependsOn(customTask) }
 
 ### Parameter specification
 
-Here are all parameters listed for the `release` extension. The plugin provides sensible defaults for all parameters so
+Here are all parameters listed for the `release` extension. The plugin provides sensible defaults for all parameters, so
 you can start without any configuration.
 
 | **Parameter Name**          | Type         | **Description**                                                                                                  | **Default value**                         |
