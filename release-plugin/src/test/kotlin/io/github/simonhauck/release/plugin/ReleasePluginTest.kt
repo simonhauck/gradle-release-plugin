@@ -281,4 +281,28 @@ class ReleasePluginTest {
             assertThat(client1Api.log().get()).hasSize(1)
             assertThat(client1Api.listTags().get()).isEmpty()
         }
+
+    @Test
+    fun `should not revert unrelated files if a push fails`() =
+        testDriver(tmpDir) {
+            val file = client1WorkDir.resolve("testFile.txt").apply { writeText("hello") }
+
+            createLocalRepository()
+
+            file.writeText("unrelated change")
+
+            val runner =
+                testKitRunner()
+                    .withArguments(
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                    )
+                    .buildAndFail()
+
+            val actual = runner.task(":pushRelease")?.outcome
+
+            assertThat(actual).isEqualTo(TaskOutcome.FAILED)
+            assertThat(file.readText()).contains("unrelated change")
+        }
 }
