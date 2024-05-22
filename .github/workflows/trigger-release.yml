@@ -18,6 +18,7 @@ jobs:
     uses: ./.github/workflows/run-tests.yml
 
   trigger-release:
+    if: contains('["simonhauck"]', github.actor)
     runs-on: ubuntu-latest
     name: Trigger the release
     needs:
