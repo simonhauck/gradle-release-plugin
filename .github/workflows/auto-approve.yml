@@ -11,3 +11,5 @@ jobs:
     if: contains('["simonhauck", "renovate[bot]"]', github.actor)
     steps:
       - uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
