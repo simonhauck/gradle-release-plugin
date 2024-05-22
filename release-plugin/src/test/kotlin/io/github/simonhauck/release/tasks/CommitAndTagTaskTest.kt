@@ -103,11 +103,6 @@ class CommitAndTagTaskTest {
     @Test
     fun `git tag should fail and revert the previous commands when the tag is already set`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
-            client1Api.tag("v1.0.0", "Initial tag").assertIsOk()
-
-            File(client1WorkDir, "newFile.txt").writeText("Hello World")
-
             appendContentToBuildGradle(
                 """
                 |tasks.register<CommitAndTagTask>("commitAndTag") {
@@ -118,8 +113,11 @@ class CommitAndTagTaskTest {
             """
                     .trimMargin()
             )
+            createValidRepositoryWithRemote()
+            client1Api.tag("v1.0.0", "Initial tag").assertIsOk()
+            File(client1WorkDir, "newFile.txt").writeText("Hello World")
 
-            val runner = testKitRunner().withArguments("commitAndTag").buildAndFail()
+            val runner = testKitRunner().withArguments("commitAndTag", "--info").buildAndFail()
 
             val actual = runner.task(":commitAndTag")?.outcome
 

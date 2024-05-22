@@ -2,16 +2,22 @@ package io.github.simonhauck.release.git.internal.commands
 
 import arrow.core.Either
 import arrow.core.flatten
+import arrow.core.getOrElse
 import io.github.simonhauck.release.git.api.*
 import io.github.simonhauck.release.git.internal.process.ProcessConfig
 import io.github.simonhauck.release.git.internal.process.ProcessSuccess
 import io.github.simonhauck.release.git.internal.process.ProcessWrapper
+import io.github.simonhauck.release.git.internal.process.exitCode
+import io.github.simonhauck.release.tasks.PushTask
 import java.io.File
+import org.gradle.api.logging.Logging
 
 internal class GitCommandProcessWrapper(
     private val processWrapper: ProcessWrapper = ProcessWrapper(),
     private val config: ProcessConfig = ProcessConfig()
 ) : GitCommandApi {
+
+    private val log = Logging.getLogger(PushTask::class.java)
 
     override fun init(branchName: String): GitVoidResult {
         return gitVoidCommand(listOf("init", "--initial-branch=$branchName"))
@@ -49,10 +55,17 @@ internal class GitCommandProcessWrapper(
     }
 
     override fun deleteLastCommit(): GitVoidResult {
-        return gitVoidCommand(listOf("reset", "--hard", "HEAD~1"))
+        val stashChangedFiles = status().map { it.notEmpty() }.getOrElse { false }
+        if (stashChangedFiles) gitVoidCommand(listOf("stash", "--include-untracked"))
+
+        val result = gitVoidCommand(listOf("reset", "--hard", "HEAD~1"))
+
+        if (stashChangedFiles) gitVoidCommand(listOf("stash", "pop"))
+
+        return result
     }
 
-    // TODO Simon.Hauck 2024-05-17 - How to test the git push behavior?
+    // TODO Simon.Hauck 2024-05-17 - How to test the git push behavior with credentials?
     override fun push(sshKeyFile: File?): GitVoidResult {
         val envToAdd =
             if (sshKeyFile != null)
@@ -132,8 +145,12 @@ internal class GitCommandProcessWrapper(
         command: List<String>,
         processConfig: ProcessConfig? = null
     ): Either<GitError, ProcessSuccess> {
-        val runCommand =
-            processWrapper.runCommand(listOf("git").plus(command), processConfig ?: config)
+        val gitCommand = listOf("git").plus(command)
+        log.info("Running git command: '${gitCommand.joinToString(" ")}'")
+
+        val runCommand = processWrapper.runCommand(gitCommand, processConfig ?: config)
+        log.info("Command finished (exitCode=${runCommand.exitCode()})")
+
         return runCommand.mapLeft { GitError(it.message, it.error) }
     }
 }
