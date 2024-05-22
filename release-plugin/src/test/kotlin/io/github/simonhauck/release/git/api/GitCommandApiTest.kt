@@ -151,6 +151,32 @@ class GitCommandApiTest {
         }
 
     @Test
+    fun `should leave unstaged, untracked and staged unchanged when dropping the last commit`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            updateVersionProperties("1.0.0")
+            val unstagedFile =
+                client1WorkDir.resolve("unstaged.txt").apply { writeText("Unstaged") }
+            val stagedFile = client1WorkDir.resolve("staged.txt").apply { writeText("Staged") }
+            client1Api.add(".").assertIsOk()
+            client1Api.commit("commit to be reverted").assertIsOk()
+
+            // This is the post commit
+            val untrackedFile =
+                client1WorkDir.resolve("untracked.txt").apply { writeText("Untracked") }
+            stagedFile.writeText("new staged content")
+            unstagedFile.writeText("new unstaged content")
+            client1Api.add("staged.txt")
+
+            client1Api.deleteLastCommit().assertIsOk()
+
+            assertThat(untrackedFile).content().isEqualTo("Untracked")
+            assertThat(stagedFile).content().isEqualTo("new staged content")
+            assertThat(unstagedFile).content().isEqualTo("new unstaged content")
+        }
+
+    @Test
     fun `should be able to set a remote branch and push a git commit that is remote available`() =
         testDriver(tmpDir) {
             serverApi.initBareRepository()

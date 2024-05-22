@@ -21,6 +21,8 @@ data class GitStatusResult(
     val untracked: List<String>
 ) {
     fun allEmpty() = staged.isEmpty() && unstaged.isEmpty() && untracked.isEmpty()
+
+    fun notEmpty() = !allEmpty()
 }
 
 fun Either<GitError, *>.isOk(): Boolean = isRight()
