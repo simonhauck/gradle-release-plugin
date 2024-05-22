@@ -38,7 +38,8 @@ jobs:
       - name: Cache
         uses: actions/cache@v4
         with:
-          key: ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+          key: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
           restore-keys: |
             ${{ runner.os }}-build-main
           path: |
