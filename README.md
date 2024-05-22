@@ -3,6 +3,7 @@
 [![Main](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-main-push.yml/badge.svg)](https://github.com/simonhauck/gradle-release-plugin/actions/workflows/on-main-push.yml)
 [![Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/io/github/simonhauck/release/io.github.simonhauck.release.gradle.plugin/maven-metadata.xml?label=Gradle%20Plugin%20Portal&colorB=brightgreen&logo=gradle)](https://plugins.gradle.org/plugin/io.github.simonhauck.release)
 
+
 <!-- TOC -->
 
 * [Gradle Release Plugin](#gradle-release-plugin)
