@@ -9,8 +9,10 @@ plugins {
     id("io.github.simonhauck.release")
 }
 
+val versionFile = layout.projectDirectory.file("version.properties")
+
 // You can set the version from the version.properties file. You can utilize this helper method
-version = Version.fromPropertiesFile(layout.projectDirectory.file("version.properties").asFile)
+version = Version.fromPropertiesFile(versionFile.asFile)
 
 tasks.withType<BaseReleaseTask> {
     // This is just here, because it interferes with the release task of this parent project
