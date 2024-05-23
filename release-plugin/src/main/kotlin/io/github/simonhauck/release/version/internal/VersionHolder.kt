@@ -17,8 +17,8 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
         log.info { "Saving versions to ${tmpFileLocation.absolutePath} to $releaseVersions" }
 
         Properties().apply {
-            setProperty(RELEASE_VERSION_KEY, releaseVersions.releaseVersion.version)
-            setProperty(POST_RELEASE_VERSION_KEY, releaseVersions.postReleaseVersion.version)
+            setProperty(RELEASE_VERSION_KEY, releaseVersions.releaseVersion.value)
+            setProperty(POST_RELEASE_VERSION_KEY, releaseVersions.postReleaseVersion.value)
             writeToFile(tmpFileLocation)
         }
     }
@@ -36,7 +36,7 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
     override fun writeVersionPropertyToFile(file: File, version: Version) {
         val updatedMap =
             readPropertiesFile(file).toMutableMap().apply {
-                put("version", version.version)
+                put("version", version.value)
                 toMap()
             }
 
