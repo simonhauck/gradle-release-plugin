@@ -8,7 +8,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class CommitAndTagTaskTest {
+internal class CommitAndTagTaskTest {
 
     @TempDir lateinit var tmpDir: File
 

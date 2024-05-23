@@ -9,7 +9,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class ReleasePluginTest {
+internal class ReleasePluginTest {
 
     @TempDir lateinit var tmpDir: File
 

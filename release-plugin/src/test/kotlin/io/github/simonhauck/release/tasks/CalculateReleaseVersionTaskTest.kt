@@ -7,7 +7,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class CalculateReleaseVersionTaskTest {
+internal class CalculateReleaseVersionTaskTest {
 
     @TempDir lateinit var tmpDir: File
 

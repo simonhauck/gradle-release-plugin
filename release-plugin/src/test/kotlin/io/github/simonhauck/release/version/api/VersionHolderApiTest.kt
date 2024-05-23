@@ -7,7 +7,7 @@ import org.gradle.api.GradleException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class VersionHolderApiTest {
+internal class VersionHolderApiTest {
     @TempDir lateinit var tempDir: File
 
     @Test
