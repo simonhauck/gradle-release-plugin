@@ -4,6 +4,7 @@ import io.github.simonhauck.release.version.api.VersionHolderApi
 import java.io.File
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -11,6 +12,8 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 abstract class WriteVersionTask : BaseReleaseTask() {
+
+    private val log = Logging.getLogger(WriteVersionTask::class.java)
 
     @get:Input abstract val versionType: Property<VersionType>
     @get:InputFile abstract val releaseVersionStore: RegularFileProperty
@@ -32,7 +35,7 @@ abstract class WriteVersionTask : BaseReleaseTask() {
                 VersionType.NEXT_DEV -> releaseVersions.postReleaseVersion
             }
 
-        println("$versionToWrite in file ${versionFile.get().asFile.absolutePath}")
+        log.lifecycle("Updating version in ${versionFile.get().asFile.path} to $versionToWrite")
         versionHolderApi.writeVersionPropertyToFile(versionFile.get().asFile, versionToWrite)
     }
 

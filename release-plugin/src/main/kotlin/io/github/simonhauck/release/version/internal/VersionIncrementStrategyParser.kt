@@ -7,7 +7,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 
 internal class VersionIncrementStrategyParser : VersionIncrementStrategyParserApi {
-    private val log = Logging.getLogger(this::class.java)
+    private val log = Logging.getLogger(VersionIncrementStrategyParser::class.java)
 
     private val parsers =
         listOf(

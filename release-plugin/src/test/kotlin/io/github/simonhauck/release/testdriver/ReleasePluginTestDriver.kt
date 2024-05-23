@@ -8,7 +8,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.testkit.runner.GradleRunner
 
 internal class ReleasePluginTestDriver {
-    private val log = Logging.getLogger(this::class.java)
+    private val log = Logging.getLogger(ReleasePluginTestDriver::class.java)
 
     operator fun invoke(tmpDir: File, action: SemanticVersioningProjectBuilder.() -> Unit) {
         log.lifecycle("Current test directory is $tmpDir")

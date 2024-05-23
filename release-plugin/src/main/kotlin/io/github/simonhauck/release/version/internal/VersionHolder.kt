@@ -10,7 +10,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 
 internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderApi {
-    private val log = Logging.getLogger(this::class.java)
+    private val log = Logging.getLogger(VersionHolder::class.java)
 
     override fun saveVersions(releaseVersions: ReleaseVersions) {
         log.info("Saving versions $releaseVersions to ${tmpFileLocation.absolutePath}")
