@@ -48,7 +48,7 @@ existing issue.
 |---------------------------------------|-----------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
 | Release with explicit version numbers | Release with while providing explicit version numbers                                         | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
 | Support Trunk based released          | The plugin can perform a release on a given branch                                            | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Simplified API                        | Release with a single parameter like major, minor, patch                                      | :x:                       | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
+| Simplified API                        | Release with a single parameter like major, minor, patch                                      | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
 | Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
 | Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.               | :x:                       | No issue created yet                                                 |
 
@@ -118,15 +118,20 @@ gradle command
 You can trigger a release by running the following gradle command
 
 ```shell
-./gradlew  release -PreleaseVersion=1.0.0 -PpostReleaseVersion=1.0.1-SNAPSHOT
+./gradlew release -PreleaseVersion=1.0.0 -PpostReleaseVersion=1.0.1-SNAPSHOT
 ```
 
 Replace the values for the `releaseVersion` and `postReleaseVersion` with your desired target values.
 
 #### Option 2: Use the release type
 
-[WIP] This feature is not yet fully implement. This feature is tracked in
-this [issue](https://github.com/simonhauck/gradle-release-plugin/issues/15)
+If you have a [semver](https://semver.org/) compatible version you can choose to use the simplified api.
+
+```shell
+./gradlew release -PreleaseType=<release-type>
+```
+
+Replace the _release-type_ with ``major``, ``minor`` or ``patch``. This will determine the version automatically.
 
 ### Customizing the release process
 
