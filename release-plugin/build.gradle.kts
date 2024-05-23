@@ -35,15 +35,6 @@ gradlePlugin {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "localPluginRepository"
-            url = uri("../local-plugin-repository")
-        }
-    }
-}
-
 private fun readVersionFromFile(file: File): String = readProperties(file).getProperty("version")
 
 private fun readProperties(propertiesFile: File) =
