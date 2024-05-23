@@ -76,12 +76,14 @@ plugins {
     id("io.github.simonhauck.release") version "<the-current-version>"
 }
 
+val versionFile = layout.projectDirectory.file("version.properties")
+
 release {
-    versionPropertyFile.set(layout.projectDirectory.file("version.properties"))
+    versionPropertyFile.set(versionFile)
 }
 
 // If you want to set the version in you gradle project you can use this helper method
-version = Version.fromPropertiesFile(layout.projectDirectory.file("version.properties").asFile)
+version = Version.fromPropertiesFile(versionFile.asFile)
 ```
 
 The plugin provides sensible defaults for the release process. If you want to customize the release process, have a look
