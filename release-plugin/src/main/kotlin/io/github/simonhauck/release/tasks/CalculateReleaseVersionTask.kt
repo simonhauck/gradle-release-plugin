@@ -16,7 +16,7 @@ import org.gradle.api.tasks.TaskAction
 
 abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
 
-    private val log = Logging.getLogger(this::class.java)
+    private val log = Logging.getLogger(CalculateReleaseVersionTask::class.java)
 
     init {
         description = "Calculate the release version and the next development version"

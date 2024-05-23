@@ -20,7 +20,7 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
     @TaskAction
     fun push() {
         if (disablePush.getOrElse(false)) {
-            println("Push is disabled by configuration.")
+            log.lifecycle("Push is disabled by configuration.")
             gitCommandHistoryApi.get().flushCommands()
             return
         }
@@ -31,16 +31,20 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
 
         Thread.sleep(delay.seconds)
 
+        log.info("Rebasing current branch...")
         gitCommandApi()
             .pullRebase()
             .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
             .getOrThrowGradleException()
+        log.info("Rebase complete")
 
-        log.lifecycle("Pushing changes to remote repository")
+        log.lifecycle("Pushing changes to remote repository...")
         gitCommandApi()
             .push(sshKeyFile.orNull?.asFile)
             .onRight { gitCommandHistoryApi.get().flushCommands() }
             .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
             .getOrThrowGradleException()
+
+        log.lifecycle("Push complete.")
     }
 }

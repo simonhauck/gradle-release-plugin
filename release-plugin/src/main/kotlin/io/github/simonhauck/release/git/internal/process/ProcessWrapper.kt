@@ -2,11 +2,13 @@ package io.github.simonhauck.release.git.internal.process
 
 import arrow.core.Either
 import java.util.concurrent.TimeUnit
+import org.gradle.api.logging.Logging
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.zeroturnaround.exec.ProcessExecutor
 import org.zeroturnaround.exec.stream.LogOutputStream
 
 internal class ProcessWrapper {
+    private val log = Logging.getLogger(ProcessWrapper::class.java)
 
     fun runCommand(command: List<String>, config: ProcessConfig = ProcessConfig()): ProcessResult =
         Either.catch {
@@ -50,22 +52,25 @@ internal class ProcessWrapper {
     }
 
     private fun Process.destroyWithDescendants() {
-        println("Killing process children...")
+        log.debug("Killing process children...")
         this.descendants().forEach { childProcess -> childProcess.destroy() }
-        println("Killing process...")
+        log.debug("Killing process...")
         this.destroy()
-        println("Waiting for shutdown (30 sec max)...")
+        log.debug("Waiting for shutdown (30 sec max)...")
         this.waitFor(30, TimeUnit.SECONDS)
-        println("Process is terminated")
+        log.debug("Process is terminated")
     }
 
     private class ProcessOutputHandler(
         private val isError: Boolean,
         private val outputCaptor: MutableList<String>
     ) : LogOutputStream() {
+        private val log = Logging.getLogger(ProcessOutputHandler::class.java)
+
         override fun processLine(line: String) {
+
             outputCaptor.add(line)
-            if (isError) System.err.println(line) else println(line)
+            if (isError) log.info("StdErr: $line") else log.info("StdOut: $line")
         }
     }
 }

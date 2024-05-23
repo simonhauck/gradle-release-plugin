@@ -16,7 +16,7 @@ version = Version.fromPropertiesFile(versionFile.asFile)
 
 tasks.withType<BaseReleaseTask> {
     // This is just here, because it interferes with the release task of this parent project
-    val include = project.path.startsWith("example")
+    val include = project.path.startsWith(":example")
     onlyIf { include }
 }
 
