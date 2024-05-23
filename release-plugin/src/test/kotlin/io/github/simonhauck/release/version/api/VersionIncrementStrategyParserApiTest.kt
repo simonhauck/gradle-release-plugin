@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.gradle.api.GradleException
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class VersionIncrementStrategyParserApiTest {
 
@@ -14,12 +13,13 @@ internal class VersionIncrementStrategyParserApiTest {
     fun `should throw if no valid arguments are supplied`() {
         val parameters = emptyMap<String, String>()
 
-        val exception =
-            assertThrows<GradleException> {
+        assertThatThrownBy {
                 versionIncrementStrategyParserApi.parseOrThrow(Version("1.0.0"), parameters)
             }
-
-        assertThat(exception.message).isEqualTo("No valid version increment strategy found.")
+            .isInstanceOf(GradleException::class.java)
+            .hasMessage(
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
+            )
     }
 
     @Test
@@ -89,6 +89,8 @@ internal class VersionIncrementStrategyParserApiTest {
                 )
             }
             .isInstanceOf(GradleException::class.java)
-            .hasMessage("No valid version increment strategy found.")
+            .hasMessage(
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
+            )
     }
 }
