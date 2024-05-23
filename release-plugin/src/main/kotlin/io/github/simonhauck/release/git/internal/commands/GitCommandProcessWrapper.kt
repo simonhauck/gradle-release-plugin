@@ -151,6 +151,24 @@ internal class GitCommandProcessWrapper(
         val runCommand = processWrapper.runCommand(gitCommand, processConfig ?: config)
         log.info("Command finished (exitCode=${runCommand.exitCode()})")
 
-        return runCommand.mapLeft { GitError(it.message, it.error) }
+        val commandString = command.joinToString(" ")
+        // TODO Simon.Hauck 2024-05-23 - Test teh gradle exception content
+        return runCommand
+            .onLeft {
+                log.error("Failed to execute command '$commandString'. Error: ${it.message}")
+            }
+            .mapLeft {
+                val output =
+                    listOf(
+                            "Failed to execute command: '$commandString'",
+                            it.message,
+                            "--- Git output ---"
+                        )
+                        .plus(it.output)
+                        .plus("--- End of output ---")
+                        .joinToString("\n")
+
+                GitError(output, it.error)
+            }
     }
 }
