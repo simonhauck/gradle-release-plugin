@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
-class GitCommandApiTest {
+internal class GitCommandApiTest {
 
     @TempDir lateinit var tmpDir: File
 

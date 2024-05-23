@@ -5,7 +5,7 @@ import org.gradle.api.GradleException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class VersionIncrementStrategyParserApiTest {
+internal class VersionIncrementStrategyParserApiTest {
 
     private val versionIncrementStrategyParserApi = VersionIncrementStrategyParserApi.create()
 
