@@ -1,12 +1,12 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
 import io.github.simonhauck.release.version.api.VersionHolderApi
 import io.github.simonhauck.release.version.api.VersionIncrementStrategyParserApi
 import java.io.File
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -14,9 +14,9 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
-private val log = KotlinLogging.logger {}
-
 abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
+
+    private val log = Logging.getLogger(this::class.java)
 
     init {
         description = "Calculate the release version and the next development version"
@@ -35,7 +35,7 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
             versionHolder.loadVersionFromFileOrThrow(versionPropertyFile.get().asFile)
         val releaseVersions = getReleaseVersions(currentVersion)
 
-        log.info { "Determined versions $releaseVersions" }
+        log.lifecycle("Determined versions $releaseVersions")
 
         versionHolder.saveVersions(releaseVersions)
     }
