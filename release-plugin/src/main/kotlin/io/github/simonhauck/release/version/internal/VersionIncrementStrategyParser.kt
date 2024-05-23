@@ -13,13 +13,14 @@ internal class VersionIncrementStrategyParser : VersionIncrementStrategyParserAp
     private val parsers =
         listOf(
             ManualVersionSelectionStrategy(),
+            ReleaseTypeSelectionStrategy(),
         )
 
     override fun parseOrThrow(
         currentVersion: Version,
         parameters: Map<String, String>
     ): ReleaseVersions {
-        val parsedVersion = parsers.firstNotNullOfOrNull { it.tryParse(parameters) }
+        val parsedVersion = parsers.firstNotNullOfOrNull { it.tryParse(currentVersion, parameters) }
 
         if (parsedVersion == null) {
             log.error { "No version increment strategy found" }

@@ -50,6 +50,31 @@ internal class VersionInfoTest {
             "1.0.0-0A.is.legal" to VersionInfo(1, 0, 0, "0A.is.legal"),
         )
 
+    @TestFactory
+    fun isPreReleaseTests(): List<DynamicTest> =
+        listOf("SNAPSHOT" to true, null to false).map {
+            DynamicTest.dynamicTest("isPreRelease() should map ${it.first} to ${it.second}") {
+                isPreRelease(it.first, it.second)
+            }
+        }
+
+    private fun isPreRelease(preReleaseSuffix: String?, expected: Boolean) {
+        val versionInfo = VersionInfo(1, 0, 0, preReleaseSuffix)
+
+        val actual = versionInfo.isPreRelease()
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `should remove the pre release suffix`() {
+        val originalVersion = VersionInfo(1, 0, 0, "suffix")
+
+        val actual = originalVersion.bumpToRelease()
+
+        assertThat(actual).isEqualTo(VersionInfo(1, 0, 0))
+    }
+
     @Test
     fun `should increase the patch level by one and remove the pre release modifier on a patch release`() {
         val currentVersion = VersionInfo(1, 2, 3, preReleaseSuffix = "val")

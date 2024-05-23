@@ -16,10 +16,18 @@ internal data class VersionInfo(
     val buildMetaData: String? = null
 ) {
 
+    fun isPreRelease(): Boolean {
+        return preReleaseSuffix != null
+    }
+
     fun toVersion(): Version {
         val preReleaseSuffixString = preReleaseSuffix?.let { "-$preReleaseSuffix" } ?: ""
         val buildMetaDataString = buildMetaData?.let { "+$buildMetaData" } ?: ""
         return Version("$major.$minor.$patch$preReleaseSuffixString$buildMetaDataString")
+    }
+
+    fun bumpToRelease(): VersionInfo {
+        return copy(preReleaseSuffix = null, buildMetaData = null)
     }
 
     fun bumpPatch(newPreLeaseSuffix: String? = null): VersionInfo {
