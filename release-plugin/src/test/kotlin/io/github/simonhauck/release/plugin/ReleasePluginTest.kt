@@ -16,7 +16,7 @@ internal class ReleasePluginTest {
     private val testDriver = ReleasePluginTestDriver()
 
     @Test
-    fun `the version file should contain the next development version at the end`() =
+    fun `the version file should contain the next development version at the end when the versions are set directly`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
@@ -34,6 +34,27 @@ internal class ReleasePluginTest {
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
             assertThat(client1WorkDir.resolve("version.properties").readText())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
+        }
+
+    @Test
+    fun `releasing with releaseType strategy should be successful`() =
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.1-SNAPSHOT")
+            createValidRepositoryWithRemote()
+
+            val runner =
+                testKitRunner()
+                    .withArguments(
+                        "release",
+                        "-PreleaseType=minor",
+                    )
+                    .build()
+
+            val actual = runner.task(":release")?.outcome
+
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(client1WorkDir.resolve("version.properties").readText())
+                .isEqualTo("version=1.1.1-SNAPSHOT")
         }
 
     @Test
