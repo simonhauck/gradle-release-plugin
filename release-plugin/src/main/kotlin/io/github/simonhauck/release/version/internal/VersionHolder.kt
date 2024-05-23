@@ -1,6 +1,5 @@
 package io.github.simonhauck.release.version.internal
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
@@ -8,13 +7,13 @@ import io.github.simonhauck.release.version.api.VersionHolderApi
 import java.io.File
 import java.util.*
 import org.gradle.api.GradleException
-
-private val log = KotlinLogging.logger {}
+import org.gradle.api.logging.Logging
 
 internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderApi {
+    private val log = Logging.getLogger(this::class.java)
 
     override fun saveVersions(releaseVersions: ReleaseVersions) {
-        log.info { "Saving versions to ${tmpFileLocation.absolutePath} to $releaseVersions" }
+        log.info("Saving versions $releaseVersions to ${tmpFileLocation.absolutePath}")
 
         Properties().apply {
             setProperty(RELEASE_VERSION_KEY, releaseVersions.releaseVersion.value)
@@ -24,7 +23,7 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
     }
 
     override fun loadVersions(): ReleaseVersions? {
-        log.debug { "Loading release versions from ${tmpFileLocation.absolutePath}" }
+        log.info("Loading release versions from ${tmpFileLocation.absolutePath}")
 
         val properties = readPropertiesFile(tmpFileLocation)
 

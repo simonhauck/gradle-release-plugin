@@ -13,7 +13,6 @@ version = readVersionFromFile(rootProject.file("../version.properties"))
 
 dependencies {
     implementation(libs.ztExec)
-    implementation(libs.kotlinLogging)
     implementation(libs.arrowKt)
 
     testImplementation(gradleTestKit())

@@ -1,18 +1,17 @@
 package io.github.simonhauck.release.testdriver
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import org.gradle.api.logging.Logging
 import org.gradle.testkit.runner.GradleRunner
 
-private val log = KotlinLogging.logger {}
-
 internal class ReleasePluginTestDriver {
+    private val log = Logging.getLogger(this::class.java)
 
     operator fun invoke(tmpDir: File, action: SemanticVersioningProjectBuilder.() -> Unit) {
-        log.info { "Current test directory is $tmpDir" }
+        log.lifecycle("Current test directory is $tmpDir")
 
         SemanticVersioningProjectBuilder(
                 tmpDir.resolve("client1"),
