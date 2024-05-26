@@ -326,4 +326,35 @@ internal class ReleasePluginTest {
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
             assertThat(file.readText()).contains("unrelated change")
         }
+
+    @Test
+    fun `should return a descriptive error message if the tag is already used`() {
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.0")
+            createValidRepositoryWithRemote()
+            client1Api.tag("v1.2.0", "this tag is already existing")
+            client1Api.push().assertIsOk()
+
+            val runner =
+                testKitRunner()
+                    .withArguments(
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                    )
+                    .buildAndFail()
+
+            val actual = runner.output.lines()
+
+            assertThat(actual)
+                .containsSequence(
+                    "Execution failed for task ':commitReleaseVersion'.",
+                    "> Failed to execute command: 'tag -a v1.2.0 -m Release commit: v1.2.0'",
+                    "  Command finished with non zero exit code (code=128)",
+                    "  --- Git output ---",
+                    "  fatal: tag 'v1.2.0' already exists",
+                    "  --- End of output ---",
+                )
+        }
+    }
 }

@@ -258,4 +258,19 @@ internal class GitCommandApiTest {
             val actual = client1Api.listTags().assertIsOk()
             assertThat(actual).containsExactly("v1.1")
         }
+
+    @Test
+    fun `should return a GitError with an descriptive error message containing the console output of the git command`() =
+        testDriver(tmpDir) {
+            val actual = client1Api.status()
+
+            assertThat(actual.leftOrNull()?.message?.lines())
+                .containsExactly(
+                    "Failed to execute command: 'status --porcelain'",
+                    "Command finished with non zero exit code (code=128)",
+                    "--- Git output ---",
+                    "fatal: not a git repository (or any of the parent directories): .git",
+                    "--- End of output ---"
+                )
+        }
 }
