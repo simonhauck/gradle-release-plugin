@@ -29,8 +29,7 @@ the [researchgate/release-plugin](https://github.com/researchgate/gradle-release
 addresses some of its shortcomings and provides additional functionalities.
 
 - **Multiple Release Types**: You can either directly specify the release version or use a simplified API and just
-  select the release type. Let the plugin do the rest (this feature is still
-  WIP, [issue](https://github.com/simonhauck/gradle-release-plugin/issues/15)).
+  select the release type. Let the plugin do the rest.
 - **Adaptable Release Workflow**: The plugin offers flexibility by allowing you to incorporate custom tasks into the
   release process to make it fit your specific projects requirements
 - **Composite Build Support**: This plugin can be applied to projects with a composite build, addressing
