@@ -15,6 +15,7 @@
             * [Option 1: Specify the versions explicitly](#option-1-specify-the-versions-explicitly)
             * [Option 2: Use the release type](#option-2-use-the-release-type)
         * [Customizing the release process](#customizing-the-release-process)
+            * [Example](#example)
         * [Parameter specification](#parameter-specification)
         * [Example with GitHub Actions](#example-with-github-actions)
     * [How to contribute](#how-to-contribute)
@@ -45,7 +46,7 @@ existing issue.
 
 | **Feature**                           | **Description**                                                                               | **Implementation Status** | **Related issues**                                                   |
 |---------------------------------------|-----------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
-| Release with explicit version numbers | Release while providing explicit version numbers                                         | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Release with explicit version numbers | Release while providing explicit version numbers                                              | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
 | Support Trunk based released          | The plugin can perform a release on a given branch                                            | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
 | Simplified API                        | Release with a single parameter like major, minor, patch                                      | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
 | Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
@@ -59,7 +60,8 @@ Here is quick guide on how to get started using this plugin.
 
 1. Git: In order to perform the different git operations the plugin requires git to be available in the path
 2. Version properties file: A version file must be available. The file should contain a key `version` which contains the
-   current project version as shown in this example [here](version.properties). The plugin will write the updated version
+   current project version as shown in this example [here](version.properties). The plugin will write the updated
+   version
    there. By default, the file should be located in the root project and be named `version.properties`. You can change
    the name and location with the configuration.
 
@@ -112,7 +114,8 @@ release {
 
 #### Option 1: Specify the versions explicitly
 
-The first option is to specify the release and post release versions explicitly. For this you can trigger the release with the following
+The first option is to specify the release and post release versions explicitly. For this you can trigger the release
+with the following
 gradle command:
 
 ```shell
@@ -183,19 +186,19 @@ tasks.commitReleaseVersion { dependsOn(customTask) }
 Here are all parameters listed for the `release` extension. The plugin provides sensible defaults for all parameters, so
 you can start without any configuration.
 
-| **Parameter Name**          | Type         | **Description**                                                                                                  | **Default value**                         |
-|-----------------------------|--------------|------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
-| _rootGitDirectory_          | RegularFile  | The root of your git project.  | <gradle-project-dir\>                      |
+| **Parameter Name**          | Type         | **Description**                                                                                                   | **Default value**                          |
+|-----------------------------|--------------|-------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| _rootGitDirectory_          | RegularFile  | The root of your git project.                                                                                     | <gradle-project-dir\>                      |
 | _versionPropertyFile_       | RegularFile  | The file containing the version. The content should contain _version=<your-version\>_                             | <gradle-project-dir\>/version.properties   |
-| _releaseCommitAddFiles_     | List <File\>  | The files that should be added for the release commit                                                            | [<gradle-project-dir\>/version.properties] |
-| _releaseCommitMessage_      | String       | The commit message used for the release commit. The key {version} is replaced with the release version           | "Release commit: v{version}"              |
-| _postReleaseCommitAddFiles_ | List <File\> | The files that should be added for the post release commit                                                       | <gradle-project-dir\>/version.properties   |
-| _postReleaseCommitMessage_  | String       | The commit message used for the post release commit. The key {version} is replaced with the post release version | "Post release commit: v{version}"         |
-| _commitMessagePrefix_       | String       | A prefix that is added for all commits                                                                           | ""                                        |
-| _tagName_                   | String       | The name for the release tag. The key {version} is replaced with the release version                             | v{version}                                |
-| _sshKeyFile_                | RegularFile  | A location of an ssh key file. If the value is null, the standard git authentication methods are used            | null                                      |
-| _disablePush_               | Boolean      | Disable the actual push operation. This is useful for local testing / development                                | false                                     |
-| _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to quickly. You can specify a delay before the second push operation | Duration.ZERO                             |
+| _releaseCommitAddFiles_     | List <File\> | The files that should be added for the release commit                                                             | [<gradle-project-dir\>/version.properties] |
+| _releaseCommitMessage_      | String       | The commit message used for the release commit. The key {version} is replaced with the release version            | "Release commit: v{version}"               |
+| _postReleaseCommitAddFiles_ | List <File\> | The files that should be added for the post release commit                                                        | <gradle-project-dir\>/version.properties   |
+| _postReleaseCommitMessage_  | String       | The commit message used for the post release commit. The key {version} is replaced with the post release version  | "Post release commit: v{version}"          |
+| _commitMessagePrefix_       | String       | A prefix that is added for all commits                                                                            | ""                                         |
+| _tagName_                   | String       | The name for the release tag. The key {version} is replaced with the release version                              | v{version}                                 |
+| _sshKeyFile_                | RegularFile  | A location of an ssh key file. If the value is null, the standard git authentication methods are used             | null                                       |
+| _disablePush_               | Boolean      | Disable the actual push operation. This is useful for local testing / development                                 | false                                      |
+| _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to quickly. You can specify a delay before the second push operation | Duration.ZERO                              |
 
 ### Example with GitHub Actions
 
