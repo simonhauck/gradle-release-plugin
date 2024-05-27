@@ -31,7 +31,7 @@ addresses some of its shortcomings and provides additional functionalities.
 - **Multiple Release Types**: You can either directly specify the release version or use a simplified API and just
   select the release type. Let the plugin do the rest.
 - **Adaptable Release Workflow**: The plugin offers flexibility by allowing you to incorporate custom tasks into the
-  release process to make it fit your specific projects requirements
+  release process to make it fit your specific project requirements
 - **Composite Build Support**: This plugin can be applied to projects with a composite build, addressing
   an [issue](https://github.com/researchgate/gradle-release/issues/383)
   found in the above-mentioned project.
@@ -45,7 +45,7 @@ existing issue.
 
 | **Feature**                           | **Description**                                                                               | **Implementation Status** | **Related issues**                                                   |
 |---------------------------------------|-----------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
-| Release with explicit version numbers | Release with while providing explicit version numbers                                         | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Release with explicit version numbers | Release while providing explicit version numbers                                         | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
 | Support Trunk based released          | The plugin can perform a release on a given branch                                            | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
 | Simplified API                        | Release with a single parameter like major, minor, patch                                      | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
 | Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
@@ -59,7 +59,7 @@ Here is quick guide on how to get started using this plugin.
 
 1. Git: In order to perform the different git operations the plugin requires git to be available in the path
 2. Version properties file: A version file must be available. The file should contain a key `version` which contains the
-   current project version as in this example [here](version.properties). The plugin will write the updated version
+   current project version as shown in this example [here](version.properties). The plugin will write the updated version
    there. By default, the file should be located in the root project and be named `version.properties`. You can change
    the name and location with the configuration.
 
@@ -91,16 +91,16 @@ at the [configuration options](#parameter-specification).
 ### Trigger a release
 
 If you have a project layout as described in the [prerequisites](#prerequisites) section, you can already start
-releasing. The plugin will provide several ways to how to set the new version.
+releasing. The plugin provides several ways to set the new version.
 
 In all cases, the plugin will create two commits. The first commit will contain the release version. This commit will be
 tagged and pushed. Afterward, a second commit with the post release version will be performed and pushed. Typically, you
-want to set here the next snapshot version.
+want to set the next snapshot version here.
 If you are running this in an CI environment, these commits can trigger a new build where you can perform
-additional release logic. An example for GitHub actions is shown [here](#example-with-github-actions)
+additional release logic. An example for GitHub actions is shown [here](#example-with-github-actions).
 
 If your want to test your configuration locally without bothering your team with constant commits, you can
-disable the push with the shown configuration. It will still generate commits and tags, but you can delete them locally
+disable pushes with the shown configuration. It will still generate commits and tags, but you can delete them locally
 afterward.
 
 ```kotlin
@@ -112,9 +112,8 @@ release {
 
 #### Option 1: Specify the versions explicitly
 
-The first option is to specify the release and post release version explicitly. For this you can use the following
-gradle command
-You can trigger a release by running the following gradle command
+The first option is to specify the release and post release versions explicitly. For this you can trigger the release with the following
+gradle command:
 
 ```shell
 ./gradlew release -PreleaseVersion=1.0.0 -PpostReleaseVersion=1.0.1-SNAPSHOT
@@ -124,7 +123,7 @@ Replace the values for the `releaseVersion` and `postReleaseVersion` with your d
 
 #### Option 2: Use the release type
 
-If you have a [semver](https://semver.org/) compatible version you can choose to use the simplified api.
+If you have a [semver](https://semver.org/) compatible version you can choose to use the simplified api:
 
 ```shell
 ./gradlew release -PreleaseType=<release-type>
@@ -134,23 +133,25 @@ Replace the _release-type_ with ``major``, ``minor`` or ``patch``. This will det
 
 ### Customizing the release process
 
-You can quite easily customize the release process by adding additional tasks to the release process and make the
-relevant tasks depend on your custom tasks. Here are the most interesting tasks:
+You can easily customize the release process by adding additional tasks and making the
+relevant tasks depend on your custom tasks. Here are the most interesting tasks performed by the plugin:
 
-1. _writeReleaseVersion_: This tasks writes the release version in your version file.
-2. _commitReleaseVersion_: This task will create a tagged commit with the release version.
+1. _writeReleaseVersion_: This task writes the release version to your version file.
+2. _commitReleaseVersion_: This task will create a commit tagged with the release version.
 3. _pushRelease_: This task will perform the push operation.
-4. _writePostReleaseVersion_: This task with write the post release version in your version file.
-5. _commitPostReleaseVersion_: This task will commit the post release version. This is not tagged.
+4. _writePostReleaseVersion_: This task with write the post release version to your version file.
+5. _commitPostReleaseVersion_: This task will commit the post release version. This commit will not be tagged.
 6. _pushPostRelease_: This task will push the post release version.
 
-Please note: The plugin will just write the version in the specified version file. Gradle will not automatically reload
+Please note: The plugin will just write the version to the specified version file. Gradle will not automatically reload
 the version property. The `version` variable from gradle will still show the old version. If you need the
 version for your custom task, you either have to read the version directly from the file or run multiple gradle
 commands.
 
+#### Example
+
 Let's assume, you want to write an additional file during the release. You could register your custom task and make the
-commit release version task depend on that. If you want to commit this file with the release commit, you can edit the
+_commitReleaseVersion_ task depend on that. If you want to commit this file with the release commit, you can edit the
 _git add_ command in the `release` configuration to include both the version file and your custom file. An example for
 that is shown below:
 
@@ -184,17 +185,17 @@ you can start without any configuration.
 
 | **Parameter Name**          | Type         | **Description**                                                                                                  | **Default value**                         |
 |-----------------------------|--------------|------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
-| _rootGitDirectory_          | RegularFile  | The root of your git project.                                                                                    | <gradle-project-dir>                      |
-| _versionPropertyFile_       | RegularFile  | The file containing the version. The content should contain _version=<your-version>_                             | <gradle-project-dir>/version.properties   |
-| _releaseCommitAddFiles_     | List\<File>  | The files that should be added for the release commit                                                            | [<gradle-project-dir>/version.properties] |
+| _rootGitDirectory_          | RegularFile  | The root of your git project.  | <gradle-project-dir\>                      |
+| _versionPropertyFile_       | RegularFile  | The file containing the version. The content should contain _version=<your-version\>_                             | <gradle-project-dir\>/version.properties   |
+| _releaseCommitAddFiles_     | List <File\>  | The files that should be added for the release commit                                                            | [<gradle-project-dir\>/version.properties] |
 | _releaseCommitMessage_      | String       | The commit message used for the release commit. The key {version} is replaced with the release version           | "Release commit: v{version}"              |
-| _postReleaseCommitAddFiles_ | List \<File> | The files that should be added for the post release commit                                                       | <gradle-project-dir>/version.properties   |
+| _postReleaseCommitAddFiles_ | List <File\> | The files that should be added for the post release commit                                                       | <gradle-project-dir\>/version.properties   |
 | _postReleaseCommitMessage_  | String       | The commit message used for the post release commit. The key {version} is replaced with the post release version | "Post release commit: v{version}"         |
 | _commitMessagePrefix_       | String       | A prefix that is added for all commits                                                                           | ""                                        |
 | _tagName_                   | String       | The name for the release tag. The key {version} is replaced with the release version                             | v{version}                                |
-| _sshKeyFile_                | RegularFile  | A location to an ssh key file. If the value is null, the standard git authentication methods are used            | null                                      |
+| _sshKeyFile_                | RegularFile  | A location of an ssh key file. If the value is null, the standard git authentication methods are used            | null                                      |
 | _disablePush_               | Boolean      | Disable the actual push operation. This is useful for local testing / development                                | false                                     |
-| _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to qickly. You can specify a delay before the second push operation | Duration.ZERO                             |
+| _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to quickly. You can specify a delay before the second push operation | Duration.ZERO                             |
 
 ### Example with GitHub Actions
 
@@ -248,7 +249,7 @@ jobs:
         run: ./gradlew release -PenablePush=true -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon
 ```
 
-To do something with the release add another workflow file that is triggered with a tag is pushed.
+To do something with the release add another workflow file that is triggered when a tag is pushed.
 
 ```yaml
 # .github/workflows/on-release-tag.yml
