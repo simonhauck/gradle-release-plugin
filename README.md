@@ -64,6 +64,7 @@ Here is quick guide on how to get started using this plugin.
    version
    there. By default, the file should be located in the root project and be named `version.properties`. You can change
    the name and location with the configuration.
+3. Gradle: Version 6.1 or higher
 
 ### Configuration
 

@@ -146,5 +146,7 @@ class ReleasePlugin : Plugin<Project> {
         gradle.sharedServices.registerIfAbsent(
             "commandHistory",
             GitCommandHistoryService::class.java
-        )
+        ) {
+            // Intentionally left empty for compatibility with older gradle versions
+        }
 }
