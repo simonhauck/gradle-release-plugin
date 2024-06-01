@@ -212,6 +212,9 @@ The general workflow will be:
 2. For tagged commits, run your release procedure like publishing the artifacts.
     - Depending on your setup you can also do your release logic if the version does not have a snapshot suffix
 
+To trigger the release you can take inspiration from the following configuration. This task has two inputs for the
+release version and post release version.
+
 <details>
 <summary>Trigger Release Action</summary>
 
