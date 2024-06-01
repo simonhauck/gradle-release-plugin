@@ -33,8 +33,15 @@ class ReleasePlugin : Plugin<Project> {
         val commitReleaseVersion =
             project.registerReleaseCommitTask(writeReleaseVersionTask, extension)
 
+        val checkForUncommittedFilesTask =
+            project.checkForUncommittedFiles(extension, commitReleaseVersion)
+
         val pushReleaseTask =
-            project.registerPushTask("pushRelease", extension, commitReleaseVersion)
+            project.registerPushTask(
+                "pushRelease",
+                extension,
+                listOf(commitReleaseVersion, checkForUncommittedFilesTask)
+            )
 
         val writePostReleaseVersionTask =
             project.tasks.register("writePostReleaseVersion", WriteVersionTask::class.java) {
@@ -51,7 +58,7 @@ class ReleasePlugin : Plugin<Project> {
             project.registerPushTask(
                 "pushPostRelease",
                 extension,
-                commitPostReleaseVersionTask,
+                listOf(commitPostReleaseVersionTask),
                 extension.delayBeforePush
             )
 
@@ -61,10 +68,23 @@ class ReleasePlugin : Plugin<Project> {
         }
     }
 
+    private fun Project.checkForUncommittedFiles(
+        extension: ReleaseExtension,
+        taskDependencies: TaskProvider<*>
+    ): TaskProvider<CheckForUncommittedFilesTask> {
+        return tasks.register(
+            "checkForUncommittedFiles",
+            CheckForUncommittedFilesTask::class.java
+        ) {
+            it.onlyIf { extension.checkForUncommittedFiles.get() }
+            it.dependsOn(taskDependencies)
+        }
+    }
+
     private fun Project.registerPushTask(
         name: String,
         extension: ReleaseExtension,
-        dependsOn: TaskProvider<*>,
+        dependsOn: List<TaskProvider<*>>,
         delay: Property<Duration> = objects.property(Duration::class.java).value(Duration.ZERO)
     ): TaskProvider<PushTask> =
         tasks.register(name, PushTask::class.java) {
