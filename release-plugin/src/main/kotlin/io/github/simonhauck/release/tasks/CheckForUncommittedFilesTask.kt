@@ -4,14 +4,22 @@ import io.github.simonhauck.release.git.api.GitStatusResult
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-abstract class CheckForUncommitedFilesTask : BaseReleaseTask(), GitTask {
+abstract class CheckForUncommittedFilesTask : BaseReleaseTask(), GitTask {
 
     @TaskAction
     fun action() {
-        val uncommitedFiles = gitCommandApi().status().getOrThrowGradleException()
+        val historyApi = gitCommandHistoryApi.get()
+
+        val uncommitedFiles =
+            gitCommandApi()
+                .status()
+                .onLeft { historyApi.revertAllCommands() }
+                .getOrThrowGradleException()
 
         if (uncommitedFiles.notEmpty()) {
-            throw GradleException(buildErrorMessage(uncommitedFiles))
+            val errorMessage = buildErrorMessage(uncommitedFiles)
+            historyApi.revertAllCommands()
+            throw GradleException(errorMessage)
         }
     }
 
