@@ -28,7 +28,7 @@ abstract class CheckForUncommittedFilesTask : BaseReleaseTask(), GitTask {
         val unstagedFilesList = uncommitedFiles.unstaged.map { " - unstaged: $it" }
         val untrackedFilesList = uncommitedFiles.untracked.map { " - untracked: $it" }
         val plus =
-            listOf("The repository contains uncommited files:")
+            listOf("The repository contains uncommitted files:")
                 .plus(stagedFilesList)
                 .plus(unstagedFilesList)
                 .plus(untrackedFilesList)
