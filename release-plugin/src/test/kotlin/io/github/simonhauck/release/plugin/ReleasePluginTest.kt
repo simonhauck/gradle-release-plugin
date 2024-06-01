@@ -387,7 +387,7 @@ internal class ReleasePluginTest {
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
             assertThat(runner.output.lines())
                 .contains(
-                    "> The repository contains uncommited files:",
+                    "> The repository contains uncommitted files:",
                     "   - untracked: uncommittedFile.txt"
                 )
             assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
