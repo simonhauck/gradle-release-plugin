@@ -394,7 +394,7 @@ internal class ReleasePluginTest {
         }
 
     @Test
-    fun `should skip the check for uncommitted files when the property is set`() =
+    fun `should skip the check for uncommitted files when the check is disabled`() =
         testDriver(tmpDir) {
             updateVersionProperties("1.0.0")
             appendContentToBuildGradle(
