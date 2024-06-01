@@ -90,4 +90,8 @@ internal class SemanticVersioningProjectBuilder(
         val versionPropertiesFile = versionPropertiesPath.toFile()
         versionPropertiesFile.writeText("version=$version")
     }
+
+    fun File.readVersionPropertiesFile(): String {
+        return resolve("version.properties").readText()
+    }
 }

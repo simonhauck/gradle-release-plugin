@@ -32,7 +32,7 @@ internal class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(client1WorkDir.resolve("version.properties").readText())
+            assertThat(client1WorkDir.readVersionPropertiesFile())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
@@ -53,7 +53,7 @@ internal class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(client1WorkDir.resolve("version.properties").readText())
+            assertThat(client1WorkDir.readVersionPropertiesFile())
                 .isEqualTo("version=1.1.1-SNAPSHOT")
         }
 
@@ -237,8 +237,7 @@ internal class ReleasePluginTest {
             val actual = runner.task(":commitReleaseVersion")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
-            assertThat(client1WorkDir.resolve("version.properties").readText())
-                .isEqualTo("version=1.0.0")
+            assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
         }
 
     @Test
@@ -255,7 +254,7 @@ internal class ReleasePluginTest {
                 .build()
 
             cloneForClient2()
-            val version = client2WorkDir.resolve("version.properties").readText()
+            val version = client2WorkDir.readVersionPropertiesFile()
             assertThat(version).isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
@@ -274,7 +273,7 @@ internal class ReleasePluginTest {
 
             cloneForClient2()
             client2Api.checkOutTag("v1.2.0").assertIsOk()
-            val version = client2WorkDir.resolve("version.properties").readText()
+            val version = client2WorkDir.readVersionPropertiesFile()
             assertThat(version).isEqualTo("version=1.2.0")
         }
 
@@ -295,7 +294,7 @@ internal class ReleasePluginTest {
                     .buildAndFail()
 
             val actual = runner.task(":pushRelease")?.outcome
-            val actualVersion = client1WorkDir.resolve("version.properties").readText()
+            val actualVersion = client1WorkDir.readVersionPropertiesFile()
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
             assertThat(actualVersion).isEqualTo("version=1.0.0")
@@ -307,6 +306,14 @@ internal class ReleasePluginTest {
     fun `should not revert unrelated files if a push fails`() =
         testDriver(tmpDir) {
             val file = client1WorkDir.resolve("testFile.txt").apply { writeText("hello") }
+            appendContentToBuildGradle(
+                """
+                |release {
+                |    checkForUncommittedFiles.set(false)
+                |}
+                """
+                    .trimMargin()
+            )
 
             createLocalRepository()
 
@@ -357,4 +364,64 @@ internal class ReleasePluginTest {
                 )
         }
     }
+
+    @Test
+    fun `should by default fail the release if an uncommitted file is in the repository and revert the local changes`() =
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.0")
+            createLocalRepository()
+
+            client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
+
+            val runner =
+                testKitRunner()
+                    .withArguments(
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                    )
+                    .buildAndFail()
+
+            val actual = runner.task(":checkForUncommittedFiles")?.outcome
+
+            assertThat(actual).isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .contains(
+                    "> The repository contains uncommited files:",
+                    "   - untracked: uncommittedFile.txt"
+                )
+            assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
+        }
+
+    @Test
+    fun `should skip the check for uncommitted files when the property is set`() =
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.0")
+            appendContentToBuildGradle(
+                """
+                |release {
+                |   checkForUncommittedFiles.set(false)
+                |}
+                """
+                    .trimMargin()
+            )
+            createValidRepositoryWithRemote()
+
+            client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
+
+            val runner =
+                testKitRunner()
+                    .withArguments(
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
+                    )
+                    .build()
+
+            val actual = runner.task(":checkForUncommittedFiles")?.outcome
+
+            assertThat(actual).isEqualTo(TaskOutcome.SKIPPED)
+            assertThat(client1WorkDir.readVersionPropertiesFile())
+                .isEqualTo("version=1.2.1-SNAPSHOT")
+        }
 }

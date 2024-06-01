@@ -44,4 +44,7 @@ abstract class ReleaseExtension(
 
     val delayBeforePush: Property<Duration> =
         objects.property(Duration::class.java).convention(Duration.ZERO)
+
+    val checkForUncommittedFiles: Property<Boolean> =
+        objects.property(Boolean::class.java).convention(true)
 }
