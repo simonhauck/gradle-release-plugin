@@ -209,9 +209,10 @@ The general workflow will be:
 
 1. Trigger a release with a manual job
 2. For tagged commits, run your release procedure like publishing the artifacts.
+    - Depending on your setup you can also do your release logic if the version does not have a snapshot suffix
 
-To trigger the release you can take inspiration from the following configuration. This task has two inputs for the
-release version and post release version.
+<details>
+<summary>Trigger Release Action</summary>
 
 ```yaml
 # .github/workflows/trigger-release.yml
@@ -250,10 +251,15 @@ jobs:
           git config --global user.name "GitHub Action"
 
       - name: Run gradle release task
-        run: ./gradlew release -PenablePush=true -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon
+        run: ./gradlew release -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }}
 ```
 
+</details>
+
 To do something with the release add another workflow file that is triggered when a tag is pushed.
+
+<details>
+<summary>Release Tag action</summary>
 
 ```yaml
 # .github/workflows/on-release-tag.yml
@@ -269,6 +275,8 @@ jobs:
   release:
   # Your jon configuration
 ```
+
+</details>
 
 ## How to contribute
 
