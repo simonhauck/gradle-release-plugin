@@ -24,8 +24,9 @@ jobs:
         uses: actions/cache@v4
         with:
           key: |
-            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}-${{ github.run_id }}
           restore-keys: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
             ${{ runner.os }}-build-main
           path: |
             ~/.gradle/caches
