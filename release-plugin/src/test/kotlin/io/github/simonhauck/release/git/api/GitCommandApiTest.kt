@@ -56,6 +56,43 @@ internal class GitCommandApiTest {
         }
 
     @Test
+    fun `should return the locally configure user when no explicit user is set`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            updateVersionProperties("1.2.0")
+            client1Api.add(".").assertIsOk()
+            client1Api.commit("Second commit").assertIsOk()
+
+            val gitLog = client1Api.log().assertIsOk().last()
+
+            assertThat(gitLog.commiterName).isEqualTo("user1")
+            assertThat(gitLog.commiterEmail).isEqualTo("user1@mail.com")
+            assertThat(gitLog.authorName).isEqualTo("user1")
+            assertThat(gitLog.authorEmail).isEqualTo("user1@mail.com")
+        }
+
+    @Test
+    fun `should overwrite the local git user name and email for commits`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            val user = GitUser("new user", "new_user@mail.com")
+            val localGitApi = GitCommandApi.create(client1WorkDir, user)
+
+            updateVersionProperties("1.2.0")
+            localGitApi.add(".")
+            localGitApi.commit("Second commit").assertIsOk()
+
+            val gitLog = localGitApi.log().assertIsOk().last()
+
+            assertThat(gitLog.commiterName).isEqualTo("new user")
+            assertThat(gitLog.commiterEmail).isEqualTo("new_user@mail.com")
+            assertThat(gitLog.authorName).isEqualTo("new user")
+            assertThat(gitLog.authorEmail).isEqualTo("new_user@mail.com")
+        }
+
+    @Test
     fun `should correctly resolve the status of multiple files`() =
         testDriver(tmpDir) {
             createLocalRepository()
