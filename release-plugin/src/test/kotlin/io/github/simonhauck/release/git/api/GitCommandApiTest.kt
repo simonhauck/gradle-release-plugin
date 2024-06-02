@@ -31,7 +31,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to create a git repository and commit a file`() =
+    fun `should create a git repository and commit a file`() =
         testDriver(tmpDir) {
             client1Api.init("main")
             client1Api.configureNameAndEmailLocally("some name", "some@mail.com")
@@ -143,7 +143,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to delete branches`() =
+    fun `should remove a branch from the repository`() =
         testDriver(tmpDir) {
             createLocalRepository()
 
@@ -215,7 +215,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to set a remote branch and push a git commit that is remote available`() =
+    fun `should set a remote branch and push a git commit that is remote available`() =
         testDriver(tmpDir) {
             serverApi.initBareRepository()
 
@@ -250,7 +250,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to rebase the commits if another client has already pushed changes`() =
+    fun `should rebase the commits if another client has already pushed changes`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
@@ -271,7 +271,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to create and list tags`() =
+    fun `should create and list tags`() =
         testDriver(tmpDir) {
             createLocalRepository()
 
@@ -284,7 +284,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to delete a tag`() =
+    fun `should delete a tag`() =
         testDriver(tmpDir) {
             createLocalRepository()
 

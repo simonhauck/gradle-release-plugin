@@ -134,7 +134,7 @@ internal class ReleasePluginTest {
     }
 
     @Test
-    fun `should be able to add different files for release and post release commit that are created at runtime`() {
+    fun `should add different files for release and post release commit that are created at runtime`() {
         testDriver(tmpDir) {
             appendContentToBuildGradle(
                 """
