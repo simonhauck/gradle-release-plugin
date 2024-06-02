@@ -200,7 +200,7 @@ you can start without any configuration.
 | _sshKeyFile_                | RegularFile  | A location of an ssh key file. If the value is null, the standard git authentication methods are used             | null                                       |
 | _disablePush_               | Boolean      | Disable the actual push operation. This is useful for local testing / development                                 | false                                      |
 | _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to quickly. You can specify a delay before the second push operation | Duration.ZERO                              |
-| checkForUncommittedFiles    | Boolean      | Checks for any uncommitted files in the working directory before the release process commit is pushed             | true                                       |
+| _checkForUncommittedFiles_  | Boolean      | Checks for any uncommitted files in the working directory before the release process commit is pushed             | true                                       |
 
 ### Example with GitHub Actions
 
