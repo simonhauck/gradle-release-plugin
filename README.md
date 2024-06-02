@@ -44,13 +44,13 @@ addresses some of its shortcomings and provides additional functionalities.
 Here is an overview of the planned features. To vote for a feature, either create an issue or give a thumbs up on an
 existing issue.
 
-| **Feature**                           | **Description**                                                                               | **Implementation Status** | **Related issues**                                                   |
-|---------------------------------------|-----------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
-| Release with explicit version numbers | Release while providing explicit version numbers                                              | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Support Trunk based released          | The plugin can perform a release on a given branch                                            | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Simplified API                        | Release with a single parameter like major, minor, patch                                      | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
-| Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
-| Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.               | :x:                       | No issue created yet                                                 |
+| **Feature**                           | **Description**                                                                    | **Implementation Status** | **Related issues**                                                   |
+|---------------------------------------|------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
+| Release with explicit version numbers | Release while providing explicit version numbers                                   | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Support Trunk based released          | The plugin can perform a release on a given branch                                 | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Simplified API                        | Release with a single parameter like major, minor, patch                           | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
+| Support Gitflow                       | The plugin should perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
+| Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.    | :x:                       | No issue created yet                                                 |
 
 ## How to use the plugin
 
