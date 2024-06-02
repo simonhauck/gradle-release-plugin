@@ -84,11 +84,12 @@ internal class GitCommandProcessWrapper(
     }
 
     override fun log(): GitResult<List<GitLogEntry>> {
-        return gitCommand(listOf("log", "--pretty=format:%H<|>%s<|>%an<|>%ae<|>%cn<|>%ce")).map {
-            processSuccess ->
+        val separator = " ##seperator## "
+        val formatFlags = listOf("%H", "%s", "%an", "%ae", "%cn", "%ce").joinToString(separator)
+        return gitCommand(listOf("log", "--pretty=format:$formatFlags")).map { processSuccess ->
             processSuccess.output
                 .map { line ->
-                    val split = line.split("<|>")
+                    val split = line.split(separator)
                     GitLogEntry(
                         hash = split[0],
                         message = split[1],
