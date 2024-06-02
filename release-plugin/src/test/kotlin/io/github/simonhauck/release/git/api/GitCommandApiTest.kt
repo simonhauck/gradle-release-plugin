@@ -39,7 +39,7 @@ internal class GitCommandApiTest {
             client1Api.add(".").assertIsOk()
             client1Api.commit("Initial commit").assertIsOk()
 
-            val actual = client1Api.log().get().map { it.message }
+            val actual = client1Api.log().assertIsOk().map { it.message }
             assertThat(actual).containsExactly("Initial commit")
         }
 
@@ -52,7 +52,7 @@ internal class GitCommandApiTest {
             client1Api.add(".").assertIsOk()
             client1Api.commit("Second commit").assertIsOk()
 
-            val actual = client1Api.log().get().map { it.message }
+            val actual = client1Api.log().assertIsOk().map { it.message }
             assertThat(actual).containsExactly("Initial commit", "Second commit")
         }
 

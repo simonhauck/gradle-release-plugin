@@ -6,7 +6,7 @@ import io.github.simonhauck.release.git.api.isOk
 import org.assertj.core.api.Assertions.assertThat
 
 internal fun <T> Either<GitError, T>.assertIsOk(): T {
-    assertThat(isOk()).isTrue()
+    assertThat(isOk()).withFailMessage { "Command is not ok failed:\n$this" }.isTrue()
     return get()
 }
 
