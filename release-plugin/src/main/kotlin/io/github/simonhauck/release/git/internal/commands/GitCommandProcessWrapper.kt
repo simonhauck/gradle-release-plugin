@@ -4,17 +4,17 @@ import arrow.core.Either
 import arrow.core.flatten
 import arrow.core.getOrElse
 import io.github.simonhauck.release.git.api.*
-import io.github.simonhauck.release.git.internal.process.ProcessConfig
-import io.github.simonhauck.release.git.internal.process.ProcessSuccess
-import io.github.simonhauck.release.git.internal.process.ProcessWrapper
-import io.github.simonhauck.release.git.internal.process.exitCode
+import io.github.simonhauck.release.git.internal.process.*
 import io.github.simonhauck.release.tasks.PushTask
 import java.io.File
 import org.gradle.api.logging.Logging
 
 internal class GitCommandProcessWrapper(
-    private val processWrapper: ProcessWrapper = ProcessWrapper(),
-    private val config: ProcessConfig = ProcessConfig()
+    private val rootGitDirectory: File?,
+    private val gitUser: GitUser?,
+    // TODO Simon.Hauck 2024-06-02 - How to test authentication
+    private val sshKeyFile: File?,
+    private val processWrapper: ProcessWrapper = ProcessWrapper()
 ) : GitCommandApi {
 
     private val log = Logging.getLogger(PushTask::class.java)
@@ -65,19 +65,8 @@ internal class GitCommandProcessWrapper(
         return result
     }
 
-    // TODO Simon.Hauck 2024-05-17 - How to test the git push behavior with credentials?
-    override fun push(sshKeyFile: File?): GitVoidResult {
-        val envToAdd =
-            if (sshKeyFile != null)
-                mapOf(
-                    "GIT_SSH_VARIANT" to "ssh",
-                    "GIT_SSH_COMMAND" to "ssh -i ${sshKeyFile.absolutePath} -o IdentitiesOnly=yes"
-                )
-            else emptyMap()
-
-        val pushConfig = config.copy(environment = config.environment.plus(envToAdd))
-
-        return gitVoidCommand(listOf("push", "--follow-tags"), pushConfig)
+    override fun push(): GitVoidResult {
+        return gitVoidCommand(listOf("push", "--follow-tags"))
     }
 
     override fun pullRebase(): GitVoidResult {
@@ -133,22 +122,23 @@ internal class GitCommandProcessWrapper(
         }
     }
 
-    private fun gitVoidCommand(
-        command: List<String>,
-        processConfig: ProcessConfig? = null
-    ): Either<GitError, GitOk> {
-        val runCommand = gitCommand(command, processConfig)
+    private fun gitVoidCommand(command: List<String>): Either<GitError, GitOk> {
+        val runCommand = gitCommand(command)
         return runCommand.map { GitOk }
     }
 
     private fun gitCommand(
         command: List<String>,
-        processConfig: ProcessConfig? = null
     ): Either<GitError, ProcessSuccess> {
         val gitCommand = listOf("git").plus(command)
         log.info("Running git command: '${gitCommand.joinToString(" ")}'")
 
-        val runCommand = processWrapper.runCommand(gitCommand, processConfig ?: config)
+        val processEnvironment = addUserEnvironment(gitUser).plus(sshKeyEnvironment(sshKeyFile))
+
+        val processConfig =
+            ProcessConfig(workingDir = rootGitDirectory, environment = processEnvironment)
+
+        val runCommand = processWrapper.runCommand(gitCommand, processConfig)
         log.info("Command finished (exitCode=${runCommand.exitCode()})")
 
         val commandString = command.joinToString(" ")
@@ -156,18 +146,37 @@ internal class GitCommandProcessWrapper(
             .onLeft {
                 log.error("Failed to execute command '$commandString'. Error: ${it.message}")
             }
-            .mapLeft {
-                val output =
-                    listOf(
-                            "Failed to execute command: '$commandString'",
-                            it.message,
-                            "--- Git output ---"
-                        )
-                        .plus(it.output)
-                        .plus("--- End of output ---")
-                        .joinToString("\n")
+            .mapLeft { buildErrorMessageWithConsoleOutput(commandString, it) }
+    }
 
-                GitError(output, it.error)
-            }
+    private fun sshKeyEnvironment(sshKeyFile: File?): Map<String, String> {
+        if (sshKeyFile == null) return emptyMap()
+        return mapOf(
+            "GIT_SSH_VARIANT" to "ssh",
+            "GIT_SSH_COMMAND" to "ssh -i ${sshKeyFile.absolutePath} -o IdentitiesOnly=yes"
+        )
+    }
+
+    private fun addUserEnvironment(gitUser: GitUser?): Map<String, String> {
+        if (gitUser == null) return emptyMap()
+        return mapOf(
+            "GIT_COMMITTER_NAME" to gitUser.name,
+            "GIT_AUTHOR_NAME" to gitUser.name,
+            "GIT_COMMITTER_EMAIL" to gitUser.email,
+            "GIT_AUTHOR_EMAIL" to gitUser.email
+        )
+    }
+
+    private fun buildErrorMessageWithConsoleOutput(
+        commandString: String,
+        it: ProcessError
+    ): GitError {
+        val output =
+            listOf("Failed to execute command: '$commandString'", it.message, "--- Git output ---")
+                .plus(it.output)
+                .plus("--- End of output ---")
+                .joinToString("\n")
+
+        return GitError(output, it.error)
     }
 }

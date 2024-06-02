@@ -89,7 +89,6 @@ class ReleasePlugin : Plugin<Project> {
     ): TaskProvider<PushTask> =
         tasks.register(name, PushTask::class.java) {
             it.dependsOn(dependsOn)
-            it.sshKeyFile.set(extension.sshKeyFile)
             it.disablePush.set(extension.disablePush)
             it.delayBeforePushInMs.set(delay)
         }
@@ -153,6 +152,7 @@ class ReleasePlugin : Plugin<Project> {
         tasks.withType(GitTask::class.java) {
             it.gitRootDirectory.set(extension.rootGitDirectory.asFile)
             it.gitCommandHistoryApi.set(commandHistoryService)
+            it.sshKeyFile.set(extension.sshKeyFile)
         }
     }
 
