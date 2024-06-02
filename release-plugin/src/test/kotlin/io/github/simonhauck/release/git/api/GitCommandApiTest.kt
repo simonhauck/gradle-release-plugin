@@ -34,6 +34,7 @@ internal class GitCommandApiTest {
     fun `should be able to create a git repository and commit a file`() =
         testDriver(tmpDir) {
             client1Api.init("main")
+            client1Api.configureNameAndEmailLocally("some name", "some@mail.com")
 
             client1Api.add(".").assertIsOk()
             client1Api.commit("Initial commit").assertIsOk()
