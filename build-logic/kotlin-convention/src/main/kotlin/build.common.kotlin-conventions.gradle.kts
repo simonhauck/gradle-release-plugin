@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("com.adarshr.test-logger")
@@ -16,8 +14,6 @@ kotlin {
         this.vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
-
-tasks.withType<KotlinCompile> { kotlinOptions { freeCompilerArgs = listOf("-Xjsr305=strict") } }
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Kotlin formatter
