@@ -49,10 +49,5 @@ jobs:
             ./**/.gradle
             ./**/build
 
-      - name: Set Git User and Email
-        run: |
-          git config --global user.email "no-replay@github-action.de"
-          git config --global user.name "GitHub Action"
-
       - name: Run gradle release task
         run: ./gradlew release -x :example:release -PenablePush=true -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon

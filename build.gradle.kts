@@ -11,4 +11,8 @@ allprojects {
 }
 
 // To prevent accidental release commits, a separate property must be set
-release { disablePush = !project.properties["enablePush"].toString().toBoolean() }
+release {
+    disablePush = !project.properties["enablePush"].toString().toBoolean()
+    gitName = "Release Bot"
+    gitEmail = "no-replay@release-bot.com"
+}
