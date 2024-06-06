@@ -29,7 +29,7 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
         if (!delay.isZero)
             log.lifecycle("Delay before push is set to ${delay.seconds}s. Waiting...")
 
-        Thread.sleep(delay.seconds)
+        Thread.sleep(delay.toMillis())
 
         log.info("Rebasing current branch...")
         gitCommandApi()
