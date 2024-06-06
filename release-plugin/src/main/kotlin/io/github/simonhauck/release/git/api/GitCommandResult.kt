@@ -13,6 +13,10 @@ data class GitError(val message: String, val throwable: Throwable? = null)
 data class GitLogEntry(
     val hash: String,
     val message: String,
+    val authorName: String,
+    val authorEmail: String,
+    val commiterName: String,
+    val commiterEmail: String,
 )
 
 data class GitStatusResult(

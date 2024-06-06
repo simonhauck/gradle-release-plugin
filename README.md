@@ -44,13 +44,13 @@ addresses some of its shortcomings and provides additional functionalities.
 Here is an overview of the planned features. To vote for a feature, either create an issue or give a thumbs up on an
 existing issue.
 
-| **Feature**                           | **Description**                                                                               | **Implementation Status** | **Related issues**                                                   |
-|---------------------------------------|-----------------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
-| Release with explicit version numbers | Release while providing explicit version numbers                                              | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Support Trunk based released          | The plugin can perform a release on a given branch                                            | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
-| Simplified API                        | Release with a single parameter like major, minor, patch                                      | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
-| Support Gitflow                       | The plugin should be able to perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
-| Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.               | :x:                       | No issue created yet                                                 |
+| **Feature**                           | **Description**                                                                    | **Implementation Status** | **Related issues**                                                   |
+|---------------------------------------|------------------------------------------------------------------------------------|---------------------------|----------------------------------------------------------------------|
+| Release with explicit version numbers | Release while providing explicit version numbers                                   | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Support Trunk based released          | The plugin can perform a release on a given branch                                 | :white_check_mark:        | [#3](https://github.com/simonhauck/gradle-release-plugin/issues/3)   |
+| Simplified API                        | Release with a single parameter like major, minor, patch                           | :white_check_mark:        | [#15](https://github.com/simonhauck/gradle-release-plugin/issues/15) |
+| Support Gitflow                       | The plugin should perform merge commits from a development branch to a main branch | :x:                       | No issue created yet                                                 |
+| Check for snapshot versions           | Add an optional check to verify the project does not use any snapshot versions.    | :x:                       | No issue created yet                                                 |
 
 ## How to use the plugin
 
@@ -197,10 +197,12 @@ you can start without any configuration.
 | _postReleaseCommitMessage_  | String       | The commit message used for the post release commit. The key {version} is replaced with the post release version  | "Post release commit: v{version}"          |
 | _commitMessagePrefix_       | String       | A prefix that is added for all commits                                                                            | ""                                         |
 | _tagName_                   | String       | The name for the release tag. The key {version} is replaced with the release version                              | v{version}                                 |
+| _gitName_                   | String       | Git name used for the commit. Requires additionally the GitEmail. Falls back to the Git default values            | null                                       |
+| _gitEmail_                  | String       | Email used for the commit. Falls back to the Git default values                                                   | null                                       |
 | _sshKeyFile_                | RegularFile  | A location of an ssh key file. If the value is null, the standard git authentication methods are used             | null                                       |
 | _disablePush_               | Boolean      | Disable the actual push operation. This is useful for local testing / development                                 | false                                      |
 | _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to quickly. You can specify a delay before the second push operation | Duration.ZERO                              |
-| checkForUncommittedFiles    | Boolean      | Checks for any uncommitted files in the working directory before the release process commit is pushed             | true                                       |
+| _checkForUncommittedFiles_  | Boolean      | Checks for any uncommitted files in the working directory before the release process commit is pushed             | true                                       |
 
 ### Example with GitHub Actions
 

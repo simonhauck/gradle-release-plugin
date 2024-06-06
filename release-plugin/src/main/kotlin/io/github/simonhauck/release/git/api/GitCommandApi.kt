@@ -1,7 +1,6 @@
 package io.github.simonhauck.release.git.api
 
 import io.github.simonhauck.release.git.internal.commands.GitCommandProcessWrapper
-import io.github.simonhauck.release.git.internal.process.ProcessConfig
 import java.io.File
 
 interface GitCommandApi {
@@ -25,7 +24,7 @@ interface GitCommandApi {
         branchName: String
     ): GitVoidResult
 
-    fun push(sshKeyFile: File? = null): GitVoidResult
+    fun push(): GitVoidResult
 
     fun deleteLastCommit(): GitVoidResult
 
@@ -42,7 +41,14 @@ interface GitCommandApi {
     fun pullRebase(): GitVoidResult
 
     companion object {
-        fun create(gitRootDirectory: File?): GitCommandApi =
-            GitCommandProcessWrapper(config = ProcessConfig(workingDir = gitRootDirectory))
+        fun create(
+            gitRootDirectory: File? = null,
+            user: GitUser? = null,
+            sshKeyFile: File? = null,
+        ): GitCommandApi {
+            return GitCommandProcessWrapper(gitRootDirectory, user, sshKeyFile)
+        }
     }
 }
+
+data class GitUser(val name: String, val email: String)

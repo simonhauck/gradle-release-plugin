@@ -52,6 +52,7 @@ internal class SemanticVersioningProjectBuilder(
     fun createValidRepositoryWithRemote() {
         serverApi.initBareRepository().assertIsOk()
         client1Api.init("main").assertIsOk()
+        client1Api.configureNameAndEmailLocally("user1", "user1@mail.com").assertIsOk()
         client1Api.add(".").assertIsOk()
         client1Api.commit("Initial commit").assertIsOk()
         client1Api
@@ -62,12 +63,14 @@ internal class SemanticVersioningProjectBuilder(
 
     fun createLocalRepository() {
         client1Api.init("main").assertIsOk()
+        client1Api.configureNameAndEmailLocally("user1", "user1@mail.com").assertIsOk()
         client1Api.add(".").assertIsOk()
         client1Api.commit("Initial commit").assertIsOk()
     }
 
     fun cloneForClient2() {
         client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+        client2Api.configureNameAndEmailLocally("user2", "user2@mail.com").assertIsOk()
     }
 
     fun createProjectScaffold() {

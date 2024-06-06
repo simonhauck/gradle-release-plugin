@@ -2,7 +2,6 @@ package io.github.simonhauck.release.git.api
 
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import io.github.simonhauck.release.testdriver.assertIsOk
-import io.github.simonhauck.release.testdriver.get
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,14 +30,15 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to create a git repository and commit a file`() =
+    fun `should create a git repository and commit a file`() =
         testDriver(tmpDir) {
             client1Api.init("main")
+            client1Api.configureNameAndEmailLocally("some name", "some@mail.com")
 
             client1Api.add(".").assertIsOk()
             client1Api.commit("Initial commit").assertIsOk()
 
-            val actual = client1Api.log().get().map { it.message }
+            val actual = client1Api.log().assertIsOk().map { it.message }
             assertThat(actual).containsExactly("Initial commit")
         }
 
@@ -51,8 +51,45 @@ internal class GitCommandApiTest {
             client1Api.add(".").assertIsOk()
             client1Api.commit("Second commit").assertIsOk()
 
-            val actual = client1Api.log().get().map { it.message }
+            val actual = client1Api.log().assertIsOk().map { it.message }
             assertThat(actual).containsExactly("Initial commit", "Second commit")
+        }
+
+    @Test
+    fun `should return the locally configure user when no explicit user is set`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            updateVersionProperties("1.2.0")
+            client1Api.add(".").assertIsOk()
+            client1Api.commit("Second commit").assertIsOk()
+
+            val gitLog = client1Api.log().assertIsOk().last()
+
+            assertThat(gitLog.commiterName).isEqualTo("user1")
+            assertThat(gitLog.commiterEmail).isEqualTo("user1@mail.com")
+            assertThat(gitLog.authorName).isEqualTo("user1")
+            assertThat(gitLog.authorEmail).isEqualTo("user1@mail.com")
+        }
+
+    @Test
+    fun `should overwrite the local git user name and email for commits`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            val user = GitUser("new user", "new_user@mail.com")
+            val localGitApi = GitCommandApi.create(client1WorkDir, user)
+
+            updateVersionProperties("1.2.0")
+            localGitApi.add(".")
+            localGitApi.commit("Second commit").assertIsOk()
+
+            val gitLog = localGitApi.log().assertIsOk().last()
+
+            assertThat(gitLog.commiterName).isEqualTo("new user")
+            assertThat(gitLog.commiterEmail).isEqualTo("new_user@mail.com")
+            assertThat(gitLog.authorName).isEqualTo("new user")
+            assertThat(gitLog.authorEmail).isEqualTo("new_user@mail.com")
         }
 
     @Test
@@ -105,7 +142,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to delete branches`() =
+    fun `should remove a branch from the repository`() =
         testDriver(tmpDir) {
             createLocalRepository()
 
@@ -177,7 +214,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to set a remote branch and push a git commit that is remote available`() =
+    fun `should set a remote branch and push a git commit that is remote available`() =
         testDriver(tmpDir) {
             serverApi.initBareRepository()
 
@@ -212,7 +249,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to rebase the commits if another client has already pushed changes`() =
+    fun `should rebase the commits if another client has already pushed changes`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
@@ -233,7 +270,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to create and list tags`() =
+    fun `should create and list tags`() =
         testDriver(tmpDir) {
             createLocalRepository()
 
@@ -246,7 +283,7 @@ internal class GitCommandApiTest {
         }
 
     @Test
-    fun `should be able to delete a tag`() =
+    fun `should delete a tag`() =
         testDriver(tmpDir) {
             createLocalRepository()
 

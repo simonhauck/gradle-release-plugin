@@ -14,11 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set Git User and Email
-        run: |
-          git config --global user.email "no-replay@github-action.de"
-          git config --global user.name "GitHub Action"
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -29,8 +24,9 @@ jobs:
         uses: actions/cache@v4
         with:
           key: |
-            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}-${{ github.run_id }}
           restore-keys: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
             ${{ runner.os }}-build-main
           path: |
             ~/.gradle/caches

@@ -134,7 +134,7 @@ internal class ReleasePluginTest {
     }
 
     @Test
-    fun `should be able to add different files for release and post release commit that are created at runtime`() {
+    fun `should add different files for release and post release commit that are created at runtime`() {
         testDriver(tmpDir) {
             appendContentToBuildGradle(
                 """
@@ -424,4 +424,42 @@ internal class ReleasePluginTest {
             assertThat(client1WorkDir.readVersionPropertiesFile())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }
+
+    @Test
+    fun `should commit the files with the configured user`() =
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |release {
+                |   gitName.set("Test User")
+                |   gitEmail.set("test@mail.de")
+                |}
+                """
+                    .trimMargin()
+            )
+
+            createValidRepositoryWithRemote()
+
+            testKitRunner().withArguments("release", "-PreleaseType=minor").build()
+
+            val lastCommit = client1Api.log().assertIsOk().last()
+            assertThat(lastCommit.message).isEqualTo("Post release commit: v1.1.1-SNAPSHOT")
+            assertThat(lastCommit.commiterName).isEqualTo("Test User")
+            assertThat(lastCommit.commiterEmail).isEqualTo("test@mail.de")
+        }
+
+    @Test
+    fun `should use the default user if the git user is not fully configured`() {
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            testKitRunner().withArguments("release", "-PreleaseType=minor").build()
+
+            val lastCommit = client1Api.log().assertIsOk().last()
+
+            assertThat(lastCommit.message).isEqualTo("Post release commit: v1.1.1-SNAPSHOT")
+            assertThat(lastCommit.commiterName).isEqualTo("user1")
+            assertThat(lastCommit.commiterEmail).isEqualTo("user1@mail.com")
+        }
+    }
 }

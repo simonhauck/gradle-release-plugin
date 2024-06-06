@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.testdriver
 
 import arrow.core.Either
+import arrow.core.flatten
 import io.github.simonhauck.release.git.api.GitCommandApi
 import io.github.simonhauck.release.git.api.GitError
 import io.github.simonhauck.release.git.api.GitOk
@@ -26,6 +27,12 @@ internal class GitTestCommandService(private val workDir: File) :
 
     fun checkOutTag(tagName: String): GitVoidResult {
         return gitVoidCommand(listOf("checkout", tagName))
+    }
+
+    fun configureNameAndEmailLocally(name: String, email: String): Either<GitError, GitOk> {
+        return gitVoidCommand(listOf("config", "user.name", name))
+            .map { gitVoidCommand(listOf("config", "user.email", email)) }
+            .flatten()
     }
 
     private fun gitVoidCommand(command: List<String>): Either<GitError, GitOk> {
