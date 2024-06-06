@@ -11,7 +11,7 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
     private val log = Logging.getLogger(PushTask::class.java)
 
     @get:Input @get:Optional abstract val disablePush: Property<Boolean>
-    @get:Input @get:Optional abstract val delayBeforePushInMs: Property<Duration>
+    @get:Input @get:Optional abstract val delayBeforePush: Property<Duration>
 
     @TaskAction
     fun push() {
@@ -21,7 +21,7 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
             return
         }
 
-        val delay: Duration = delayBeforePushInMs.getOrElse(Duration.ZERO)
+        val delay: Duration = delayBeforePush.getOrElse(Duration.ZERO)
         if (!delay.isZero)
             log.lifecycle("Delay before push is set to ${delay.seconds}s. Waiting...")
 
