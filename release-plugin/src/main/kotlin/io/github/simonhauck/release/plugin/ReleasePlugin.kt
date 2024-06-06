@@ -90,7 +90,7 @@ class ReleasePlugin : Plugin<Project> {
         tasks.register(name, PushTask::class.java) {
             it.dependsOn(dependsOn)
             it.disablePush.set(extension.disablePush)
-            it.delayBeforePushInMs.set(delay)
+            it.delayBeforePush.set(delay)
         }
 
     private fun Project.registerReleaseCommitTask(
