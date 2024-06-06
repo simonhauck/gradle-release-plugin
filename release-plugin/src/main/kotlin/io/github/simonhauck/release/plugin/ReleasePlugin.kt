@@ -153,6 +153,8 @@ class ReleasePlugin : Plugin<Project> {
             it.gitRootDirectory.set(extension.rootGitDirectory.asFile)
             it.gitCommandHistoryApi.set(commandHistoryService)
             it.sshKeyFile.set(extension.sshKeyFile)
+            it.gitName.set(extension.gitName)
+            it.gitEmail.set(extension.gitEmail)
         }
     }
 

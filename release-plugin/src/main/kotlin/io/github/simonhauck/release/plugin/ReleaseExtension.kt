@@ -38,6 +38,10 @@ abstract class ReleaseExtension(
 
     val tagName: Property<String> = objects.property(String::class.java).convention("v{version}")
 
+    val gitName: Property<String> = objects.property(String::class.java)
+
+    val gitEmail: Property<String> = objects.property(String::class.java)
+
     val sshKeyFile: RegularFileProperty = objects.fileProperty()
 
     val disablePush: Property<Boolean> = objects.property(Boolean::class.java).convention(false)

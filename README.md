@@ -197,6 +197,8 @@ you can start without any configuration.
 | _postReleaseCommitMessage_  | String       | The commit message used for the post release commit. The key {version} is replaced with the post release version  | "Post release commit: v{version}"          |
 | _commitMessagePrefix_       | String       | A prefix that is added for all commits                                                                            | ""                                         |
 | _tagName_                   | String       | The name for the release tag. The key {version} is replaced with the release version                              | v{version}                                 |
+| _gitName_                   | String       | Git name used for the commit. Requires additionally the GitEmail. Falls back to the Git default values            | null                                       |
+| _gitEmail_                  | String       | Email used for the commit. Falls back to the Git default values                                                   | null                                       |
 | _sshKeyFile_                | RegularFile  | A location of an ssh key file. If the value is null, the standard git authentication methods are used             | null                                       |
 | _disablePush_               | Boolean      | Disable the actual push operation. This is useful for local testing / development                                 | false                                      |
 | _delayBeforePush_           | Duration     | Some systems aggregate commits that are done to quickly. You can specify a delay before the second push operation | Duration.ZERO                              |
