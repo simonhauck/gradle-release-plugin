@@ -11,10 +11,7 @@ abstract class CheckForUncommittedFilesTask : BaseReleaseTask(), GitTask {
         val historyApi = gitCommandHistoryApi.get()
 
         val uncommitedFiles =
-            gitCommandApi()
-                .status()
-                .onLeft { historyApi.revertAllCommands() }
-                .getOrThrowGradleException()
+            gitCommandApi().status().revertHistoryOnError().getOrThrowGradleException()
 
         if (uncommitedFiles.notEmpty()) {
             val errorMessage = buildErrorMessage(uncommitedFiles)
