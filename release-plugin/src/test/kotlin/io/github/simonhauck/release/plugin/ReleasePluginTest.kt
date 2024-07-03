@@ -23,10 +23,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -65,10 +62,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -86,18 +80,14 @@ internal class ReleasePluginTest {
                 |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
                 |}
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
             client1WorkDir.resolve("otherFile.txt").writeText("Hello World")
 
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -115,18 +105,14 @@ internal class ReleasePluginTest {
                 |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
                 |}
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .buildAndFail()
 
             assertThat(runner.task(":commitReleaseVersion")?.outcome).isEqualTo(TaskOutcome.FAILED)
@@ -164,18 +150,14 @@ internal class ReleasePluginTest {
                 |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
                 |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -201,17 +183,13 @@ internal class ReleasePluginTest {
                     |    versionPropertyFile.set(layout.projectDirectory.file("$fileName"))
                     |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
-                    "release",
-                    "-PreleaseVersion=1.2.0",
-                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                )
+                    "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                 .build()
 
             assertThat(versionFile.readText()).isEqualTo("version=1.2.1-SNAPSHOT")
@@ -228,10 +206,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .buildAndFail()
 
             val actual = runner.task(":commitReleaseVersion")?.outcome
@@ -247,10 +222,7 @@ internal class ReleasePluginTest {
 
             testKitRunner()
                 .withArguments(
-                    "release",
-                    "-PreleaseVersion=1.2.0",
-                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                )
+                    "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                 .build()
 
             cloneForClient2()
@@ -265,10 +237,7 @@ internal class ReleasePluginTest {
 
             testKitRunner()
                 .withArguments(
-                    "release",
-                    "-PreleaseVersion=1.2.0",
-                    "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                )
+                    "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                 .build()
 
             cloneForClient2()
@@ -287,10 +256,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .buildAndFail()
 
             val actual = runner.task(":pushRelease")?.outcome
@@ -312,8 +278,7 @@ internal class ReleasePluginTest {
                 |    checkForUncommittedFiles.set(false)
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createLocalRepository()
 
@@ -322,10 +287,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .buildAndFail()
 
             val actual = runner.task(":pushRelease")?.outcome
@@ -345,10 +307,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .buildAndFail()
 
             val actual = runner.output.lines()
@@ -376,10 +335,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .buildAndFail()
 
             val actual = runner.task(":checkForUncommittedFiles")?.outcome
@@ -388,8 +344,7 @@ internal class ReleasePluginTest {
             assertThat(runner.output.lines())
                 .contains(
                     "> The repository contains uncommitted files:",
-                    "   - untracked: uncommittedFile.txt"
-                )
+                    "   - untracked: uncommittedFile.txt")
             assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
         }
 
@@ -403,8 +358,7 @@ internal class ReleasePluginTest {
                 |   checkForUncommittedFiles.set(false)
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
 
             client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
@@ -412,10 +366,7 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release",
-                        "-PreleaseVersion=1.2.0",
-                        "-PpostReleaseVersion=1.2.1-SNAPSHOT"
-                    )
+                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
                     .build()
 
             val actual = runner.task(":checkForUncommittedFiles")?.outcome
@@ -435,8 +386,7 @@ internal class ReleasePluginTest {
                 |   gitEmail.set("test@mail.de")
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 

@@ -16,7 +16,7 @@ internal class ReleasePluginTestDriver {
         SemanticVersioningProjectBuilder(
                 tmpDir.resolve("client1"),
                 tmpDir.resolve("client2"),
-                tmpDir.resolve("server")
+                tmpDir.resolve("server"),
             )
             .apply {
                 createProjectScaffold()

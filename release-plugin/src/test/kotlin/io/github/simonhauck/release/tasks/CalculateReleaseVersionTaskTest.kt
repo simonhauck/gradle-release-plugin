@@ -24,7 +24,7 @@ internal class CalculateReleaseVersionTaskTest {
                     .withArguments(
                         "calculateReleaseVersion",
                         "-PreleaseVersion=1.1.0",
-                        "-PpostReleaseVersion=1.2.0-SNAPSHOT"
+                        "-PpostReleaseVersion=1.2.0-SNAPSHOT",
                     )
                     .build()
 
@@ -54,7 +54,7 @@ internal class CalculateReleaseVersionTaskTest {
                 arrayOf(
                     "calculateReleaseVersion",
                     "-PreleaseVersion=1.1.0",
-                    "-PpostReleaseVersion=1.2.0-SNAPSHOT"
+                    "-PpostReleaseVersion=1.2.0-SNAPSHOT",
                 )
 
             testKitRunner().withArguments(*args).build()
