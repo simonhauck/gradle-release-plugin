@@ -21,5 +21,6 @@
 *.iml
 *.ipr
 /git_toolbox_prj.xml
+/git_toolbox_blame.xml
 /gradle.xml
 
