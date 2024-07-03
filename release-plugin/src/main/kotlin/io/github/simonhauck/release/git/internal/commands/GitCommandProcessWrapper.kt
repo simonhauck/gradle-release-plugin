@@ -56,11 +56,11 @@ internal class GitCommandProcessWrapper(
 
     override fun deleteLastCommit(): GitVoidResult {
         val stashChangedFiles = status().map { it.notEmpty() }.getOrElse { false }
-        if (stashChangedFiles) gitVoidCommand(listOf("stash", "--include-untracked"))
+        if (stashChangedFiles) stash(true)
 
         val result = gitVoidCommand(listOf("reset", "--hard", "HEAD~1"))
 
-        if (stashChangedFiles) gitVoidCommand(listOf("stash", "pop"))
+        if (stashChangedFiles) stashPop()
 
         return result
     }
@@ -96,11 +96,20 @@ internal class GitCommandProcessWrapper(
                         authorName = split[2],
                         authorEmail = split[3],
                         commiterName = split[4],
-                        commiterEmail = split[5]
+                        commiterEmail = split[5],
                     )
                 }
                 .asReversed()
         }
+    }
+
+    override fun stash(includeUntracked: Boolean): GitVoidResult {
+        val includeUntrackedFlag = if (includeUntracked) "--include-untracked" else null
+        return gitVoidCommand(listOfNotNull("stash", includeUntrackedFlag))
+    }
+
+    override fun stashPop(): GitVoidResult {
+        return gitVoidCommand(listOf("stash", "pop"))
     }
 
     override fun createBranch(branchName: String): GitVoidResult {
@@ -162,7 +171,7 @@ internal class GitCommandProcessWrapper(
         if (sshKeyFile == null) return emptyMap()
         return mapOf(
             "GIT_SSH_VARIANT" to "ssh",
-            "GIT_SSH_COMMAND" to "ssh -i ${sshKeyFile.absolutePath} -o IdentitiesOnly=yes"
+            "GIT_SSH_COMMAND" to "ssh -i ${sshKeyFile.absolutePath} -o IdentitiesOnly=yes",
         )
     }
 
@@ -172,7 +181,7 @@ internal class GitCommandProcessWrapper(
             "GIT_COMMITTER_NAME" to gitUser.name,
             "GIT_AUTHOR_NAME" to gitUser.name,
             "GIT_COMMITTER_EMAIL" to gitUser.email,
-            "GIT_AUTHOR_EMAIL" to gitUser.email
+            "GIT_AUTHOR_EMAIL" to gitUser.email,
         )
     }
 
