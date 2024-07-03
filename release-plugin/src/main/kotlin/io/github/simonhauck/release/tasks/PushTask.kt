@@ -54,7 +54,8 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
         gitCommandApi()
             .stash(includeUntracked = false)
             .registerRevertCommandOnSuccess(
-                RevertCommand("Restoring changes from stash") { gitCommandApi().stashPop() })
+                RevertCommand("Restoring changes from stash") { gitCommandApi().stashPop() }
+            )
             .revertHistoryOnError()
             .getOrThrowGradleException()
 
