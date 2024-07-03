@@ -22,8 +22,7 @@ internal class PushTaskTest {
                 """
                 |tasks.register<PushTask>("testPush"){}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
             client1Api.add("build.gradle.kts")
             client1Api.commit("pushTaskMessage")
 
@@ -44,8 +43,7 @@ internal class PushTaskTest {
                 """
                 |tasks.register<PushTask>("testPush"){}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createLocalRepository()
 
@@ -64,10 +62,48 @@ internal class PushTaskTest {
             |   disablePush = true
             |}
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createLocalRepository()
+
+            val runner = testKitRunner().withArguments("testPush").build()
+
+            val actual = runner.task(":testPush")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+        }
+
+    @Test
+    fun `should not fail to pull the remote changes when unstaged files are available`() =
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<PushTask>("testPush"){}
+                """
+                    .trimMargin())
+
+            createValidRepositoryWithRemote()
+
+            updateVersionProperties("untracked-file.txt")
+
+            val runner = testKitRunner().withArguments("testPush").build()
+
+            val actual = runner.task(":testPush")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+        }
+
+    @Test
+    fun `should not fail to pull the remote changes when staged files are available`() =
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<PushTask>("testPush"){}
+                """
+                    .trimMargin())
+
+            createValidRepositoryWithRemote()
+
+            updateVersionProperties("untracked-file.txt")
+            client1Api.add("version.properties")
 
             val runner = testKitRunner().withArguments("testPush").build()
 
