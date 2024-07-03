@@ -1,5 +1,6 @@
 package io.github.simonhauck.release.tasks
 
+import io.github.simonhauck.release.git.api.RevertCommand
 import java.time.Duration
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
@@ -27,12 +28,11 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
 
         Thread.sleep(delay.toMillis())
 
-        log.info("Rebasing current branch...")
-        gitCommandApi()
-            .pullRebase()
-            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
-            .getOrThrowGradleException()
-        log.info("Rebase complete")
+        whileLocalChangesAreStashed {
+            log.info("Rebasing current branch...")
+            gitCommandApi().pullRebase().revertHistoryOnError().getOrThrowGradleException()
+            log.info("Rebase complete")
+        }
 
         log.lifecycle("Pushing changes to remote repository...")
         gitCommandApi()
@@ -42,5 +42,28 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
             .getOrThrowGradleException()
 
         log.lifecycle("Push complete.")
+    }
+
+    private fun whileLocalChangesAreStashed(whileStash: () -> Unit): Unit {
+        val status = gitCommandApi().status().revertHistoryOnError().getOrThrowGradleException()
+        if (status.staged.isEmpty() && status.unstaged.isEmpty()) {
+            return whileStash()
+        }
+
+        log.info("Stashing local changes...")
+        gitCommandApi()
+            .stash(includeUntracked = false)
+            .registerRevertCommandOnSuccess(
+                RevertCommand("Restoring changes from stash") { gitCommandApi().stashPop() })
+            .revertHistoryOnError()
+            .getOrThrowGradleException()
+
+        whileStash()
+
+        log.info("Restoring local changes...")
+        gitCommandApi()
+            .stashPop()
+            .onRight { gitCommandHistoryApi.get().dropLastRevertCommand() }
+            .getOrThrowGradleException()
     }
 }
