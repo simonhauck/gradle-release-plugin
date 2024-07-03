@@ -8,6 +8,8 @@ interface GitCommandHistoryApi {
     fun flushCommands()
 
     fun revertAllCommands()
+
+    fun dropLastRevertCommand()
 }
 
 data class RevertCommand(
