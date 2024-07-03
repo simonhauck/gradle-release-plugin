@@ -1,9 +1,9 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.simonhauck.release.git.api.GitCommandApi
-import io.github.simonhauck.release.git.api.GitCommandHistoryApi
-import io.github.simonhauck.release.git.api.GitUser
+import arrow.core.Either
+import io.github.simonhauck.release.git.api.*
 import java.io.File
+import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -26,5 +26,22 @@ interface GitTask : Task {
         val email = gitEmail.orNull
         val user = if (userName != null && email != null) GitUser(userName, email) else null
         return GitCommandApi.create(gitRootDirectory.get(), user, sshKeyFile.asFile.orNull)
+    }
+
+    fun <T> GitResult<T>.revertHistoryOnError(): Either<GitError, T> {
+        return onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+    }
+
+    fun <T> GitResult<T>.registerRevertCommandOnSuccess(
+        revertCommand: RevertCommand
+    ): Either<GitError, T> {
+        return onRight { gitCommandHistoryApi.get().registerRevertCommand(revertCommand) }
+    }
+
+    fun <T> GitResult<T>.getOrThrowGradleException(): T {
+        return when (this) {
+            is Either.Left -> throw GradleException(this.value.message, this.value.throwable)
+            is Either.Right -> this.value
+        }
     }
 }
