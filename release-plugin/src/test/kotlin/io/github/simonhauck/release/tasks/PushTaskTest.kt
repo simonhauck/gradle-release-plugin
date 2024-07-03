@@ -22,7 +22,8 @@ internal class PushTaskTest {
                 """
                 |tasks.register<PushTask>("testPush"){}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
             client1Api.add("build.gradle.kts")
             client1Api.commit("pushTaskMessage")
 
@@ -43,7 +44,8 @@ internal class PushTaskTest {
                 """
                 |tasks.register<PushTask>("testPush"){}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             createLocalRepository()
 
@@ -62,7 +64,8 @@ internal class PushTaskTest {
             |   disablePush = true
             |}
             """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             createLocalRepository()
 
@@ -79,7 +82,8 @@ internal class PushTaskTest {
                 """
                 |tasks.register<PushTask>("testPush"){}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             createValidRepositoryWithRemote()
 
@@ -98,7 +102,8 @@ internal class PushTaskTest {
                 """
                 |tasks.register<PushTask>("testPush"){}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             createValidRepositoryWithRemote()
 
