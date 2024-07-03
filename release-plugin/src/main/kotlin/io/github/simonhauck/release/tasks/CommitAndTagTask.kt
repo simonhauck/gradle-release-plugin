@@ -40,31 +40,23 @@ abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
             val filePath = it.absolutePath
             gitCommandApi()
                 .add(filePath)
-                .onRight {
-                    gitCommandHistoryApi
-                        .get()
-                        .registerRevertCommand(buildGitAddRevertCommand(filePath))
-                }
-                .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+                .registerRevertCommandOnSuccess(buildGitAddRevertCommand(filePath))
+                .revertHistoryOnError()
                 .getOrThrowGradleException()
         }
 
         gitCommandApi()
             .commit("$commitPrefix$commitMessage")
-            .map { gitCommandHistoryApi.get().registerRevertCommand(buildGitCommitRevertCommand()) }
-            .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+            .registerRevertCommandOnSuccess(buildGitCommitRevertCommand())
+            .revertHistoryOnError()
             .getOrThrowGradleException()
 
         if (tagName.isNotEmpty()) {
             val fullTagName = "$tagPrefix$tagName"
             gitCommandApi()
                 .tag(fullTagName, "$tagMessagePrefix$tagMessage")
-                .map {
-                    gitCommandHistoryApi
-                        .get()
-                        .registerRevertCommand(buildGitTagRevertCommand(fullTagName))
-                }
-                .onLeft { gitCommandHistoryApi.get().revertAllCommands() }
+                .registerRevertCommandOnSuccess(buildGitTagRevertCommand(fullTagName))
+                .revertHistoryOnError()
                 .getOrThrowGradleException()
         }
     }
