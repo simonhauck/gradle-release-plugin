@@ -307,7 +307,57 @@ internal class GitCommandApiTest {
                     "Command finished with non zero exit code (code=128)",
                     "--- Git output ---",
                     "fatal: not a git repository (or any of the parent directories): .git",
-                    "--- End of output ---"
-                )
+                    "--- End of output ---")
+        }
+
+    @Test
+    fun `should not contain any changes staged, unstaged or untracked files after stash was called`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            updateVersionProperties("stagedFile")
+            client1Api.add(".")
+            appendContentToBuildGradle("unstagedContent")
+            client1WorkDir.resolve("tmpFile").createNewFile()
+
+            val beforeStash = client1Api.status().assertIsOk()
+            assertThat(beforeStash.staged).containsExactly("version.properties")
+            assertThat(beforeStash.unstaged).containsExactly("build.gradle.kts")
+            assertThat(beforeStash.untracked).containsExactly("tmpFile")
+
+            client1Api.stash(true).assertIsOk()
+
+            val afterStashEmpty = client1Api.status().assertIsOk().allEmpty()
+            assertThat(afterStashEmpty).isTrue()
+        }
+
+    @Test
+    fun `should not stash untracked files if the flag is set to false`() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            client1WorkDir.resolve("tmpFile").createNewFile()
+
+            client1Api.stash(false).assertIsOk()
+
+            val actual = client1Api.status().assertIsOk()
+            assertThat(actual.untracked).containsExactly("tmpFile")
+        }
+
+    @Test
+    fun `should restore local changes after pop `() =
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            updateVersionProperties("stagedFile")
+            client1Api.add(".")
+            appendContentToBuildGradle("unstagedContent")
+
+            client1Api.stash(false).assertIsOk()
+            client1Api.stashPop()
+
+            val actual = client1Api.status().assertIsOk()
+            assertThat(actual.unstaged)
+                .containsExactlyInAnyOrder("version.properties", "build.gradle.kts")
         }
 }

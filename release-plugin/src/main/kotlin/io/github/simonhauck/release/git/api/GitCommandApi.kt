@@ -30,6 +30,10 @@ interface GitCommandApi {
 
     fun log(): GitResult<List<GitLogEntry>>
 
+    fun stash(includeUntracked: Boolean): GitVoidResult
+
+    fun stashPop(): GitVoidResult
+
     fun getLocalBranchNames(): GitResult<List<String>>
 
     fun tag(tagName: String, tagMessage: String): GitVoidResult
