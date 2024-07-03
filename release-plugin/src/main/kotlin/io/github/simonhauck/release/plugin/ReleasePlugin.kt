@@ -25,10 +25,7 @@ class ReleasePlugin : Plugin<Project> {
 
         val writeReleaseVersionTask =
             project.registerWriteReleaseVersionTask(
-                calculateReleaseVersionTask,
-                releaseVersionStore,
-                extension
-            )
+                calculateReleaseVersionTask, releaseVersionStore, extension)
 
         val commitReleaseVersion =
             project.registerReleaseCommitTask(writeReleaseVersionTask, extension)
@@ -40,8 +37,7 @@ class ReleasePlugin : Plugin<Project> {
             project.registerPushTask(
                 "pushRelease",
                 extension,
-                listOf(commitReleaseVersion, checkForUncommittedFilesTask)
-            )
+                listOf(commitReleaseVersion, checkForUncommittedFilesTask))
 
         val writePostReleaseVersionTask =
             project.tasks.register("writePostReleaseVersion", WriteVersionTask::class.java) {
@@ -59,8 +55,7 @@ class ReleasePlugin : Plugin<Project> {
                 "pushPostRelease",
                 extension,
                 listOf(commitPostReleaseVersionTask),
-                extension.delayBeforePush
-            )
+                extension.delayBeforePush)
 
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
@@ -74,7 +69,7 @@ class ReleasePlugin : Plugin<Project> {
     ): TaskProvider<CheckForUncommittedFilesTask> {
         return tasks.register(
             "checkForUncommittedFiles",
-            CheckForUncommittedFilesTask::class.java
+            CheckForUncommittedFilesTask::class.java,
         ) {
             it.onlyIf { extension.checkForUncommittedFiles.get() }
             it.dependsOn(taskDependencies)
@@ -167,7 +162,7 @@ class ReleasePlugin : Plugin<Project> {
     private fun Project.registerGitHistoryService(): Provider<GitCommandHistoryService> =
         gradle.sharedServices.registerIfAbsent(
             "commandHistory",
-            GitCommandHistoryService::class.java
+            GitCommandHistoryService::class.java,
         ) {
             // Intentionally left empty for compatibility with older gradle versions
         }

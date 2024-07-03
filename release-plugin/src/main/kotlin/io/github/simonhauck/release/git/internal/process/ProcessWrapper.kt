@@ -38,8 +38,7 @@ internal class ProcessWrapper {
                         processOutputCaptor,
                         error = null,
                         message =
-                            "Command finished with non zero exit code (code=${result.exitValue})"
-                    )
+                            "Command finished with non zero exit code (code=${result.exitValue})"),
                 )
             }
 

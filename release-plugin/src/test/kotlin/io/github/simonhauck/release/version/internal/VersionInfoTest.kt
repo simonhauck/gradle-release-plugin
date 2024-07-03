@@ -189,7 +189,7 @@ internal class VersionInfoTest {
                 "+justmeta",
                 "9.8.7+meta+meta",
                 "9.8.7-whatever+meta+meta",
-                "9999.9999.9999----RC-SNAPSHOT.12.09.1--------------------------------..12"
+                "9999.9999.9999----RC-SNAPSHOT.12.09.1--------------------------------..12",
             )
             .map { DynamicTest.dynamicTest("should fail parsing for $it") { expectsException(it) } }
 
@@ -197,7 +197,6 @@ internal class VersionInfoTest {
         assertThatThrownBy { VersionInfo.fromVersion(Version(versionValue)) }
             .isInstanceOf(GradleException::class.java)
             .hasMessage(
-                "Can not parse versionInfo of '$versionValue' since it does not conform to the SemVer pattern"
-            )
+                "Can not parse versionInfo of '$versionValue' since it does not conform to the SemVer pattern")
     }
 }

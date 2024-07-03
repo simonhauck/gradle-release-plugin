@@ -18,7 +18,7 @@ internal class ManualVersionSelectionStrategy() : VersionIncrementStrategy {
     override val requiredPropertyDescription =
         listOf(
             "$RELEASE_VERSION_KEY - The version to release",
-            "$POST_RELEASE_VERSION_KEY - The version after the release"
+            "$POST_RELEASE_VERSION_KEY - The version after the release",
         )
 
     override fun tryParse(

@@ -39,7 +39,7 @@ internal data class VersionInfo(
             minor = minor + 1,
             patch = 0,
             preReleaseSuffix = newPreLeaseSuffix,
-            buildMetaData = null
+            buildMetaData = null,
         )
     }
 
@@ -49,7 +49,7 @@ internal data class VersionInfo(
             minor = 0,
             patch = 0,
             preReleaseSuffix = newPreLeaseSuffix,
-            buildMetaData = null
+            buildMetaData = null,
         )
     }
 

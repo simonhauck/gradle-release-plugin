@@ -307,7 +307,7 @@ internal class GitCommandApiTest {
                     "Command finished with non zero exit code (code=128)",
                     "--- Git output ---",
                     "fatal: not a git repository (or any of the parent directories): .git",
-                    "--- End of output ---"
+                    "--- End of output ---",
                 )
         }
 

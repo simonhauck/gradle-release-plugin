@@ -22,8 +22,7 @@ internal class CheckForUncommittedFilesTaskTest {
                 |    
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createLocalRepository()
 
@@ -43,8 +42,7 @@ internal class CheckForUncommittedFilesTaskTest {
                 |    
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createLocalRepository()
             updateVersionProperties("some-other-version")
@@ -83,8 +81,7 @@ internal class CheckForUncommittedFilesTaskTest {
                     |   dependsOn(commitTask)
                     |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             updateVersionProperties("1.0.0")
             createLocalRepository()

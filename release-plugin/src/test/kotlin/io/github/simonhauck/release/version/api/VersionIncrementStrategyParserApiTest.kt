@@ -18,8 +18,7 @@ internal class VersionIncrementStrategyParserApiTest {
             }
             .isInstanceOf(GradleException::class.java)
             .hasMessage(
-                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
-            )
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters")
     }
 
     @Test
@@ -37,7 +36,7 @@ internal class VersionIncrementStrategyParserApiTest {
         val actual =
             versionIncrementStrategyParserApi.parseOrThrow(
                 Version("1.0.0"),
-                mapOf("releaseType" to "major")
+                mapOf("releaseType" to "major"),
             )
 
         val expected = ReleaseVersions(Version("2.0.0"), Version("2.0.1-SNAPSHOT"))
@@ -49,7 +48,7 @@ internal class VersionIncrementStrategyParserApiTest {
         val actual =
             versionIncrementStrategyParserApi.parseOrThrow(
                 Version("1.0.0-SNAPSHOT"),
-                mapOf("releaseType" to "patch")
+                mapOf("releaseType" to "patch"),
             )
 
         val expected = ReleaseVersions(Version("1.0.0"), Version("1.0.1-SNAPSHOT"))
@@ -61,7 +60,7 @@ internal class VersionIncrementStrategyParserApiTest {
         val actual =
             versionIncrementStrategyParserApi.parseOrThrow(
                 Version("1.0.0"),
-                mapOf("releaseType" to "patch")
+                mapOf("releaseType" to "patch"),
             )
 
         val expected = ReleaseVersions(Version("1.0.1"), Version("1.0.2-SNAPSHOT"))
@@ -73,7 +72,7 @@ internal class VersionIncrementStrategyParserApiTest {
         val actual =
             versionIncrementStrategyParserApi.parseOrThrow(
                 Version("1.0.0"),
-                mapOf("releaseType" to "minor")
+                mapOf("releaseType" to "minor"),
             )
 
         val expected = ReleaseVersions(Version("1.1.0"), Version("1.1.1-SNAPSHOT"))
@@ -85,12 +84,11 @@ internal class VersionIncrementStrategyParserApiTest {
         assertThatThrownBy {
                 versionIncrementStrategyParserApi.parseOrThrow(
                     Version("1.0.0"),
-                    mapOf("releaseType" to "unknown")
+                    mapOf("releaseType" to "unknown"),
                 )
             }
             .isInstanceOf(GradleException::class.java)
             .hasMessage(
-                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
-            )
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters")
     }
 }

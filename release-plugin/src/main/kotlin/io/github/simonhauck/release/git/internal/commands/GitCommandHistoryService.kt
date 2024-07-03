@@ -28,8 +28,7 @@ internal abstract class GitCommandHistoryService :
 
     override fun revertAllCommands() {
         log.lifecycle(
-            "Trying to revert changes that are already done... (size=${commandStack.size})"
-        )
+            "Trying to revert changes that are already done... (size=${commandStack.size})")
         while (commandStack.isNotEmpty()) {
             val lastCommand = commandStack.pop()
 

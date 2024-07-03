@@ -29,8 +29,7 @@ internal class VersionIncrementStrategyParser : VersionIncrementStrategyParserAp
             }
 
             throw GradleException(
-                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
-            )
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters")
         }
 
         return parsedVersion
