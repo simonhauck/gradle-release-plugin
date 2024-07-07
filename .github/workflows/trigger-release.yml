@@ -3,14 +3,14 @@ name: Trigger Release
 on:
   workflow_dispatch:
     inputs:
-      release-version:
-        description: 'The version with which the code should be released'
+      release-type:
+        description: 'The type of release that should be performed'
         type: string
         required: true
-      post-release-version:
-        description: 'The next snapshot version'
-        type: string
-        required: true
+        options:
+          - major
+          - minor
+          - patch
 
 
 jobs:
@@ -50,4 +50,4 @@ jobs:
             ./**/build
 
       - name: Run gradle release task
-        run: ./gradlew release -x :example:release -PenablePush=true -PreleaseVersion=${{ github.event.inputs.release-version }} -PpostReleaseVersion=${{ github.event.inputs.post-release-version }} --no-daemon
+        run: ./gradlew release -x :example:release -PenablePush=true -PreleaseType=${{ github.event.inputs.release-type }} --no-daemon
