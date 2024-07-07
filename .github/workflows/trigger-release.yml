@@ -5,8 +5,9 @@ on:
     inputs:
       release-type:
         description: 'The type of release that should be performed'
-        type: string
+        type: choice
         required: true
+        default: 'patch'
         options:
           - major
           - minor
