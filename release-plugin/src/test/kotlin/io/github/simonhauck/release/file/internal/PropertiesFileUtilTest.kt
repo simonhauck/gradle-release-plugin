@@ -48,14 +48,13 @@ class PropertiesFileUtilTest {
 
         PropertiesFileUtil().updatePropertiesFile(file, properties)
 
-        val actual = file.readText()
+        val actual = file.readLines()
 
         val expected =
-            """
-            |someOtherProperty=anotherValue
-            |someProperty=value
-            """
-                .trimMargin()
+            listOf(
+                "someOtherProperty=anotherValue",
+                "someProperty=value",
+            )
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -80,16 +79,15 @@ class PropertiesFileUtilTest {
 
         PropertiesFileUtil().updatePropertiesFile(file, properties)
 
-        val actual = file.readText()
+        val actual = file.readLines()
 
         val expected =
-            """
-            |someProperty=somePropertyNewValue
-            |# Some comment
-            |someOtherProperty=anotherValue
-            |newProperty=newValue
-            """
-                .trimMargin()
+            listOf(
+                "someProperty=somePropertyNewValue",
+                "# Some comment",
+                "someOtherProperty=anotherValue",
+                "newProperty=newValue",
+            )
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -110,15 +108,14 @@ class PropertiesFileUtilTest {
 
         PropertiesFileUtil().updatePropertiesFile(file, properties)
 
-        val actual = file.readText()
+        val actual = file.readLines()
 
         val expected =
-            """
-            |someProperty: somePropertyNewValue
-            |someOtherProperty: anotherValue
-            |newProperty: newValue
-            """
-                .trimMargin()
+            listOf(
+                "someProperty: somePropertyNewValue",
+                "someOtherProperty: anotherValue",
+                "newProperty: newValue",
+            )
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -137,14 +134,13 @@ class PropertiesFileUtilTest {
 
         PropertiesFileUtil().updatePropertiesFile(file, properties)
 
-        val actual = file.readText()
+        val actual = file.readLines()
 
         val expected =
-            """
-            |someProperty=value
-            |newProperty=newValue
-            """
-                .trimMargin()
+            listOf(
+                "someProperty=value",
+                "newProperty=newValue",
+            )
         assertThat(actual).isEqualTo(expected)
     }
 
