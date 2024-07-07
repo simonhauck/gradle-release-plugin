@@ -33,13 +33,8 @@ internal class VersionHolder(private val tmpFileLocation: File) : VersionHolderA
     }
 
     override fun writeVersionPropertyToFile(file: File, version: Version) {
-        val updatedMap =
-            readPropertiesFile(file).toMutableMap().apply {
-                put("version", version.value)
-                toMap()
-            }
-
-        PropertiesFileUtil().writePropertiesFile(file, updatedMap)
+        val propertiesToUpdateOrAdd = mapOf("version" to version.value)
+        PropertiesFileUtil().updatePropertiesFile(file, propertiesToUpdateOrAdd)
     }
 
     private fun Properties.writeToFile(file: File) {

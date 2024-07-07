@@ -412,4 +412,32 @@ internal class ReleasePluginTest {
             assertThat(lastCommit.commiterEmail).isEqualTo("user1@mail.com")
         }
     }
+
+    @Test
+    fun `should support property files with colon as separator and other unrelated properties`() {
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            val versionFile =
+                client1WorkDir.resolve("version.properties").apply {
+                    writeText(
+                        """
+                    |# Some comment
+                    |unrelatedProperty: unrelatedValue
+                    |version: 1.0.0
+                    |someProperty: value
+                """
+                            .trimMargin())
+                }
+
+            testKitRunner().withArguments("release", "-PreleaseType=major").build()
+
+            assertThat(versionFile.readLines())
+                .containsExactly(
+                    "# Some comment",
+                    "unrelatedProperty: unrelatedValue",
+                    "version: 2.0.1-SNAPSHOT",
+                    "someProperty: value")
+        }
+    }
 }
