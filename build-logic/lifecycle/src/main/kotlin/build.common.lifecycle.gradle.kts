@@ -1,21 +1,35 @@
-description = "Provides plugins that are used by Gradle subprojects"
-
 plugins { `lifecycle-base` }
 
-tasks.check {
-    dependsOn(subprojects.map { "${it.name}:check" })
-    dependsOn(checkJvmArgsCompatibilityTask)
-}
+object LifeCycleUtility {
 
-val checkJvmArgsCompatibilityTask =
-    tasks.register<CheckJvmArgsCompatibilityTask>("checkJvmArgs") {
-        gradlePropertiesFiles =
-            listOf(
-                layout.projectDirectory.file("gradle.properties").asFile,
-                layout.projectDirectory.file("../gradle.properties").asFile,
-                layout.projectDirectory.file("../release-plugin/gradle.properties").asFile,
-            )
+    fun TaskProvider<*>.dependsOnSameTaskInSubmodules(
+        excludedModule: List<String> = emptyList(),
+    ) {
+        this { dependsOnSameTaskInSubmodules(excludedModule) }
     }
+
+    fun Task.dependsOnSameTaskInSubmodules(
+        excludedModule: List<String> = emptyList(),
+    ) {
+        project.subprojects
+            .filterNot { it.name in excludedModule }
+            .forEach { subproject -> dependsOn(":${subproject.name}:${this.name}") }
+    }
+
+    fun TaskProvider<*>.dependsOnSameTaskInIncludedBuilds(
+        excludedModule: List<String> = emptyList(),
+    ) {
+        this { dependsOnSameTaskInIncludedBuilds(excludedModule) }
+    }
+
+    fun Task.dependsOnSameTaskInIncludedBuilds(
+        excludedModule: List<String> = emptyList(),
+    ) {
+        project.gradle.includedBuilds
+            .filterNot { it.name in excludedModule }
+            .forEach { includedBuild -> dependsOn(includedBuild.task(":${this.name}")) }
+    }
+}
 
 abstract class CheckJvmArgsCompatibilityTask : DefaultTask() {
     @get:InputFiles abstract val gradlePropertiesFiles: ListProperty<File>
