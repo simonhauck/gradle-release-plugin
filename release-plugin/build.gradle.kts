@@ -1,7 +1,6 @@
 import java.util.*
 
 plugins {
-    id("build.common.artifactory")
     id("build.common.kotlin-conventions")
     `java-gradle-plugin`
     alias(libs.plugins.gradlePublish)
