@@ -35,5 +35,5 @@ jobs:
             ./**/build
 
       - name: Run Build & Test
-        run: ./gradlew release-plugin:build build --no-daemon
+        run: ./gradlew build --no-daemon
 
