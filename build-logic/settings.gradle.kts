@@ -10,6 +10,6 @@ plugins {
 }
 
 include(
-    "artifactory",
+    "lifecycle",
     "kotlin-convention",
 )
