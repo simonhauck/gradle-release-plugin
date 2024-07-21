@@ -24,6 +24,17 @@ We welcome and appreciate all contributions. Here's how you can participate:
 
 ## Development Setup
 
-- To format the code run `./gradlew format` and `./gradlew release-plugin:format` for the plugin
-- To build the project use `./gradlew assemble` and `gradlew release-plugin:assemble` for the plugin
-- To run all checks use `./gradlew check` and `./gradlew release-plugin:check` for the plugin
+### Building & Testing
+
+This plugin can be built and tested with the standard lifecycle tasks provided by Gradle.
+
+- To build the project use `./gradlew assemble`
+- To run all checks (including formatting) use `./gradlew check`
+- To build and run tests use `./gradlew build`
+
+If you just want to run the plugin related tests use `./gradlew release-plugin:test`.
+
+### Formatting
+
+This plugin uses [ktfmt](https://github.com/facebook/ktfmt) as formatting tool.
+To format files run `./gradlew format`. To check if your files are formatted correctly use `./gradlew checkFormat`.
