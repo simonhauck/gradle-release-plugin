@@ -59,7 +59,7 @@ internal data class VersionInfo(
             return parseVersionInfo(version).getOrElse { throw it }
         }
 
-        private fun parseVersionInfo(version: Version): Either<GradleException, VersionInfo> =
+        internal fun parseVersionInfo(version: Version): Either<GradleException, VersionInfo> =
             either {
                 val value = version.value
                 val regexString =
