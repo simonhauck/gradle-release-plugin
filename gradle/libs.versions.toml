@@ -1,5 +1,5 @@
 [versions]
-kotlionVersion = "2.0.0"
+kotlionVersion = "2.0.10"
 junitVersion = "5.10.3"
 
 [libraries]
