@@ -1,6 +1,6 @@
 [versions]
 kotlionVersion = "2.0.10"
-junitVersion = "5.10.3"
+junitVersion = "5.11.0"
 
 [libraries]
 # Plugins that are used in buildLogic
