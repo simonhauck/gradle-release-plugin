@@ -9,6 +9,9 @@
   "features": {
   },
   "postCreateCommand": "java -version",
+  "mounts": [
+    "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  ],
   "customizations": {
     "jetbrains": {
       "settings": {
@@ -19,7 +22,6 @@
         "com.github.copilot"
       ],
       "backend": "IntelliJ",
-      "version": "2024.2.0.1"
     }
   }
 }
