@@ -3,20 +3,12 @@
 {
   "name": "Java",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "none",
-      "installMaven": "false",
-      "installGradle": "false"
-    }
+  build: {
+    dockerfile: "Dockerfile"
   },
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
-
-  // Use 'postCreateCommand' to run commands after the container is created.
+  "features": {
+  },
   "postCreateCommand": "java -version",
-  // Configure tool-specific properties.
   "customizations": {
     "jetbrains": {
       "settings": {
@@ -24,8 +16,6 @@
       "plugins": [
       ],
       "backend": "IntelliJ"
-    },
-  },
-  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  // "remoteUser": "root"
+    }
+  }
 }
