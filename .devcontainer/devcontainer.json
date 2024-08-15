@@ -14,6 +14,9 @@
       "settings": {
       },
       "plugins": [
+        "com.suusan2go.kotlin-fill-class",
+        "com.facebook.ktfmt_idea_plugin",
+        "com.github.copilot"
       ],
       "backend": "IntelliJ"
     }
