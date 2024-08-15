@@ -18,7 +18,8 @@
         "com.facebook.ktfmt_idea_plugin",
         "com.github.copilot"
       ],
-      "backend": "IntelliJ"
+      "backend": "IntelliJ",
+      "version": "2024.2.0.1"
     }
   }
 }
