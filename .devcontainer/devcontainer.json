@@ -2,16 +2,13 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/java
 {
   "name": "Java",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
+    "ghcr.io/devcontainers/features/java" : {
+      "version": "21",
+      "jdkDistro": "open"
+    }
   },
-  "postCreateCommand": "java -version",
-  //"mounts": [
-  //  "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
-  //],
   "customizations": {
     "jetbrains": {
       "settings": {
