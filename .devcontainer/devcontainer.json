@@ -9,9 +9,9 @@
   "features": {
   },
   "postCreateCommand": "java -version",
-  "mounts": [
-    "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
-  ],
+  //"mounts": [
+  //  "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  //],
   "customizations": {
     "jetbrains": {
       "settings": {
@@ -21,7 +21,7 @@
         "com.facebook.ktfmt_idea_plugin",
         "com.github.copilot"
       ],
-      "backend": "IntelliJ",
+      "backend": "IntelliJ"
     }
   }
 }
