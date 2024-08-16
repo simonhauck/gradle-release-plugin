@@ -18,8 +18,7 @@
       },
       "plugins": [
         "com.suusan2go.kotlin-fill-class",
-        "com.facebook.ktfmt_idea_plugin",
-        "com.github.copilot"
+        "com.facebook.ktfmt_idea_plugin"
       ],
       "backend": "IntelliJ"
     }
