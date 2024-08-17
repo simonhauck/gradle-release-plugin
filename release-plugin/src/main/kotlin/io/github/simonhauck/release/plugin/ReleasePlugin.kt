@@ -20,8 +20,20 @@ class ReleasePlugin : Plugin<Project> {
         val releaseVersionStore =
             project.layout.buildDirectory.file("release/tmpVersion.properties")
 
+        project.configurations
+            .flatMap { configuration -> configuration.dependencies }
+            .map { dependency ->
+                val s = "${dependency.group}:${dependency.name}:${dependency.version}"
+                println("Dependency: $s")
+                s
+            }
+        val checkForSnapshotVersionsTask =
+            project.tasks.register(
+                "checkForPreReleaseVersions", CheckForPreReleaseDependenciesTask::class.java) {}
+
         val calculateReleaseVersionTask =
-            project.registerCalculateReleaseVersionTask(releaseVersionStore, extension)
+            project.registerCalculateReleaseVersionTask(
+                releaseVersionStore, extension, checkForSnapshotVersionsTask)
 
         val writeReleaseVersionTask =
             project.registerWriteReleaseVersionTask(
@@ -129,7 +141,8 @@ class ReleasePlugin : Plugin<Project> {
 
     private fun Project.registerCalculateReleaseVersionTask(
         releaseVersionStore: Provider<RegularFile>,
-        extension: ReleaseExtension
+        extension: ReleaseExtension,
+        preCheckTask: TaskProvider<*>
     ): TaskProvider<CalculateReleaseVersionTask> =
         tasks.register("calculateReleaseVersion", CalculateReleaseVersionTask::class.java) {
             val stringMap = properties.map { (key, value) -> key to value.toString() }.toMap()
@@ -137,6 +150,7 @@ class ReleasePlugin : Plugin<Project> {
             it.releaseVersionStorePath.set(releaseVersionStore.get().asFile)
             it.versionPropertyFile.set(extension.versionPropertyFile)
             it.releaseVersionStore.set(releaseVersionStore)
+            it.dependsOn(preCheckTask)
         }
 
     private fun Project.configureGitTasks(

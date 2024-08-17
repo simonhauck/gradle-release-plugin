@@ -1,11 +1,11 @@
 package io.github.simonhauck.release.tasks
 
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 
 class CheckForPreReleaseDependenciesTaskTest {
 
@@ -40,11 +40,10 @@ class CheckForPreReleaseDependenciesTaskTest {
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.FAILED)
             assertThat(runner.output.lines())
                 .containsSequence(
-                    "Found 2 pre-release dependencies with a pre-release version that are not allowed",
-                    " - other.xy:lib2:1.0.0-SNAPSHOT",
-                    " - some.group:lib:1.0.0-alpha",
-                    "Change the versions or add them to the ignore list.",
-                )
+                    "> Found 2 dependencies with a pre-release version that are not allowed",
+                    "   - other.xy:lib2:1.0.0-SNAPSHOT",
+                    "   - some.group:lib:1.0.0-alpha",
+                    "  Change the versions or add them to the ignore list.")
         }
 
     @Test
