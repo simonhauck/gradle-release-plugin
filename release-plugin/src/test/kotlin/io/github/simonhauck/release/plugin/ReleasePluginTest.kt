@@ -23,7 +23,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -39,13 +42,7 @@ internal class ReleasePluginTest {
             updateVersionProperties("1.0.1-SNAPSHOT")
             createValidRepositoryWithRemote()
 
-            val runner =
-                testKitRunner()
-                    .withArguments(
-                        "release",
-                        "-PreleaseType=minor",
-                    )
-                    .build()
+            val runner = testKitRunner().withArguments("release", "-PreleaseType=minor").build()
 
             val actual = runner.task(":release")?.outcome
 
@@ -62,7 +59,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -87,7 +87,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -112,7 +115,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .buildAndFail()
 
             assertThat(runner.task(":commitReleaseVersion")?.outcome).isEqualTo(TaskOutcome.FAILED)
@@ -157,7 +163,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .build()
 
             val actual = runner.task(":release")?.outcome
@@ -189,7 +198,10 @@ internal class ReleasePluginTest {
 
             testKitRunner()
                 .withArguments(
-                    "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                    "release",
+                    "-PreleaseVersion=1.2.0",
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                )
                 .build()
 
             assertThat(versionFile.readText()).isEqualTo("version=1.2.1-SNAPSHOT")
@@ -206,7 +218,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .buildAndFail()
 
             val actual = runner.task(":commitReleaseVersion")?.outcome
@@ -222,7 +237,10 @@ internal class ReleasePluginTest {
 
             testKitRunner()
                 .withArguments(
-                    "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                    "release",
+                    "-PreleaseVersion=1.2.0",
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                )
                 .build()
 
             cloneForClient2()
@@ -237,7 +255,10 @@ internal class ReleasePluginTest {
 
             testKitRunner()
                 .withArguments(
-                    "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                    "release",
+                    "-PreleaseVersion=1.2.0",
+                    "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                )
                 .build()
 
             cloneForClient2()
@@ -256,7 +277,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .buildAndFail()
 
             val actual = runner.task(":pushRelease")?.outcome
@@ -287,7 +311,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .buildAndFail()
 
             val actual = runner.task(":pushRelease")?.outcome
@@ -307,7 +334,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .buildAndFail()
 
             val actual = runner.output.lines()
@@ -335,7 +365,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .buildAndFail()
 
             val actual = runner.task(":checkForUncommittedFiles")?.outcome
@@ -344,7 +377,8 @@ internal class ReleasePluginTest {
             assertThat(runner.output.lines())
                 .contains(
                     "> The repository contains uncommitted files:",
-                    "   - untracked: uncommittedFile.txt")
+                    "   - untracked: uncommittedFile.txt",
+                )
             assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
         }
 
@@ -366,7 +400,10 @@ internal class ReleasePluginTest {
             val runner =
                 testKitRunner()
                     .withArguments(
-                        "release", "-PreleaseVersion=1.2.0", "-PpostReleaseVersion=1.2.1-SNAPSHOT")
+                        "release",
+                        "-PreleaseVersion=1.2.0",
+                        "-PpostReleaseVersion=1.2.1-SNAPSHOT",
+                    )
                     .build()
 
             val actual = runner.task(":checkForUncommittedFiles")?.outcome
@@ -437,7 +474,55 @@ internal class ReleasePluginTest {
                     "# Some comment",
                     "unrelatedProperty: unrelatedValue",
                     "version: 2.0.1-SNAPSHOT",
-                    "someProperty: value")
+                    "someProperty: value",
+                )
+        }
+    }
+
+    @Test
+    fun `release should fail it the project uses a snapshot dependency`() {
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+            """
+                    .trimMargin())
+            createLocalRepository()
+
+            val runner = testKitRunner().withArguments("release").buildAndFail()
+
+            assertThat(runner.task(":checkForPreReleaseVersions")?.outcome)
+                .isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .contains(
+                    "> Found 1 dependencies with a pre-release version that are not allowed",
+                    "   - io.github.simonhauck.release:release-plugin:1.0.0-RC1",
+                    "  Change the versions or add them to the ignore list.",
+                )
+        }
+    }
+
+    @Test
+    fun `release should succeed without any snapshot dependencies`() {
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }
+            """
+                    .trimMargin())
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
+
+            assertThat(runner.task(":checkForPreReleaseVersions")?.outcome)
+                .isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         }
     }
 }
