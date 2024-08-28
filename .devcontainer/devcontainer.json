@@ -1,10 +1,10 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/java
 {
-  "name": "Java",
+  "name": "Gradle Release Plugin",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/java" : {
+    "ghcr.io/devcontainers/features/java": {
       "version": "21",
       "jdkDistro": "open"
     }
