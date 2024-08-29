@@ -22,12 +22,14 @@ class ReleasePlugin : Plugin<Project> {
 
         val projectDependencies = project.getDependenciesAsProvider()
 
-        val checkForSnapshotVersionsTask =
+        val checkForPreReleaseVersionsTask =
             project.tasks.register(
                 "checkForPreReleaseVersions",
                 CheckForPreReleaseDependenciesTask::class.java,
             ) {
-                // TODO: Add ignored dependencies in extension
+                it.onlyIf { extension.checkForPreReleaseVersions.get() }
+                it.ignorePreReleaseDependencies.set(extension.ignorePreReleaseDependencies)
+                it.ignorePreReleaseDependenciesFile.set(extension.ignorePreReleaseDependenciesFile)
                 it.usedDependencies.set(projectDependencies)
             }
 
@@ -35,7 +37,7 @@ class ReleasePlugin : Plugin<Project> {
             project.registerCalculateReleaseVersionTask(
                 releaseVersionStore,
                 extension,
-                checkForSnapshotVersionsTask,
+                checkForPreReleaseVersionsTask,
             )
 
         val writeReleaseVersionTask =

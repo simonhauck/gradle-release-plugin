@@ -1,13 +1,13 @@
 package io.github.simonhauck.release.plugin
 
+import java.io.File
+import java.time.Duration
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import java.io.File
-import java.time.Duration
 
 abstract class ReleaseExtension(
     private val objects: ObjectFactory,
@@ -17,7 +17,12 @@ abstract class ReleaseExtension(
     val rootGitDirectory: RegularFileProperty = projectFileProperty("./")
     val versionPropertyFile: RegularFileProperty = projectFileProperty("version.properties")
 
-    // Checks
+    // Check for snapshot / pre-release versions
+    val checkForPreReleaseVersions: Property<Boolean> = booleanProperty(true)
+    val ignorePreReleaseDependenciesFile: RegularFileProperty = fileProperty()
+    val ignorePreReleaseDependencies: ListProperty<String> = stringListProperty()
+
+    // Check for uncommited files
     val checkForUncommittedFiles: Property<Boolean> = booleanProperty(true)
 
     // Git config
@@ -43,6 +48,9 @@ abstract class ReleaseExtension(
 
     private fun stringProperty(default: String? = null): Property<String> =
         objects.property(String::class.java).convention(default)
+
+    private fun stringListProperty(default: List<String>? = null): ListProperty<String> =
+        objects.listProperty(String::class.java).convention(default)
 
     private fun projectFileProperty(default: String?): RegularFileProperty =
         objects.fileProperty().convention(default?.let { layout.projectDirectory.file(it) })
