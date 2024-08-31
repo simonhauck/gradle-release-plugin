@@ -18,7 +18,8 @@ internal class VersionIncrementStrategyParserApiTest {
             }
             .isInstanceOf(GradleException::class.java)
             .hasMessage(
-                "No valid version increment strategy found. Check the log or the documentation for the available parameters")
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
+            )
     }
 
     @Test
@@ -89,6 +90,7 @@ internal class VersionIncrementStrategyParserApiTest {
             }
             .isInstanceOf(GradleException::class.java)
             .hasMessage(
-                "No valid version increment strategy found. Check the log or the documentation for the available parameters")
+                "No valid version increment strategy found. Check the log or the documentation for the available parameters"
+            )
     }
 }

@@ -21,7 +21,7 @@ interface GitCommandApi {
     fun addRemoteAndSetUpstream(
         remoteName: String,
         remoteUrl: String,
-        branchName: String
+        branchName: String,
     ): GitVoidResult
 
     fun push(): GitVoidResult

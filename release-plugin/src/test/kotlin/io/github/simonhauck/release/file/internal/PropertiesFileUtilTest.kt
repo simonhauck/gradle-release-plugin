@@ -25,7 +25,8 @@ class PropertiesFileUtilTest {
                     |
                     |#comment=this should be filtered
                     """
-                        .trimMargin())
+                        .trimMargin()
+                )
             }
 
         val actual = PropertiesFileUtil().readProperties(file)
@@ -50,11 +51,7 @@ class PropertiesFileUtilTest {
 
         val actual = file.readLines()
 
-        val expected =
-            listOf(
-                "someOtherProperty=anotherValue",
-                "someProperty=value",
-            )
+        val expected = listOf("someOtherProperty=anotherValue", "someProperty=value")
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -68,14 +65,12 @@ class PropertiesFileUtilTest {
                     |# Some comment
                     |someOtherProperty=anotherValue
                     """
-                        .trimMargin())
+                        .trimMargin()
+                )
             }
 
         val properties =
-            mapOf(
-                "newProperty" to "newValue",
-                "someProperty" to "somePropertyNewValue",
-            )
+            mapOf("newProperty" to "newValue", "someProperty" to "somePropertyNewValue")
 
         PropertiesFileUtil().updatePropertiesFile(file, properties)
 
@@ -100,7 +95,8 @@ class PropertiesFileUtilTest {
                     |someProperty: value
                     |someOtherProperty: anotherValue
                     """
-                        .trimMargin())
+                        .trimMargin()
+                )
             }
 
         val properties =
@@ -127,7 +123,8 @@ class PropertiesFileUtilTest {
                     """
                     |someProperty=value
                     """
-                        .trimMargin())
+                        .trimMargin()
+                )
             }
 
         val properties = mapOf("newProperty" to "newValue")
@@ -136,11 +133,7 @@ class PropertiesFileUtilTest {
 
         val actual = file.readLines()
 
-        val expected =
-            listOf(
-                "someProperty=value",
-                "newProperty=newValue",
-            )
+        val expected = listOf("someProperty=value", "newProperty=newValue")
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -158,9 +151,10 @@ class PropertiesFileUtilTest {
             )
             .map {
                 DynamicTest.dynamicTest(
-                    "shouldDetectPropertiesSeparator() should map ${it.first} to ${it.second}") {
-                        shouldDetectPropertiesSeparator(it.first, it.second)
-                    }
+                    "shouldDetectPropertiesSeparator() should map ${it.first} to ${it.second}"
+                ) {
+                    shouldDetectPropertiesSeparator(it.first, it.second)
+                }
             }
 
     @Test

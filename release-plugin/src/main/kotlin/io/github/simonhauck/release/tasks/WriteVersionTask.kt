@@ -42,10 +42,11 @@ abstract class WriteVersionTask : BaseReleaseTask() {
     private fun VersionHolderApi.getReleaseVersionsOrThrow(tmpFileLocation: File?) =
         loadVersions()
             ?: throw GradleException(
-                "No release version found in $tmpFileLocation. Did the task to write the file execute before?")
+                "No release version found in $tmpFileLocation. Did the task to write the file execute before?"
+            )
 }
 
 enum class VersionType {
     RELEASE,
-    NEXT_DEV
+    NEXT_DEV,
 }

@@ -45,7 +45,8 @@ abstract class CheckForPreReleaseDependenciesTask : BaseReleaseTask() {
         val split = it.split(":")
         if (split.size > 3)
             throw GradleException(
-                "Something went wrong. Expected a dependency in form of group:name:version but got $it")
+                "Something went wrong. Expected a dependency in form of group:name:version but got $it"
+            )
 
         if (split.size < 3) return false
         val version = split[2]

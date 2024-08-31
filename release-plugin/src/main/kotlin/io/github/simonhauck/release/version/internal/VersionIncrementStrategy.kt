@@ -23,7 +23,7 @@ internal class ManualVersionSelectionStrategy() : VersionIncrementStrategy {
 
     override fun tryParse(
         currentVersion: Version,
-        parameters: Map<String, String>
+        parameters: Map<String, String>,
     ): ReleaseVersions? {
         val releaseVersion = parameters[RELEASE_VERSION_KEY]
         val postReleaseVersion = parameters[POST_RELEASE_VERSION_KEY]
@@ -50,7 +50,7 @@ internal class ReleaseTypeSelectionStrategy : VersionIncrementStrategy {
 
     override fun tryParse(
         currentVersion: Version,
-        parameters: Map<String, String>
+        parameters: Map<String, String>,
     ): ReleaseVersions? {
         val releaseType = parameters[RELEASE_TYPE] ?: return null
 

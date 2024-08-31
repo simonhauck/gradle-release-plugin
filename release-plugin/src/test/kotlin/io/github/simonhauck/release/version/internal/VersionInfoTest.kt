@@ -197,6 +197,7 @@ internal class VersionInfoTest {
         assertThatThrownBy { VersionInfo.fromVersion(Version(versionValue)) }
             .isInstanceOf(GradleException::class.java)
             .hasMessage(
-                "Can not parse versionInfo of '$versionValue' since it does not conform to the SemVer pattern")
+                "Can not parse versionInfo of '$versionValue' since it does not conform to the SemVer pattern"
+            )
     }
 }

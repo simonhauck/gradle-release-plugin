@@ -13,7 +13,7 @@ internal data class VersionInfo(
     val minor: Int,
     val patch: Int,
     val preReleaseSuffix: String? = null,
-    val buildMetaData: String? = null
+    val buildMetaData: String? = null,
 ) {
 
     fun isPreRelease(): Boolean {
