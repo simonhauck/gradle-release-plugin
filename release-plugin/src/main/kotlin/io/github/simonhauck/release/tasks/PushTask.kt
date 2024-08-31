@@ -14,6 +14,10 @@ abstract class PushTask : BaseReleaseTask(), GitTask {
     @get:Input @get:Optional abstract val disablePush: Property<Boolean>
     @get:Input @get:Optional abstract val delayBeforePush: Property<Duration>
 
+    init {
+        description = "Pushes the changes to the remote repository."
+    }
+
     @TaskAction
     fun push() {
         if (disablePush.getOrElse(false)) {

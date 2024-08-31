@@ -20,12 +20,32 @@ class ReleasePlugin : Plugin<Project> {
         val releaseVersionStore =
             project.layout.buildDirectory.file("release/tmpVersion.properties")
 
+        val projectDependencies = project.getDependenciesAsProvider()
+
+        val checkForPreReleaseVersionsTask =
+            project.tasks.register(
+                "checkForPreReleaseVersions",
+                CheckForPreReleaseDependenciesTask::class.java,
+            ) {
+                it.onlyIf { extension.checkForPreReleaseVersions.get() }
+                it.ignorePreReleaseDependencies.set(extension.ignorePreReleaseDependencies)
+                it.ignorePreReleaseDependenciesFile.set(extension.ignorePreReleaseDependenciesFile)
+                it.usedDependencies.set(projectDependencies)
+            }
+
         val calculateReleaseVersionTask =
-            project.registerCalculateReleaseVersionTask(releaseVersionStore, extension)
+            project.registerCalculateReleaseVersionTask(
+                releaseVersionStore,
+                extension,
+                checkForPreReleaseVersionsTask,
+            )
 
         val writeReleaseVersionTask =
             project.registerWriteReleaseVersionTask(
-                calculateReleaseVersionTask, releaseVersionStore, extension)
+                calculateReleaseVersionTask,
+                releaseVersionStore,
+                extension,
+            )
 
         val commitReleaseVersion =
             project.registerReleaseCommitTask(writeReleaseVersionTask, extension)
@@ -37,7 +57,8 @@ class ReleasePlugin : Plugin<Project> {
             project.registerPushTask(
                 "pushRelease",
                 extension,
-                listOf(commitReleaseVersion, checkForUncommittedFilesTask))
+                listOf(commitReleaseVersion, checkForUncommittedFilesTask),
+            )
 
         val writePostReleaseVersionTask =
             project.tasks.register("writePostReleaseVersion", WriteVersionTask::class.java) {
@@ -55,7 +76,8 @@ class ReleasePlugin : Plugin<Project> {
                 "pushPostRelease",
                 extension,
                 listOf(commitPostReleaseVersionTask),
-                extension.delayBeforePush)
+                extension.delayBeforePush,
+            )
 
         project.tasks.register("release", BaseReleaseTask::class.java) {
             it.description = "Release the current version"
@@ -63,9 +85,16 @@ class ReleasePlugin : Plugin<Project> {
         }
     }
 
+    private fun Project.getDependenciesAsProvider(): Provider<List<String>> = provider {
+        configurations
+            .flatMap { configuration -> configuration.dependencies }
+            .filter { it.group != null && it.version != null }
+            .map { "${it.group}:${it.name}:${it.version}" }
+    }
+
     private fun Project.checkForUncommittedFiles(
         extension: ReleaseExtension,
-        taskDependencies: TaskProvider<*>
+        taskDependencies: TaskProvider<*>,
     ): TaskProvider<CheckForUncommittedFilesTask> {
         return tasks.register(
             "checkForUncommittedFiles",
@@ -80,7 +109,7 @@ class ReleasePlugin : Plugin<Project> {
         name: String,
         extension: ReleaseExtension,
         dependsOn: List<TaskProvider<*>>,
-        delay: Property<Duration> = objects.property(Duration::class.java).value(Duration.ZERO)
+        delay: Property<Duration> = objects.property(Duration::class.java).value(Duration.ZERO),
     ): TaskProvider<PushTask> =
         tasks.register(name, PushTask::class.java) {
             it.dependsOn(dependsOn)
@@ -118,7 +147,7 @@ class ReleasePlugin : Plugin<Project> {
     private fun Project.registerWriteReleaseVersionTask(
         calculateReleaseVersionTask: TaskProvider<CalculateReleaseVersionTask>,
         releaseVersionStore: Provider<RegularFile>,
-        extension: ReleaseExtension
+        extension: ReleaseExtension,
     ): TaskProvider<WriteVersionTask> =
         tasks.register("writeReleaseVersion", WriteVersionTask::class.java) {
             it.dependsOn(calculateReleaseVersionTask)
@@ -129,7 +158,8 @@ class ReleasePlugin : Plugin<Project> {
 
     private fun Project.registerCalculateReleaseVersionTask(
         releaseVersionStore: Provider<RegularFile>,
-        extension: ReleaseExtension
+        extension: ReleaseExtension,
+        preCheckTask: TaskProvider<*>,
     ): TaskProvider<CalculateReleaseVersionTask> =
         tasks.register("calculateReleaseVersion", CalculateReleaseVersionTask::class.java) {
             val stringMap = properties.map { (key, value) -> key to value.toString() }.toMap()
@@ -137,11 +167,10 @@ class ReleasePlugin : Plugin<Project> {
             it.releaseVersionStorePath.set(releaseVersionStore.get().asFile)
             it.versionPropertyFile.set(extension.versionPropertyFile)
             it.releaseVersionStore.set(releaseVersionStore)
+            it.dependsOn(preCheckTask)
         }
 
-    private fun Project.configureGitTasks(
-        extension: ReleaseExtension,
-    ) {
+    private fun Project.configureGitTasks(extension: ReleaseExtension) {
         val commandHistoryService = project.registerGitHistoryService()
 
         tasks.withType(GitTask::class.java) {
