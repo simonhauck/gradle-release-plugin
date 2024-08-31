@@ -30,7 +30,8 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner =
                 testKitRunner().withArguments("testCheckForPreReleaseDependencies").buildAndFail()
@@ -58,7 +59,8 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")
@@ -78,9 +80,32 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    ignorePreReleaseDependencies = listOf($snapshotVersionDependency)
                 |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
+            val actual = runner.task(":testCheckForPreReleaseDependencies")
+
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+        }
+
+    @Test
+    fun `task should not fail because of snapshot dependencies that are only listed with group and name in the ignore list`() =
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                |    usedDependencies = setOf(
+                |       $snapshotVersionDependency,
+                |    )
+                |    ignorePreReleaseDependencies = listOf("other.xy:lib2")
+                |}
+                """
+                    .trimMargin()
+            )
+
+            val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
+
             val actual = runner.task(":testCheckForPreReleaseDependencies")
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
@@ -98,7 +123,8 @@ class CheckForPreReleaseDependenciesTaskTest {
             |    ignorePreReleaseDependenciesFile = file("ignore.txt")
             |}
             """
-                    .trimMargin())
+                    .trimMargin()
+            )
             client1WorkDir
                 .resolve("ignore.txt")
                 .writeText(snapshotVersionDependency.replace("\"", ""))
@@ -122,7 +148,8 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")
@@ -142,7 +169,8 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")
