@@ -20,6 +20,8 @@ abstract class CheckForPreReleaseDependenciesTask : BaseReleaseTask() {
     @get:Input abstract val usedDependencies: SetProperty<String>
 
     init {
+        description =
+            "Checks that no pre-release dependencies are used to ensure reproducible builds."
         outputs.upToDateWhen { true }
     }
 

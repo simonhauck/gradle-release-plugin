@@ -6,6 +6,10 @@ import org.gradle.api.tasks.TaskAction
 
 abstract class CheckForUncommittedFilesTask : BaseReleaseTask(), GitTask {
 
+    init {
+        description = "Checks for uncommitted files in the repository"
+    }
+
     @TaskAction
     fun action() {
         val historyApi = gitCommandHistoryApi.get()
