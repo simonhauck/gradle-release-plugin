@@ -44,7 +44,7 @@ internal class ReleasePluginCompatibilityTest {
             val runner =
                 testKitRunner()
                     .withGradleVersion("6.1")
-                    .withArguments("release", "-PreleaseType=major")
+                    .withArguments("release", "-PreleaseType=major", "--stacktrace")
                     .build()
 
             assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)

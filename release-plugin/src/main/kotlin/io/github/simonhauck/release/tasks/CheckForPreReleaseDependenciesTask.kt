@@ -1,8 +1,5 @@
 package io.github.simonhauck.release.tasks
 
-import arrow.core.getOrElse
-import io.github.simonhauck.release.version.api.Version
-import io.github.simonhauck.release.version.internal.VersionInfo
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logging
@@ -51,9 +48,18 @@ abstract class CheckForPreReleaseDependenciesTask : BaseReleaseTask() {
         if (split.size < 3) return false
         val version = split[2]
 
-        return VersionInfo.parseVersionInfo(Version(version))
-            .map { it.isPreRelease() }
-            .getOrElse { false }
+        val allChecks =
+            listOf(
+                version.contains("alpha", ignoreCase = true),
+                version.contains("beta", ignoreCase = true),
+                version.contains("beta", ignoreCase = true),
+                version.contains("rc", ignoreCase = true),
+                version.contains("pre", ignoreCase = true),
+                version.contains("snapshot", ignoreCase = true),
+                version.contains(".*[.-]M[0-9]+.*".toRegex(RegexOption.IGNORE_CASE)),
+            )
+
+        return allChecks.any { it }
     }
 
     private fun buildErrorMessage(notAllowedDependencies: List<String>): String {

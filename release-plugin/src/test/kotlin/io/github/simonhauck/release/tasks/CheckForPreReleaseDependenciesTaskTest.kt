@@ -137,9 +137,9 @@ class CheckForPreReleaseDependenciesTaskTest {
                 """
                 |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
                 |    usedDependencies = setOf(
-                |       "\"some.group:lib:1.0.0.a1\"",
-                |       "\"other.xy:lib2:1.0\"",
-                |       "\"released.dep:great:1.0.0-1.2.6\"",
+                |       "some.group:lib:1.0.0.a1",
+                |       "other.xy:lib2:1.0",
+                |       "released.dep:great:1.0.0-1.2.6",
                 |    )
                 |}
                 """
@@ -149,6 +149,49 @@ class CheckForPreReleaseDependenciesTaskTest {
             val actual = runner.task(":testCheckForPreReleaseDependencies")
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+        }
+    }
+
+    @Test
+    fun `should fail and list dependencies that are not following the semver standard but still indicate pre-release versions`() {
+        testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                |    usedDependencies = setOf(
+                |       "some.group:lib:1.0.0.v1-SNAPSHOT",
+                |       "some.group:lib:1.0.0.v1-RC",
+                |       "some.group:lib:1.0.0.v1-RC1",
+                |       "some.group:lib:1.0.0.v1-alpha",
+                |       "some.group:lib:1.0.0.v1-ALPHA",
+                |       "some.group:lib:1.0.0.v1-BETA",
+                |       "some.group:lib:1.0.0.v1-pre",
+                |       "some.group:lib:1.0.0.v1-m3",
+                |       "some.group:lib:1.0.0.v1-M2",
+                |    )
+                |}
+                """
+                    .trimMargin())
+
+            val runner =
+                testKitRunner().withArguments("testCheckForPreReleaseDependencies").buildAndFail()
+            val actual = runner.task(":testCheckForPreReleaseDependencies")
+
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .containsSequence(
+                    "> Found 9 dependencies with a pre-release version that are not allowed",
+                    "   - some.group:lib:1.0.0.v1-ALPHA",
+                    "   - some.group:lib:1.0.0.v1-BETA",
+                    "   - some.group:lib:1.0.0.v1-M2",
+                    "   - some.group:lib:1.0.0.v1-RC",
+                    "   - some.group:lib:1.0.0.v1-RC1",
+                    "   - some.group:lib:1.0.0.v1-SNAPSHOT",
+                    "   - some.group:lib:1.0.0.v1-alpha",
+                    "   - some.group:lib:1.0.0.v1-m3",
+                    "   - some.group:lib:1.0.0.v1-pre",
+                    "  Change the versions or add them to the ignore list.",
+                )
         }
     }
 
