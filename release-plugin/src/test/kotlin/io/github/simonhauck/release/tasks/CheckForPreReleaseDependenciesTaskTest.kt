@@ -30,8 +30,7 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             val runner =
                 testKitRunner().withArguments("testCheckForPreReleaseDependencies").buildAndFail()
@@ -59,8 +58,7 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")
@@ -80,8 +78,7 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    ignorePreReleaseDependencies = listOf($snapshotVersionDependency)
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")
@@ -101,8 +98,7 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    ignorePreReleaseDependencies = listOf("other.xy:lib2")
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
 
@@ -123,8 +119,7 @@ class CheckForPreReleaseDependenciesTaskTest {
             |    ignorePreReleaseDependenciesFile = file("ignore.txt")
             |}
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
             client1WorkDir
                 .resolve("ignore.txt")
                 .writeText(snapshotVersionDependency.replace("\"", ""))
@@ -148,8 +143,7 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")
@@ -169,8 +163,7 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |    )
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             val runner = testKitRunner().withArguments("testCheckForPreReleaseDependencies").build()
             val actual = runner.task(":testCheckForPreReleaseDependencies")

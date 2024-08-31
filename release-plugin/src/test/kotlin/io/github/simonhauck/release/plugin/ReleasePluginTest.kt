@@ -80,8 +80,7 @@ internal class ReleasePluginTest {
                 |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
                 |}
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
             client1WorkDir.resolve("otherFile.txt").writeText("Hello World")
 
@@ -109,8 +108,7 @@ internal class ReleasePluginTest {
                 |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
                 |}
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
@@ -158,8 +156,7 @@ internal class ReleasePluginTest {
                 |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
                 |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
@@ -195,8 +192,7 @@ internal class ReleasePluginTest {
                     |    versionPropertyFile.set(layout.projectDirectory.file("$fileName"))
                     |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
@@ -306,8 +302,7 @@ internal class ReleasePluginTest {
                 |    checkForUncommittedFiles.set(false)
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createLocalRepository()
 
@@ -397,8 +392,7 @@ internal class ReleasePluginTest {
                 |   checkForUncommittedFiles.set(false)
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
 
             client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
@@ -429,8 +423,7 @@ internal class ReleasePluginTest {
                 |   gitEmail.set("test@mail.de")
                 |}
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
 
             createValidRepositoryWithRemote()
 
@@ -471,8 +464,7 @@ internal class ReleasePluginTest {
                     |version: 1.0.0
                     |someProperty: value
                 """
-                            .trimMargin()
-                    )
+                            .trimMargin())
                 }
 
             testKitRunner().withArguments("release", "-PreleaseType=major").build()
@@ -497,8 +489,7 @@ internal class ReleasePluginTest {
                 |repositories { gradlePluginPortal() }
                 |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createLocalRepository()
 
             val runner = testKitRunner().withArguments("release").buildAndFail()
@@ -524,8 +515,7 @@ internal class ReleasePluginTest {
                 |repositories { gradlePluginPortal() }
                 |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }
             """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
@@ -548,8 +538,7 @@ internal class ReleasePluginTest {
                 |
                 |release { checkForPreReleaseVersions.set(false) }
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
@@ -571,8 +560,7 @@ internal class ReleasePluginTest {
                 |
                 |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }
                 """
-                    .trimMargin()
-            )
+                    .trimMargin())
             createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
