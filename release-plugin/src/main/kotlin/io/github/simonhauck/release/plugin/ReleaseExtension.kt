@@ -49,7 +49,7 @@ abstract class ReleaseExtension(
     private fun stringProperty(default: String? = null): Property<String> =
         objects.property(String::class.java).convention(default)
 
-    private fun stringListProperty(default: List<String>? = null): ListProperty<String> =
+    private fun stringListProperty(default: List<String> = emptyList()): ListProperty<String> =
         objects.listProperty(String::class.java).convention(default)
 
     private fun projectFileProperty(default: String?): RegularFileProperty =
