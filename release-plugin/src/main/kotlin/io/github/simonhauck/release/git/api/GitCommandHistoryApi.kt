@@ -12,7 +12,4 @@ interface GitCommandHistoryApi {
     fun dropLastRevertCommand()
 }
 
-data class RevertCommand(
-    val message: String,
-    val revertCommand: () -> Either<GitError, *>,
-)
+data class RevertCommand(val message: String, val revertCommand: () -> Either<GitError, *>)

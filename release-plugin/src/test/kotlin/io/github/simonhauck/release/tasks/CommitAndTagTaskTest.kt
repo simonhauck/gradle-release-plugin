@@ -34,7 +34,8 @@ internal class CommitAndTagTaskTest {
                     |    tagMessagePrefix.set("tag: ")
                     |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("commitAndTag").build()
 
@@ -62,7 +63,8 @@ internal class CommitAndTagTaskTest {
                     |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
                     |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("commitAndTag").build()
 
@@ -87,7 +89,8 @@ internal class CommitAndTagTaskTest {
                     |    gitAddFilePattern.set(listOf(file("newFile.txt")))
                     |}
                 """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("commitAndTag").build()
 
@@ -108,7 +111,8 @@ internal class CommitAndTagTaskTest {
                 |    tagName.set("v1.0.0")
                 |}
             """
-                    .trimMargin())
+                    .trimMargin()
+            )
             createValidRepositoryWithRemote()
             client1Api.tag("v1.0.0", "Initial tag").assertIsOk()
             File(client1WorkDir, "newFile.txt").writeText("Hello World")
@@ -142,7 +146,8 @@ internal class CommitAndTagTaskTest {
                 |    templateVariables.set(file("variables.properties"))
                 |}
             """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             client1WorkDir
                 .resolve("variables.properties")
@@ -155,7 +160,8 @@ internal class CommitAndTagTaskTest {
                 |var5=some-tag
                 |var6=some-tag-prefix
                 """
-                        .trimMargin())
+                        .trimMargin()
+                )
 
             val runner = testKitRunner().withArguments("commitAndTag").build()
 

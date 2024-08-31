@@ -14,7 +14,7 @@ internal class GitCommandProcessWrapper(
     private val gitUser: GitUser?,
     // TODO Simon.Hauck 2024-06-02 - How to test authentication
     private val sshKeyFile: File?,
-    private val processWrapper: ProcessWrapper = ProcessWrapper()
+    private val processWrapper: ProcessWrapper = ProcessWrapper(),
 ) : GitCommandApi {
 
     private val log = Logging.getLogger(PushTask::class.java)
@@ -76,7 +76,7 @@ internal class GitCommandProcessWrapper(
     override fun addRemoteAndSetUpstream(
         remoteName: String,
         remoteUrl: String,
-        branchName: String
+        branchName: String,
     ): GitVoidResult {
         return gitVoidCommand(listOf("remote", "add", remoteName, remoteUrl))
             .map { gitVoidCommand(listOf("push", "-u", remoteName, branchName)) }
@@ -145,9 +145,7 @@ internal class GitCommandProcessWrapper(
         return runCommand.map { GitOk }
     }
 
-    private fun gitCommand(
-        command: List<String>,
-    ): Either<GitError, ProcessSuccess> {
+    private fun gitCommand(command: List<String>): Either<GitError, ProcessSuccess> {
         val gitCommand = listOf("git").plus(command)
         log.info("Running git command: '${gitCommand.joinToString(" ")}'")
 
@@ -187,7 +185,7 @@ internal class GitCommandProcessWrapper(
 
     private fun buildErrorMessageWithConsoleOutput(
         commandString: String,
-        it: ProcessError
+        it: ProcessError,
     ): GitError {
         val output =
             listOf("Failed to execute command: '$commandString'", it.message, "--- Git output ---")

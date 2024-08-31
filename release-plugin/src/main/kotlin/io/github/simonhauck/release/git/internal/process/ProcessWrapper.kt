@@ -38,7 +38,8 @@ internal class ProcessWrapper {
                         processOutputCaptor,
                         error = null,
                         message =
-                            "Command finished with non zero exit code (code=${result.exitValue})"),
+                            "Command finished with non zero exit code (code=${result.exitValue})",
+                    )
                 )
             }
 
@@ -79,7 +80,7 @@ internal class ProcessWrapper {
 
     private class ProcessOutputHandler(
         private val isError: Boolean,
-        private val outputCaptor: MutableList<String>
+        private val outputCaptor: MutableList<String>,
     ) : LogOutputStream() {
         private val log = Logging.getLogger(ProcessOutputHandler::class.java)
 

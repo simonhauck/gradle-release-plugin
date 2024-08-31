@@ -28,7 +28,7 @@ internal class ReleasePluginTestDriver {
 internal class SemanticVersioningProjectBuilder(
     val client1WorkDir: File,
     val client2WorkDir: File,
-    val serverWorkDir: File
+    val serverWorkDir: File,
 ) {
 
     init {

@@ -37,7 +37,7 @@ internal class PropertiesFileUtil {
 
     private fun updatePropertyLine(
         line: String,
-        propertiesToUpdateOrAdd: Map<String, String>
+        propertiesToUpdateOrAdd: Map<String, String>,
     ): String {
         val property = line.parseProperty() ?: return line
         val newValue = propertiesToUpdateOrAdd[property.first] ?: return line

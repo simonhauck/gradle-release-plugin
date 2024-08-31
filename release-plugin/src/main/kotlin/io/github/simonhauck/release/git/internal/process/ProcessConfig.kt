@@ -4,5 +4,5 @@ import java.io.File
 
 internal data class ProcessConfig(
     val environment: Map<String, String> = emptyMap(),
-    val workingDir: File? = null
+    val workingDir: File? = null,
 )

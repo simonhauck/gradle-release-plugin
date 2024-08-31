@@ -13,5 +13,5 @@ internal data class ProcessError(
     val exitCode: Int?,
     val output: List<String>,
     val error: Throwable?,
-    val message: String
+    val message: String,
 )

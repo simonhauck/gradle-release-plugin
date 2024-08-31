@@ -4,9 +4,7 @@ import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import java.io.File
 import org.gradle.api.GradleException
 
-data class Version(
-    val value: String,
-) {
+data class Version(val value: String) {
 
     companion object {
         fun fromPropertiesFile(file: File): String {
@@ -17,7 +15,4 @@ data class Version(
     }
 }
 
-data class ReleaseVersions(
-    val releaseVersion: Version,
-    val postReleaseVersion: Version,
-)
+data class ReleaseVersions(val releaseVersion: Version, val postReleaseVersion: Version)

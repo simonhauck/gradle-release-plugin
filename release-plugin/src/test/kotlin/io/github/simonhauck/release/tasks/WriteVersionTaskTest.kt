@@ -29,7 +29,8 @@ internal class WriteVersionTaskTest {
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
                  """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("writeTestReleaseVersion").build()
 
@@ -54,7 +55,8 @@ internal class WriteVersionTaskTest {
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
                  """
-                    .trimMargin())
+                    .trimMargin()
+            )
 
             val runner = testKitRunner().withArguments("writeTestReleaseVersion").build()
 
@@ -79,7 +81,8 @@ internal class WriteVersionTaskTest {
                 |   versionFile.set(layout.projectDirectory.file("version.properties"))
                 |}
                  """
-                    .trimMargin())
+                    .trimMargin()
+            )
         }
 
     private fun SemanticVersioningProjectBuilder.createVersionStoreFile(): File {
