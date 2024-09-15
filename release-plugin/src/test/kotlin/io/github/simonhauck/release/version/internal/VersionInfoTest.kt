@@ -70,9 +70,18 @@ internal class VersionInfoTest {
     fun `should remove the pre release suffix`() {
         val originalVersion = VersionInfo(1, 0, 0, "suffix")
 
-        val actual = originalVersion.bumpToRelease()
+        val actual = originalVersion.bumpPreReleaseSuffix()
 
         assertThat(actual).isEqualTo(VersionInfo(1, 0, 0))
+    }
+
+    @Test
+    fun `should update the pre release suffix`() {
+        val originalVersion = VersionInfo(1, 0, 0, "suffix")
+
+        val actual = originalVersion.bumpPreReleaseSuffix("RC")
+
+        assertThat(actual).isEqualTo(VersionInfo(1, 0, 0, preReleaseSuffix = "RC"))
     }
 
     @Test

@@ -14,7 +14,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
-abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
+abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
 
     private val log = Logging.getLogger(CalculateReleaseVersionTask::class.java)
 
@@ -41,6 +41,6 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
     }
 
     private fun getReleaseVersions(currentVersion: Version): ReleaseVersions =
-        VersionIncrementStrategyParserApi.create()
+        VersionIncrementStrategyParserApi.create(gitCommandApi())
             .parseOrThrow(currentVersion, commandLineParameters.get())
 }
