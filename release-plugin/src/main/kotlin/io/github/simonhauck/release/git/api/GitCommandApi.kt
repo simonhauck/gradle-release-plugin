@@ -38,6 +38,8 @@ interface GitCommandApi {
 
     fun tag(tagName: String, tagMessage: String): GitVoidResult
 
+    fun fetchRemoteTags(): GitVoidResult
+
     fun listTags(): GitResult<List<String>>
 
     fun deleteLocalTag(tagName: String): GitVoidResult

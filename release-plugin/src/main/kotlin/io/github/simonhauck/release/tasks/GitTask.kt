@@ -2,8 +2,6 @@ package io.github.simonhauck.release.tasks
 
 import arrow.core.Either
 import io.github.simonhauck.release.git.api.*
-import java.io.File
-import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -11,6 +9,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import java.io.File
 
 interface GitTask : Task {
 
@@ -36,12 +35,5 @@ interface GitTask : Task {
         revertCommand: RevertCommand
     ): Either<GitError, T> {
         return onRight { gitCommandHistoryApi.get().registerRevertCommand(revertCommand) }
-    }
-
-    fun <T> GitResult<T>.getOrThrowGradleException(): T {
-        return when (this) {
-            is Either.Left -> throw GradleException(this.value.message, this.value.throwable)
-            is Either.Right -> this.value
-        }
     }
 }

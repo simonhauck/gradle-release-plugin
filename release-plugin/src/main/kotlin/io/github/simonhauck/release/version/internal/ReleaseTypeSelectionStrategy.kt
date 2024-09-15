@@ -1,11 +1,16 @@
 package io.github.simonhauck.release.version.internal
 
 import io.github.simonhauck.release.git.api.GitCommandApi
+import io.github.simonhauck.release.git.api.getOrThrowGradleException
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
+import org.gradle.api.logging.Logging
 
-internal class ReleaseTypeSelectionStrategy(gitCommandApi: GitCommandApi) :
+internal class ReleaseTypeSelectionStrategy(private val gitCommandApi: GitCommandApi) :
     VersionIncrementStrategy {
+
+    private val log = Logging.getLogger(ReleaseTypeSelectionStrategy::class.java)
+
     override val strategyName: String
         get() = "ReleaseType selection"
 
@@ -21,7 +26,7 @@ internal class ReleaseTypeSelectionStrategy(gitCommandApi: GitCommandApi) :
         parameters: Map<String, String>,
     ): ReleaseVersions? {
         val releaseType = parameters[RELEASE_TYPE] ?: return null
-        val preReleaseSuffix = parameters[PRE_SUFFIX]?.findUnusedSuffix(currentVersion)
+        val preReleaseSuffix = parameters[PRE_SUFFIX]
 
         val currentVersionInfo = VersionInfo.fromVersion(currentVersion)
 
@@ -30,11 +35,10 @@ internal class ReleaseTypeSelectionStrategy(gitCommandApi: GitCommandApi) :
                 "major" -> currentVersionInfo.bumpMajor(preReleaseSuffix)
                 "minor" -> currentVersionInfo.bumpMinor(preReleaseSuffix)
                 "patch" ->
-                    if (currentVersionInfo.isPreRelease())
-                        currentVersionInfo.bumpPreReleaseSuffix(preReleaseSuffix)
+                    if (currentVersionInfo.isPreRelease()) currentVersionInfo.dropPreReleaseSuffix()
                     else currentVersionInfo.bumpPatch(preReleaseSuffix)
                 else -> return null
-            }
+            }.applyPreReleaseSuffixIfPresent(preReleaseSuffix)
 
         // If the next version is a pre-release, the post-release version is reverted so that the
         // next release can be triggered with the same level again
@@ -45,7 +49,34 @@ internal class ReleaseTypeSelectionStrategy(gitCommandApi: GitCommandApi) :
         return ReleaseVersions(releaseVersion.toVersion(), postReleaseVersion.toVersion())
     }
 
-    private fun String.findUnusedSuffix(currentVersion: Version): String {
+    private fun VersionInfo.applyPreReleaseSuffixIfPresent(preReleaseSuffix: String?): VersionInfo {
+        if (preReleaseSuffix == null) return this
+
+        val unusedPreReleaseSuffix = preReleaseSuffix.findUnusedSuffix(this)
+
+        return this.copy(preReleaseSuffix = unusedPreReleaseSuffix)
+    }
+
+    private fun String.findUnusedSuffix(releaseVersion: VersionInfo): String {
+        gitCommandApi.fetchRemoteTags().onLeft {
+            log.debug("Failed to fetch remote tags... This will not fail release process.")
+            log.debug(it.message)
+        }
+
+        val existingTags = gitCommandApi.listTags().getOrThrowGradleException()
+
+        val relevantTags =
+            existingTags.filter {
+                val version = releaseVersion.copy(preReleaseSuffix = this).toVersion()
+                it.startsWith(version.value)
+            }
+
+        // TOOD (Simon Hauck): We must pass in the pre release tag as well. to get the correct
+        // suffix
+        relevantTags.forEachIndexed { index, _ ->
+            val newSuffix = "$this.${index + 1}"
+            if (!relevantTags.contains(newSuffix)) return newSuffix
+        }
         return this
     }
 
