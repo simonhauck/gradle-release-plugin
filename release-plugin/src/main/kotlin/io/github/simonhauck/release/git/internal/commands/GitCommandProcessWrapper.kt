@@ -134,7 +134,6 @@ internal class GitCommandProcessWrapper(
         return gitVoidCommand(listOf("tag", "-d", tagName))
     }
 
-    // TODO test
     override fun fetchRemoteTags(): GitVoidResult {
         return gitVoidCommand(listOf("fetch", "--tags"))
     }
