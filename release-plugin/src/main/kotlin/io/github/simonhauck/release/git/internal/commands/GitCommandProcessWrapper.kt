@@ -6,8 +6,8 @@ import arrow.core.getOrElse
 import io.github.simonhauck.release.git.api.*
 import io.github.simonhauck.release.git.internal.process.*
 import io.github.simonhauck.release.tasks.PushTask
-import org.gradle.api.logging.Logging
 import java.io.File
+import org.gradle.api.logging.Logging
 
 internal class GitCommandProcessWrapper(
     private val rootGitDirectory: File?,

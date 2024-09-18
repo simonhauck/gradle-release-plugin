@@ -22,7 +22,7 @@ internal class VersionIncrementStrategyParserApiTest {
             val parameters = emptyMap<String, String>()
 
             assertThatThrownBy {
-                    versionIncrementStrategyParserApi.parseOrThrow(Version("1.0.0"), parameters,)
+                    versionIncrementStrategyParserApi.parseOrThrow(Version("1.0.0"), parameters)
                 }
                 .isInstanceOf(GradleException::class.java)
                 .hasMessage(
@@ -34,12 +34,12 @@ internal class VersionIncrementStrategyParserApiTest {
     fun `should use the manual release type strategy if the required properties are set`() =
         testDriver(tmpDir) {
             val versionIncrementStrategyParserApi =
-                VersionIncrementStrategyParserApi.create(client1Api,"v{version}")
+                VersionIncrementStrategyParserApi.create(client1Api, "v{version}")
             val parameters =
                 mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
 
             val actual =
-                versionIncrementStrategyParserApi.parseOrThrow(Version("1.0.0"), parameters,)
+                versionIncrementStrategyParserApi.parseOrThrow(Version("1.0.0"), parameters)
 
             assertThat(actual)
                 .isEqualTo(ReleaseVersions(Version("1.1.0"), Version("1.2.0-SNAPSHOT")))
@@ -49,7 +49,7 @@ internal class VersionIncrementStrategyParserApiTest {
     fun `should use release type strategy when releaseType is specified`() {
         testDriver(tmpDir) {
             val versionIncrementStrategyParserApi =
-                VersionIncrementStrategyParserApi.create(client1Api,"v{version}")
+                VersionIncrementStrategyParserApi.create(client1Api, "v{version}")
 
             val parameters = mapOf("releaseType" to "major")
 

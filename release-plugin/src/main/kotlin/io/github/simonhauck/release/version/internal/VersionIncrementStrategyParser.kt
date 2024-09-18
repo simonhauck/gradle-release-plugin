@@ -7,13 +7,17 @@ import io.github.simonhauck.release.version.api.VersionIncrementStrategyParserAp
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 
-internal class VersionIncrementStrategyParser(gitCommandApi: GitCommandApi,
-                                              releaseTagName: String,) :
-    VersionIncrementStrategyParserApi {
+internal class VersionIncrementStrategyParser(
+    gitCommandApi: GitCommandApi,
+    releaseTagName: String,
+) : VersionIncrementStrategyParserApi {
     private val log = Logging.getLogger(VersionIncrementStrategyParser::class.java)
 
     private val parsers =
-        listOf(ManualVersionSelectionStrategy(), ReleaseTypeSelectionStrategy(gitCommandApi, releaseTagName))
+        listOf(
+            ManualVersionSelectionStrategy(),
+            ReleaseTypeSelectionStrategy(gitCommandApi, releaseTagName),
+        )
 
     override fun parseOrThrow(
         currentVersion: Version,

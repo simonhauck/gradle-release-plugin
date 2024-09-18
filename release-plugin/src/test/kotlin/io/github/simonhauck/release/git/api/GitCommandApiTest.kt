@@ -2,10 +2,10 @@ package io.github.simonhauck.release.git.api
 
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import io.github.simonhauck.release.testdriver.assertIsOk
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 
 internal class GitCommandApiTest {
 

@@ -11,6 +11,7 @@ interface VersionIncrementStrategyParserApi {
         fun create(
             gitCommandApi: GitCommandApi,
             releaseTagTemplate: String,
-        ): VersionIncrementStrategyParserApi = VersionIncrementStrategyParser(gitCommandApi, releaseTagTemplate)
+        ): VersionIncrementStrategyParserApi =
+            VersionIncrementStrategyParser(gitCommandApi, releaseTagTemplate)
     }
 }
