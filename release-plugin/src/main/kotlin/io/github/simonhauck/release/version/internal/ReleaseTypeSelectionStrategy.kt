@@ -22,7 +22,7 @@ internal class ReleaseTypeSelectionStrategy(
         get() =
             listOf(
                 "$RELEASE_TYPE - The type of release ($MAJOR_KEY, $MINOR_KEY, $PATCH_KEY)",
-                "$PRE_SUFFIX - (Optional) Type of pre-release (e.g. alpha, RC, beta, ...). A counter will be automatically applied.",
+                "$PRE_RELEASE_TYPE - (Optional) Type of pre-release (e.g. alpha, RC, beta, ...). A counter will be automatically applied.",
             )
 
     override fun tryParse(
@@ -30,30 +30,29 @@ internal class ReleaseTypeSelectionStrategy(
         parameters: Map<String, String>,
     ): ReleaseVersions? {
         val releaseType = parameters[RELEASE_TYPE] ?: return null
-        val preReleaseSuffix = parameters[PRE_SUFFIX]
+        val preReleaseType = parameters[PRE_RELEASE_TYPE]
 
         val currentVersionInfo = VersionInfo.fromVersion(currentVersion)
 
         val releaseVersion =
             when (releaseType) {
-                "major" -> currentVersionInfo.bumpMajor(preReleaseSuffix)
-                "minor" -> currentVersionInfo.bumpMinor(preReleaseSuffix)
+                "major" -> currentVersionInfo.bumpMajor(preReleaseType)
+                "minor" -> currentVersionInfo.bumpMinor(preReleaseType)
                 "patch" ->
                     if (currentVersionInfo.isPreRelease()) currentVersionInfo.dropPreReleaseSuffix()
-                    else currentVersionInfo.bumpPatch(preReleaseSuffix)
+                    else currentVersionInfo.bumpPatch(preReleaseType)
                 else -> return null
-            }.applyPreReleaseSuffixIfPresent(preReleaseSuffix)
+            }.applyPreReleaseTypeIfAvailable(preReleaseType)
 
         // If the next version is a pre-release, the post-release version is reverted so that the
         // next release can be triggered with the same level again
         val postReleaseVersion =
-            if (preReleaseSuffix == null) releaseVersion.bumpPatch("SNAPSHOT")
-            else currentVersionInfo
+            if (preReleaseType == null) releaseVersion.bumpPatch("SNAPSHOT") else currentVersionInfo
 
         return ReleaseVersions(releaseVersion.toVersion(), postReleaseVersion.toVersion())
     }
 
-    private fun VersionInfo.applyPreReleaseSuffixIfPresent(preReleaseSuffix: String?): VersionInfo {
+    private fun VersionInfo.applyPreReleaseTypeIfAvailable(preReleaseSuffix: String?): VersionInfo {
         if (preReleaseSuffix == null) return this
 
         val tags =
@@ -82,7 +81,7 @@ internal class ReleaseTypeSelectionStrategy(
 
     companion object {
         private const val RELEASE_TYPE = "releaseType"
-        private const val PRE_SUFFIX = "preReleaseType"
+        private const val PRE_RELEASE_TYPE = "preReleaseType"
         private const val MAJOR_KEY = "major"
         private const val MINOR_KEY = "minor"
         private const val PATCH_KEY = "patch"
