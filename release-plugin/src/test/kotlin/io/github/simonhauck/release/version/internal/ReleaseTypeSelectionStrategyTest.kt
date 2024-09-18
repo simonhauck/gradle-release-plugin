@@ -16,7 +16,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun getStrategyName() =
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
 
             val strategyName = strategy.strategyName
 
@@ -26,7 +26,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun getRequiredPropertyDescription() {
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
 
             val requiredPropertyDescription = strategy.requiredPropertyDescription
 
@@ -41,7 +41,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should return the correct versions for a major release`() =
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
 
             val actual = strategy.tryParse(Version("1.0.0"), mapOf("releaseType" to "major"))
 
@@ -52,7 +52,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should drop the snapshot tag for the release version on a patch level release`() =
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
 
             val actual =
                 strategy.tryParse(Version("1.0.0-SNAPSHOT"), mapOf("releaseType" to "patch"))
@@ -64,7 +64,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should increase the patch level for a patch release if not preRelease suffix is set`() =
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
             val actual = strategy.tryParse(Version("1.0.0"), mapOf("releaseType" to "patch"))
 
             val expected = ReleaseVersions(Version("1.0.1"), Version("1.0.2-SNAPSHOT"))
@@ -74,7 +74,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should return the correct versions for a minor release`() =
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
             val actual = strategy.tryParse(Version("1.0.0"), mapOf("releaseType" to "minor"))
 
             val expected = ReleaseVersions(Version("1.1.0"), Version("1.1.1-SNAPSHOT"))
@@ -86,14 +86,14 @@ internal class ReleaseTypeSelectionStrategyTest {
         testDriver(tmpDir) {
             createLocalRepository()
 
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
             val actual =
                 strategy.tryParse(
                     Version("1.0.0"),
                     mapOf("releaseType" to "patch", "preReleaseType" to "rc"),
                 )
 
-            val expected = ReleaseVersions(Version("1.0.1-rc"), Version("1.0.0"))
+            val expected = ReleaseVersions(Version("1.0.1-rc1"), Version("1.0.0"))
             assertThat(actual).isEqualTo(expected)
         }
     }
@@ -103,14 +103,58 @@ internal class ReleaseTypeSelectionStrategyTest {
         testDriver(tmpDir) {
             createLocalRepository()
 
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
             val actual =
                 strategy.tryParse(
                     Version("1.0.0"),
                     mapOf("releaseType" to "patch", "preReleaseType" to "rc"),
                 )
 
-            val expected = ReleaseVersions(Version("1.0.1-rc"), Version("1.0.0"))
+            val expected = ReleaseVersions(Version("1.0.1-rc1"), Version("1.0.0"))
+            assertThat(actual).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `should increase the counter for the pre release type to 2 if the rc1 is already set`() {
+        testDriver(tmpDir) {
+            createLocalRepository()
+
+            client1Api.tag("v1.0.1-rc1", "Previous tag")
+
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
+            val actual =
+                strategy.tryParse(
+                    Version("1.0.0"),
+                    mapOf("releaseType" to "patch", "preReleaseType" to "rc"),
+                )
+
+            val expected = ReleaseVersions(Version("1.0.1-rc2"), Version("1.0.0"))
+            assertThat(actual).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `should fetch the remote tags before calculate the release version`() {
+        testDriver(tmpDir) {
+            val currentVersion = "0.0.1"
+            updateVersionProperties(currentVersion)
+
+            createValidRepositoryWithRemote()
+
+            cloneForClient2()
+            client2Api.tag("v1.0.0-rc1", "first release tag")
+            client2Api.tag("v1.0.0-rc2", "second release tag")
+            client2Api.push()
+
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
+            val actual =
+                strategy.tryParse(
+                    Version(currentVersion),
+                    mapOf("releaseType" to "major", "preReleaseType" to "rc"),
+                )
+
+            val expected = ReleaseVersions(Version("1.0.0-rc3"), Version(currentVersion))
             assertThat(actual).isEqualTo(expected)
         }
     }
@@ -118,7 +162,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should return null if an unknown releaseType is set`() =
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
 
             val actual = strategy.tryParse(Version("1.0.0"), mapOf("releaseType" to "unknown"))
 
@@ -128,7 +172,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should return null if no releaseType property is specified`() {
         testDriver(tmpDir) {
-            val strategy = ReleaseTypeSelectionStrategy(client1Api)
+            val strategy = ReleaseTypeSelectionStrategy(client1Api,"v{version}")
 
             val actual = strategy.tryParse(Version("1.0.0"), emptyMap())
 

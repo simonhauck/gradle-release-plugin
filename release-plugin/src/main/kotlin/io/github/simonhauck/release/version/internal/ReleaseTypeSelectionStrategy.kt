@@ -1,13 +1,17 @@
 package io.github.simonhauck.release.version.internal
 
+import arrow.core.Either
+import arrow.core.flatten
 import io.github.simonhauck.release.git.api.GitCommandApi
-import io.github.simonhauck.release.git.api.getOrThrowGradleException
+import io.github.simonhauck.release.git.api.GitError
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
 import org.gradle.api.logging.Logging
 
-internal class ReleaseTypeSelectionStrategy(private val gitCommandApi: GitCommandApi) :
-    VersionIncrementStrategy {
+internal class ReleaseTypeSelectionStrategy(
+    private val gitCommandApi: GitCommandApi,
+    private val releaseTagName: String,
+) : VersionIncrementStrategy {
 
     private val log = Logging.getLogger(ReleaseTypeSelectionStrategy::class.java)
 
@@ -52,32 +56,28 @@ internal class ReleaseTypeSelectionStrategy(private val gitCommandApi: GitComman
     private fun VersionInfo.applyPreReleaseSuffixIfPresent(preReleaseSuffix: String?): VersionInfo {
         if (preReleaseSuffix == null) return this
 
-        val unusedPreReleaseSuffix = preReleaseSuffix.findUnusedSuffix(this)
+        val tags =
+            gitCommandApi
+                .fetchRemoteTags()
+                .map { gitCommandApi.listTags() }
+                .flatten()
+                .logErrorOnLeft()
+                .getOrNull()
+                ?.toSet() ?: return this
 
-        return this.copy(preReleaseSuffix = unusedPreReleaseSuffix)
+        return generateSequence(1) { it + 1 }
+            .map { index -> this.copy(preReleaseSuffix = "$preReleaseSuffix$index") }
+            .first { version -> !tags.containsVersion(version) }
     }
 
-    private fun String.findUnusedSuffix(releaseVersion: VersionInfo): String {
-        gitCommandApi.fetchRemoteTags().onLeft {
-            log.debug("Failed to fetch remote tags... This will not fail release process.")
-            log.debug(it.message)
-        }
+    private fun Set<String>.containsVersion(version: VersionInfo): Boolean {
+        val expectedReleaseTag = releaseTagName.replace("{version}", version.toVersion().value)
+        return contains(expectedReleaseTag)
+    }
 
-        val existingTags = gitCommandApi.listTags().getOrThrowGradleException()
-
-        val relevantTags =
-            existingTags.filter {
-                val version = releaseVersion.copy(preReleaseSuffix = this).toVersion()
-                it.startsWith(version.value)
-            }
-
-        // TOOD (Simon Hauck): We must pass in the pre release tag as well. to get the correct
-        // suffix
-        relevantTags.forEachIndexed { index, _ ->
-            val newSuffix = "$this.${index + 1}"
-            if (!relevantTags.contains(newSuffix)) return newSuffix
-        }
-        return this
+    private fun <B> Either<GitError, B>.logErrorOnLeft(): Either<GitError, B> = onLeft {
+        log.info("Failed to get all local and remote tags - This will not fail the build")
+        log.info(it.message)
     }
 
     companion object {

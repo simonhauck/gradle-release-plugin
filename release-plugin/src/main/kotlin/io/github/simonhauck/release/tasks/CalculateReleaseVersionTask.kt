@@ -9,10 +9,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 
 abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
 
@@ -25,6 +22,7 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
     @get:InputFile abstract val versionPropertyFile: RegularFileProperty
     @get:Input abstract val releaseVersionStorePath: Property<File>
     @get:Input abstract val commandLineParameters: MapProperty<String, String>
+    @get:Input abstract val tagPrefix: Property<String>
 
     @get:OutputFile abstract val releaseVersionStore: RegularFileProperty
 
@@ -41,6 +39,6 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
     }
 
     private fun getReleaseVersions(currentVersion: Version): ReleaseVersions =
-        VersionIncrementStrategyParserApi.create(gitCommandApi())
+        VersionIncrementStrategyParserApi.create(gitCommandApi(), tagPrefix.get())
             .parseOrThrow(currentVersion, commandLineParameters.get())
 }

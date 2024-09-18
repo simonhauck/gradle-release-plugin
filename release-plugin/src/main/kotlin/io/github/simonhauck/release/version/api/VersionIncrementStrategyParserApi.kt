@@ -8,7 +8,9 @@ interface VersionIncrementStrategyParserApi {
     fun parseOrThrow(currentVersion: Version, parameters: Map<String, String>): ReleaseVersions
 
     companion object {
-        fun create(gitCommandApi: GitCommandApi): VersionIncrementStrategyParserApi =
-            VersionIncrementStrategyParser(gitCommandApi)
+        fun create(
+            gitCommandApi: GitCommandApi,
+            releaseTagTemplate: String,
+        ): VersionIncrementStrategyParserApi = VersionIncrementStrategyParser(gitCommandApi, releaseTagTemplate)
     }
 }
