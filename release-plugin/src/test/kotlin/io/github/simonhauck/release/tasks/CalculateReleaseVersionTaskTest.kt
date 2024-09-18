@@ -46,7 +46,7 @@ internal class CalculateReleaseVersionTaskTest {
         }
 
     @Test
-    fun `task should be up to date when invoked twice`() =
+    fun `task should not be up to date when invoked twice because the git repository could change`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
@@ -62,6 +62,6 @@ internal class CalculateReleaseVersionTaskTest {
 
             val actual = runner.task(":calculateReleaseVersion")
 
-            assertThat(actual?.outcome).isEqualTo(TaskOutcome.UP_TO_DATE)
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         }
 }

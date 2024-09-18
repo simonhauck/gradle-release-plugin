@@ -17,6 +17,8 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
 
     init {
         description = "Calculate the release version and the next development version"
+        // Run this task always, because the git repository could have changed, (e.g. the tags)
+        outputs.upToDateWhen { false }
     }
 
     @get:InputFile abstract val versionPropertyFile: RegularFileProperty
