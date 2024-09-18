@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.git.api
 
 import arrow.core.Either
+import org.gradle.api.GradleException
 
 typealias GitVoidResult = Either<GitError, GitOk>
 
@@ -29,4 +30,11 @@ data class GitStatusResult(
     fun notEmpty() = !allEmpty()
 }
 
-fun Either<GitError, *>.isOk(): Boolean = isRight()
+internal fun Either<GitError, *>.isOk(): Boolean = isRight()
+
+internal fun <T> GitResult<T>.getOrThrowGradleException(): T {
+    return when (this) {
+        is Either.Left -> throw GradleException(this.value.message, this.value.throwable)
+        is Either.Right -> this.value
+    }
+}

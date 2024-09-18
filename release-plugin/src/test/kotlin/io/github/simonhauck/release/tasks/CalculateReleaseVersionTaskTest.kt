@@ -13,55 +13,134 @@ internal class CalculateReleaseVersionTaskTest {
 
     private val testDriver = ReleasePluginTestDriver()
 
-    // TODO Simon.Hauck 2024-05-12 - Rewrite tests to create task explicitly ?
     @Test
-    fun `task should be successful if a valid release versions for passed as command line parameters`() =
+    fun `should write the provided release and post release version to the releaseVersionStore`() =
         testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                |    versionPropertyFile = file("version.properties")
+                |    commandLineParameters = mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
+                |    releaseTagName = "v{version}"
+                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                |}
+            """
+                    .trimMargin()
+            )
             createValidRepositoryWithRemote()
 
-            val runner =
-                testKitRunner()
-                    .withArguments(
-                        "calculateReleaseVersion",
-                        "-PreleaseVersion=1.1.0",
-                        "-PpostReleaseVersion=1.2.0-SNAPSHOT",
-                    )
-                    .build()
-
-            val actual = runner.task(":calculateReleaseVersion")
+            val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
+            val actual = runner.task(":testCalculateReleaseVersion")
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(client1WorkDir.resolve("build/release-version-store.txt").readLines())
+                .containsExactly("postReleaseVersion=1.2.0-SNAPSHOT", "releaseVersion=1.1.0")
+        }
+
+    @Test
+    fun `should write the calculated release and post release version in the file`() =
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.0")
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                |    versionPropertyFile = file("version.properties")
+                |    commandLineParameters = mapOf("releaseType" to "major")
+                |    releaseTagName = "v{version}"
+                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                |}
+            """
+                    .trimMargin()
+            )
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
+            val actual = runner.task(":testCalculateReleaseVersion")
+
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(client1WorkDir.resolve("build/release-version-store.txt").readLines())
+                .containsExactly("postReleaseVersion=2.0.1-SNAPSHOT", "releaseVersion=2.0.0")
+        }
+
+    @Test
+    fun `should create a pre-release version if a pre-release type is provided`() =
+        testDriver(tmpDir) {
+            updateVersionProperties("1.0.0")
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                |    versionPropertyFile = file("version.properties")
+                |    commandLineParameters = mapOf("releaseType" to "major", "preReleaseType" to "rc")
+                |    releaseTagName = "v{version}"
+                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                |}
+            """
+                    .trimMargin()
+            )
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
+            val actual = runner.task(":testCalculateReleaseVersion")
+
+            assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+            assertThat(client1WorkDir.resolve("build/release-version-store.txt").readLines())
+                .containsExactly("postReleaseVersion=1.0.0", "releaseVersion=2.0.0-rc1")
         }
 
     @Test
     fun `task should fail if no versions are provided`() =
         testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                |    versionPropertyFile = file("version.properties")
+                |    commandLineParameters = mapOf("someRandomProperties" to "xy")
+                |    releaseTagName = "v{version}"
+                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                |}
+            """
+                    .trimMargin()
+            )
             createValidRepositoryWithRemote()
 
-            val runner = testKitRunner().withArguments("calculateReleaseVersion").buildAndFail()
-
-            val actual = runner.task(":calculateReleaseVersion")
+            val runner = testKitRunner().withArguments("testCalculateReleaseVersion").buildAndFail()
+            val actual = runner.task(":testCalculateReleaseVersion")
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .containsSequence(
+                    "No version increment strategy found",
+                    "Available strategy: Manual Version Selection",
+                    "	 releaseVersion - The version to release",
+                    "	 postReleaseVersion - The version after the release",
+                    "Available strategy: ReleaseType selection",
+                    "	 releaseType - The type of release (major, minor, patch)",
+                    "	 preReleaseType - (Optional) Type of pre-release (e.g. alpha, RC, beta, ...). A counter will be automatically applied.",
+                )
         }
 
     @Test
-    fun `task should be up to date when invoked twice`() =
+    fun `task should not be up to date when invoked twice because the git repository could change`() =
         testDriver(tmpDir) {
+            appendContentToBuildGradle(
+                """
+                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                |    versionPropertyFile = file("version.properties")
+                |    commandLineParameters = mapOf("releaseType" to "major")
+                |    releaseTagName = "v{version}"
+                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                |}
+            """
+                    .trimMargin()
+            )
+
             createValidRepositoryWithRemote()
 
-            val args =
-                arrayOf(
-                    "calculateReleaseVersion",
-                    "-PreleaseVersion=1.1.0",
-                    "-PpostReleaseVersion=1.2.0-SNAPSHOT",
-                )
+            repeat(2) {
+                val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
+                val actual = runner.task(":testCalculateReleaseVersion")
 
-            testKitRunner().withArguments(*args).build()
-            val runner = testKitRunner().withArguments(*args).build()
-
-            val actual = runner.task(":calculateReleaseVersion")
-
-            assertThat(actual?.outcome).isEqualTo(TaskOutcome.UP_TO_DATE)
+                assertThat(actual?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+            }
         }
 }

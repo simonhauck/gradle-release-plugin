@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.tasks
 
 import io.github.simonhauck.release.git.api.GitStatusResult
+import io.github.simonhauck.release.git.api.getOrThrowGradleException
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 

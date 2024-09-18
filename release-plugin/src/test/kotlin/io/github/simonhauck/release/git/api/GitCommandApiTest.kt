@@ -297,6 +297,41 @@ internal class GitCommandApiTest {
         }
 
     @Test
+    fun `should fetch remote tags`() =
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+            client2Api.fetchRemoteTags().assertIsOk()
+            val initialTags = client2Api.listTags().assertIsOk()
+            assertThat(initialTags).isEmpty()
+
+            client1Api.tag("v1.0", "Initial release").assertIsOk()
+            client1Api.tag("v1.1", "Second release").assertIsOk()
+            client1Api.push()
+
+            client2Api.fetchRemoteTags().assertIsOk()
+            val actual = client2Api.listTags().assertIsOk()
+
+            assertThat(actual).containsExactly("v1.0", "v1.1")
+        }
+
+    @Test
+    fun `remote fetch should fail if the repository is not initialized`() =
+        testDriver(tmpDir) {
+            val actual = client1Api.fetchRemoteTags()
+
+            assertThat(actual.leftOrNull()?.message?.lines())
+                .containsExactly(
+                    "Failed to execute command: 'fetch --tags'",
+                    "Command finished with non zero exit code (code=128)",
+                    "--- Git output ---",
+                    "fatal: not a git repository (or any of the parent directories): .git",
+                    "--- End of output ---",
+                )
+        }
+
+    @Test
     fun `should return a GitError with an descriptive error message containing the console output of the git command`() =
         testDriver(tmpDir) {
             val actual = client1Api.status()

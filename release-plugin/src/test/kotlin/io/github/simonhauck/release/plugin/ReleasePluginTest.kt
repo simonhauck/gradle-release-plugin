@@ -52,6 +52,31 @@ internal class ReleasePluginTest {
         }
 
     @Test
+    fun `releasing multiple types with the same pre release type should increment the counter for the pre-release versions`() {
+        testDriver(tmpDir) {
+            updateVersionProperties("0.0.1-SNAPSHOT")
+            createValidRepositoryWithRemote()
+
+            // First release
+            testKitRunner()
+                .withArguments("release", "-PreleaseType=major", "-PpreReleaseType=pre")
+                .build()
+                .apply { assertThat(task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS) }
+            assertThat(client1Api.listTags().assertIsOk()).containsExactly("v1.0.0-pre1")
+
+            // Second release
+            testKitRunner()
+                .withArguments("release", "-PreleaseType=major", "-PpreReleaseType=pre")
+                .build()
+                .apply { assertThat(task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS) }
+            assertThat(client1Api.listTags().assertIsOk())
+                .containsExactly("v1.0.0-pre1", "v1.0.0-pre2")
+            assertThat(client1WorkDir.readVersionPropertiesFile())
+                .isEqualTo("version=0.0.1-SNAPSHOT")
+        }
+    }
+
+    @Test
     fun `no files should be changed, untracked or commited when the release plugin has finished successful`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()

@@ -9,22 +9,25 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 
-abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
+abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
 
     private val log = Logging.getLogger(CalculateReleaseVersionTask::class.java)
 
     init {
         description = "Calculate the release version and the next development version"
+        // Run this task always, because the git repository could have changed, (e.g. the tags)
+        outputs.upToDateWhen { false }
     }
 
     @get:InputFile abstract val versionPropertyFile: RegularFileProperty
-    @get:Input abstract val releaseVersionStorePath: Property<File>
+    @get:Deprecated("Use releaseVersionStore instead")
+    @get:Input
+    @get:Optional
+    abstract val releaseVersionStorePath: Property<File>
     @get:Input abstract val commandLineParameters: MapProperty<String, String>
+    @get:Input abstract val releaseTagName: Property<String>
 
     @get:OutputFile abstract val releaseVersionStore: RegularFileProperty
 
@@ -41,6 +44,6 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask() {
     }
 
     private fun getReleaseVersions(currentVersion: Version): ReleaseVersions =
-        VersionIncrementStrategyParserApi.create()
+        VersionIncrementStrategyParserApi.create(gitCommandApi(), releaseTagName.get())
             .parseOrThrow(currentVersion, commandLineParameters.get())
 }

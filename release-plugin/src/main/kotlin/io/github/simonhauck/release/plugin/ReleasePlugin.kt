@@ -164,7 +164,7 @@ class ReleasePlugin : Plugin<Project> {
         tasks.register("calculateReleaseVersion", CalculateReleaseVersionTask::class.java) {
             val stringMap = properties.map { (key, value) -> key to value.toString() }.toMap()
             it.commandLineParameters.set(stringMap)
-            it.releaseVersionStorePath.set(releaseVersionStore.get().asFile)
+            it.releaseTagName.set(extension.tagName)
             it.versionPropertyFile.set(extension.versionPropertyFile)
             it.releaseVersionStore.set(releaseVersionStore)
             it.dependsOn(preCheckTask)

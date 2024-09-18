@@ -26,7 +26,7 @@ internal data class VersionInfo(
         return Version("$major.$minor.$patch$preReleaseSuffixString$buildMetaDataString")
     }
 
-    fun bumpToRelease(): VersionInfo {
+    fun dropPreReleaseSuffix(): VersionInfo {
         return copy(preReleaseSuffix = null, buildMetaData = null)
     }
 
