@@ -22,9 +22,12 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
     }
 
     @get:InputFile abstract val versionPropertyFile: RegularFileProperty
-    @get:Input abstract val releaseVersionStorePath: Property<File>
+    @get:Deprecated("Use releaseVersionStore instead")
+    @get:Input
+    @get:Optional
+    abstract val releaseVersionStorePath: Property<File>
     @get:Input abstract val commandLineParameters: MapProperty<String, String>
-    @get:Input abstract val tagPrefix: Property<String>
+    @get:Input abstract val releaseTagName: Property<String>
 
     @get:OutputFile abstract val releaseVersionStore: RegularFileProperty
 
@@ -41,6 +44,6 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
     }
 
     private fun getReleaseVersions(currentVersion: Version): ReleaseVersions =
-        VersionIncrementStrategyParserApi.create(gitCommandApi(), tagPrefix.get())
+        VersionIncrementStrategyParserApi.create(gitCommandApi(), releaseTagName.get())
             .parseOrThrow(currentVersion, commandLineParameters.get())
 }
