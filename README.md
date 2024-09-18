@@ -68,10 +68,19 @@ You can set the release and post-release version explicitly with the following g
 Alternately, if you have a [semver](https://semver.org/) compatible version you can use the simplified API:
 
 ```shell
+# Current version: 1.0.0, release-type=major -> Release Version: 2.0.0, Post Release Version: 2.0.1-SNAPSHOT
 ./gradlew release -PreleaseType=<release-type>
+
+# Or 
+
+# Current version: 1.0.0, release-type=major, preReleaseType=RC -> Release Version: 2.0.0-RC1, Post Release Version: 1.0.0
+./gradlew release -PreleaseType=<release-type> -PpreReleaseType=<pre-release-type>
 ```
 
 Replace the _release-type_ with ``major``, ``minor`` or ``patch``. This will determine the version automatically.
+The _pre-release-type_ is an optional string (e.g. ALPHA). If set, the plugin will automatically apply a counter based
+on the existing git tags and set the post release version back to the current project version, so when you create the "
+final" release, you can select the same release type - just without the _pre-release-type_.
 
 ### What does the plugin do?
 
