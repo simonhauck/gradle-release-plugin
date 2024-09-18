@@ -84,6 +84,8 @@ internal class ReleaseTypeSelectionStrategyTest {
     @Test
     fun `should create a pre-release when the release suffix is specified`() {
         testDriver(tmpDir) {
+            createLocalRepository()
+
             val strategy = ReleaseTypeSelectionStrategy(client1Api)
             val actual =
                 strategy.tryParse(
@@ -97,8 +99,10 @@ internal class ReleaseTypeSelectionStrategyTest {
     }
 
     @Test
-    fun `should revert back to the original version when a release with a pre release version was triggered`() {
+    fun `should revert the post release version back to the original version when a release with a pre release version was triggered`() {
         testDriver(tmpDir) {
+            createLocalRepository()
+
             val strategy = ReleaseTypeSelectionStrategy(client1Api)
             val actual =
                 strategy.tryParse(

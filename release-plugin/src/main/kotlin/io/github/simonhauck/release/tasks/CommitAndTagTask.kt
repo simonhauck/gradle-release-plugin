@@ -3,6 +3,7 @@ package io.github.simonhauck.release.tasks
 import arrow.core.fold
 import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import io.github.simonhauck.release.git.api.RevertCommand
+import io.github.simonhauck.release.git.api.getOrThrowGradleException
 import java.io.File
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty

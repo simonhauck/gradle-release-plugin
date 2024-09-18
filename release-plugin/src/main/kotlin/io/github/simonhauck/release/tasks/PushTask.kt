@@ -1,6 +1,7 @@
 package io.github.simonhauck.release.tasks
 
 import io.github.simonhauck.release.git.api.RevertCommand
+import io.github.simonhauck.release.git.api.getOrThrowGradleException
 import java.time.Duration
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
