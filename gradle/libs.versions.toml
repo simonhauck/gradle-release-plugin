@@ -15,7 +15,7 @@ arrowKt = { module = "io.arrow-kt:arrow-core", version = "1.2.4" }
 # Testing related
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
-assertJCore = { module = "org.assertj:assertj-core", version = "3.26.3" }
+assertJCore = { module = "org.assertj:assertj-core", version = "3.27.0" }
 
 [plugins]
 gradlePublish = { id = "com.gradle.plugin-publish", version = "1.3.0" }
