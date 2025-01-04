@@ -1,5 +1,5 @@
 [versions]
-kotlionVersion = "2.0.21"
+kotlionVersion = "2.1.0"
 junitVersion = "5.11.4"
 
 [libraries]
@@ -10,7 +10,7 @@ testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version =
 
 # Kotlin related
 ztExec = { module = "org.zeroturnaround:zt-exec", version = "1.12" }
-arrowKt = { module = "io.arrow-kt:arrow-core", version = "1.2.4" }
+arrowKt = { module = "io.arrow-kt:arrow-core", version = "2.0.0" }
 
 # Testing related
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }

@@ -17,7 +17,7 @@ internal class ReleasePluginCompatibilityTest {
 
     @TestFactory
     fun `plugin can be applied to different Gradle versions`(): List<DynamicTest> {
-        val gradleVersions = listOf("8.0", "7.0", "6.1")
+        val gradleVersions = listOf("8.2", "8.7", "8.12")
 
         return gradleVersions.map { gradleVersion ->
             DynamicTest.dynamicTest("Gradle version $gradleVersion") {
@@ -36,14 +36,30 @@ internal class ReleasePluginCompatibilityTest {
         }
     }
 
+    // TODO This does not work?
     @Test
-    fun `release is successful with gradle 6(dot)1`() =
+    fun `plugin can be applied to projects with gradle 8(dot)1`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
-                    .withGradleVersion("6.1")
+                    .withGradleVersion("8.1")
+                    .withArguments("release", "-PreleaseType=major", "--stacktrace")
+                    .build()
+
+            assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+        }
+
+
+    @Test
+    fun `release is successful with gradle 8(dot)2`() =
+        testDriver(tmpDir) {
+            createValidRepositoryWithRemote()
+
+            val runner =
+                testKitRunner()
+                    .withGradleVersion("8.2")
                     .withArguments("release", "-PreleaseType=major", "--stacktrace")
                     .build()
 
