@@ -25,15 +25,7 @@ repositories { mavenCentral() }
 // Kotlin formatter
 // ---------------------------------------------------------------------------------------------------------------------
 
-ktfmt {
-    // KotlinLang style - 4 space indentation - From kotlinlang.org/docs/coding-conventions.html
-    kotlinLangStyle()
-
-    blockIndent.set(4)
-    continuationIndent.set(4)
-
-    removeUnusedImports.set(true)
-}
+ktfmt { kotlinLangStyle() }
 
 tasks.register("checkFormat") {
     group = "verification"
