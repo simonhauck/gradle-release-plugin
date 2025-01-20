@@ -1,7 +1,8 @@
 package io.github.simonhauck.release.git.internal.process
 
-import arrow.core.Either
-import arrow.core.getOrElse
+import io.github.simonhauck.release.util.Either
+import io.github.simonhauck.release.util.getOrElse
+import io.github.simonhauck.release.util.map
 
 internal typealias ProcessResult = Either<ProcessError, ProcessSuccess>
 

@@ -1,11 +1,25 @@
 package io.github.simonhauck.release.git.internal.commands
 
-import arrow.core.Either
-import arrow.core.flatten
-import arrow.core.getOrElse
-import io.github.simonhauck.release.git.api.*
-import io.github.simonhauck.release.git.internal.process.*
+import io.github.simonhauck.release.git.api.GitCommandApi
+import io.github.simonhauck.release.git.api.GitError
+import io.github.simonhauck.release.git.api.GitLogEntry
+import io.github.simonhauck.release.git.api.GitOk
+import io.github.simonhauck.release.git.api.GitResult
+import io.github.simonhauck.release.git.api.GitStatusResult
+import io.github.simonhauck.release.git.api.GitUser
+import io.github.simonhauck.release.git.api.GitVoidResult
+import io.github.simonhauck.release.git.internal.process.ProcessConfig
+import io.github.simonhauck.release.git.internal.process.ProcessError
+import io.github.simonhauck.release.git.internal.process.ProcessSuccess
+import io.github.simonhauck.release.git.internal.process.ProcessWrapper
+import io.github.simonhauck.release.git.internal.process.exitCode
 import io.github.simonhauck.release.tasks.PushTask
+import io.github.simonhauck.release.util.Either
+import io.github.simonhauck.release.util.flatten
+import io.github.simonhauck.release.util.getOrElse
+import io.github.simonhauck.release.util.map
+import io.github.simonhauck.release.util.mapLeft
+import io.github.simonhauck.release.util.onLeft
 import java.io.File
 import org.gradle.api.logging.Logging
 
@@ -30,7 +44,7 @@ internal class GitCommandProcessWrapper(
             val unstaged = mutableListOf<String>()
             val untracked = mutableListOf<String>()
 
-            lines.forEach { line ->
+            lines.forEach { line: String ->
                 when {
                     line.startsWith("??") -> untracked.add(line.drop(3))
                     line.startsWith(" ") -> unstaged.add(line.drop(3))

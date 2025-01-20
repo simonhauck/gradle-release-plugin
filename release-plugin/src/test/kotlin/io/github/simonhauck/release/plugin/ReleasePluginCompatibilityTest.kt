@@ -51,7 +51,6 @@ internal class ReleasePluginCompatibilityTest {
             assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         }
 
-
     @Test
     fun `release is successful with gradle 8(dot)2`() =
         testDriver(tmpDir) {

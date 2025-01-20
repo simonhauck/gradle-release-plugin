@@ -1,8 +1,8 @@
 package io.github.simonhauck.release.testdriver
 
-import arrow.core.Either
 import io.github.simonhauck.release.git.api.GitError
 import io.github.simonhauck.release.git.api.isOk
+import io.github.simonhauck.release.util.Either
 import org.assertj.core.api.Assertions.assertThat
 
 internal fun <T> Either<GitError, T>.assertIsOk(): T {
