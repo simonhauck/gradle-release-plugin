@@ -7,6 +7,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
 
 internal class ReleasePluginCompatibilityTest {
@@ -36,19 +37,20 @@ internal class ReleasePluginCompatibilityTest {
         }
     }
 
-    // TODO This does not work?
     @Test
-    fun `plugin can be applied to projects with gradle 8(dot)1`() =
+    fun `plugin can not be applied to projects with gradle 8(dot)1`() =
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
-            val runner =
-                testKitRunner()
-                    .withGradleVersion("8.1")
-                    .withArguments("release", "-PreleaseType=major", "--stacktrace")
-                    .build()
-
-            assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
+            runCatching {
+                    testKitRunner()
+                        .withGradleVersion("8.1")
+                        .withArguments("release", "-PreleaseType=major", "--stacktrace")
+                        .build()
+                }
+                .onSuccess {
+                    fail("This is unexpected. The plugin can not be applied to gradle 8.1?")
+                }
         }
 
     @Test
