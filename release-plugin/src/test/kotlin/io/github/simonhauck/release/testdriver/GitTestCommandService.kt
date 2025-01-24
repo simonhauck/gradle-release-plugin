@@ -1,7 +1,5 @@
 package io.github.simonhauck.release.testdriver
 
-import arrow.core.Either
-import arrow.core.flatten
 import io.github.simonhauck.release.git.api.GitCommandApi
 import io.github.simonhauck.release.git.api.GitError
 import io.github.simonhauck.release.git.api.GitOk
@@ -9,6 +7,10 @@ import io.github.simonhauck.release.git.api.GitVoidResult
 import io.github.simonhauck.release.git.internal.process.ProcessConfig
 import io.github.simonhauck.release.git.internal.process.ProcessSuccess
 import io.github.simonhauck.release.git.internal.process.ProcessWrapper
+import io.github.simonhauck.release.util.Either
+import io.github.simonhauck.release.util.flatten
+import io.github.simonhauck.release.util.map
+import io.github.simonhauck.release.util.mapLeft
 import java.io.File
 
 internal class GitTestCommandService(private val workDir: File) :

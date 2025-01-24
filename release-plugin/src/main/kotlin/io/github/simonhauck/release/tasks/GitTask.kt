@@ -1,7 +1,14 @@
 package io.github.simonhauck.release.tasks
 
-import arrow.core.Either
-import io.github.simonhauck.release.git.api.*
+import io.github.simonhauck.release.git.api.GitCommandApi
+import io.github.simonhauck.release.git.api.GitCommandHistoryApi
+import io.github.simonhauck.release.git.api.GitError
+import io.github.simonhauck.release.git.api.GitResult
+import io.github.simonhauck.release.git.api.GitUser
+import io.github.simonhauck.release.git.api.RevertCommand
+import io.github.simonhauck.release.util.Either
+import io.github.simonhauck.release.util.onLeft
+import io.github.simonhauck.release.util.onRight
 import java.io.File
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty

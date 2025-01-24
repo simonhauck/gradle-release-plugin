@@ -1,6 +1,5 @@
 package io.github.simonhauck.release.tasks
 
-import arrow.core.fold
 import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import io.github.simonhauck.release.git.api.RevertCommand
 import io.github.simonhauck.release.git.api.getOrThrowGradleException
@@ -76,6 +75,6 @@ abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
             ?: emptyMap()
 
     private fun String.replaceVariables(variables: Map<String, String>): String {
-        return variables.fold(this) { acc, (key, value) -> acc.replace("{$key}", value) }
+        return variables.entries.fold(this) { acc, (key, value) -> acc.replace("{$key}", value) }
     }
 }

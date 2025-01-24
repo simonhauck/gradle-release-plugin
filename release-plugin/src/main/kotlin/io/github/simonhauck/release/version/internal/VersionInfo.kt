@@ -1,10 +1,7 @@
 package io.github.simonhauck.release.version.internal
 
-import arrow.core.Either
-import arrow.core.getOrElse
-import arrow.core.raise.either
-import arrow.core.raise.ensure
-import arrow.core.raise.ensureNotNull
+import io.github.simonhauck.release.util.Either
+import io.github.simonhauck.release.util.getOrElse
 import io.github.simonhauck.release.version.api.Version
 import org.gradle.api.GradleException
 
@@ -59,27 +56,30 @@ internal data class VersionInfo(
             return parseVersionInfo(version).getOrElse { throw it }
         }
 
-        internal fun parseVersionInfo(version: Version): Either<GradleException, VersionInfo> =
-            either {
-                val value = version.value
-                val regexString =
-                    """^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?${'$'}"""
-                val matchEntire = regexString.toRegex().matchEntire(value)
+        private fun parseVersionInfo(version: Version): Either<GradleException, VersionInfo> {
+            val value = version.value
+            val regexString =
+                """^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?${'$'}"""
+            val matchEntire = regexString.toRegex().matchEntire(value)
+            val matcher = regexString.toPattern().matcher(value)
 
-                val matcher = regexString.toPattern().matcher(value)
-
-                val parsingException = buildErrorMessage(version)
-                val parseResult = ensureNotNull(matchEntire) { parsingException }
-                ensure(matcher.matches()) { parsingException }
-
-                val major = parseResult.groups[1]?.value?.toInt() ?: raise(parsingException)
-                val minor = parseResult.groups[2]?.value?.toInt() ?: raise(parsingException)
-                val patch = parseResult.groups[3]?.value?.toInt() ?: raise(parsingException)
-                val prerelease = parseResult.groups[4]?.value
-                val buildMetaData = parseResult.groups[5]?.value
-
-                VersionInfo(major, minor, patch, prerelease, buildMetaData)
+            val parsingException = buildErrorMessage(version)
+            if (matchEntire == null || !matcher.matches()) {
+                return Either.Left(parsingException)
             }
+
+            val major = matchEntire.groups[1]?.value?.toIntOrNull()
+            val minor = matchEntire.groups[2]?.value?.toIntOrNull()
+            val patch = matchEntire.groups[3]?.value?.toIntOrNull()
+            val prerelease = matchEntire.groups[4]?.value
+            val buildMetaData = matchEntire.groups[5]?.value
+
+            if (major == null || minor == null || patch == null) {
+                return Either.Left(parsingException)
+            }
+
+            return Either.Right(VersionInfo(major, minor, patch, prerelease, buildMetaData))
+        }
 
         private fun buildErrorMessage(version: Version): GradleException {
             val message =

@@ -1,9 +1,12 @@
 package io.github.simonhauck.release.version.internal
 
-import arrow.core.Either
-import arrow.core.flatten
 import io.github.simonhauck.release.git.api.GitCommandApi
 import io.github.simonhauck.release.git.api.GitError
+import io.github.simonhauck.release.util.Either
+import io.github.simonhauck.release.util.flatten
+import io.github.simonhauck.release.util.getOrNull
+import io.github.simonhauck.release.util.map
+import io.github.simonhauck.release.util.onLeft
 import io.github.simonhauck.release.version.api.ReleaseVersions
 import io.github.simonhauck.release.version.api.Version
 import org.gradle.api.logging.Logging

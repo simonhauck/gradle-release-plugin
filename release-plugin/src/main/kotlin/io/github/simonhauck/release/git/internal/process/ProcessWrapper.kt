@@ -1,9 +1,6 @@
 package io.github.simonhauck.release.git.internal.process
 
-import arrow.core.Either
-import arrow.core.flatten
-import arrow.core.raise.either
-import arrow.core.raise.ensure
+import io.github.simonhauck.release.util.Either
 import java.util.concurrent.TimeUnit
 import org.gradle.api.logging.Logging
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -11,40 +8,44 @@ import org.zeroturnaround.exec.ProcessExecutor
 import org.zeroturnaround.exec.stream.LogOutputStream
 
 internal class ProcessWrapper {
+
     private val log = Logging.getLogger(ProcessWrapper::class.java)
 
-    fun runCommand(command: List<String>, config: ProcessConfig = ProcessConfig()): ProcessResult =
-        Either.catch { runCommandOrThrow(config, command) }
-            .mapLeft { ProcessError(null, emptyList(), it, "Command failed with an exception") }
-            .flatten()
-
-    private fun runCommandOrThrow(config: ProcessConfig, command: List<String>): ProcessResult =
-        either {
-            val processOutputCaptor: MutableList<String> = mutableListOf()
-            val result =
-                ProcessExecutor()
-                    .directory(config.workingDir)
-                    .environment(config.environment)
-                    .addOsSpecificCommands(*command.toTypedArray())
-                    .handleConsoleOutput(processOutputCaptor)
-                    .destroyWithDescendants()
-                    .timeout(40, TimeUnit.SECONDS)
-                    .execute()
-
-            ensure(result.exitValue == 0) {
-                raise(
-                    ProcessError(
-                        result.exitValue,
-                        processOutputCaptor,
-                        error = null,
-                        message =
-                            "Command finished with non zero exit code (code=${result.exitValue})",
-                    )
-                )
-            }
-
-            ProcessSuccess(exitCode = result.exitValue, output = processOutputCaptor)
+    fun runCommand(command: List<String>, config: ProcessConfig = ProcessConfig()): ProcessResult {
+        return try {
+            runCommandOrThrow(config, command)
+        } catch (e: Exception) {
+            Either.Left(ProcessError(null, emptyList(), e, "Command failed with an exception"))
         }
+    }
+
+    private fun runCommandOrThrow(config: ProcessConfig, command: List<String>): ProcessResult {
+        val processOutputCaptor: MutableList<String> = mutableListOf()
+        val result =
+            ProcessExecutor()
+                .directory(config.workingDir)
+                .environment(config.environment)
+                .addOsSpecificCommands(*command.toTypedArray())
+                .handleConsoleOutput(processOutputCaptor)
+                .destroyWithDescendants()
+                .timeout(40, TimeUnit.SECONDS)
+                .execute()
+
+        if (result.exitValue != 0) {
+            return Either.Left(
+                ProcessError(
+                    result.exitValue,
+                    processOutputCaptor,
+                    error = null,
+                    message = "Command finished with non zero exit code (code=${result.exitValue})",
+                )
+            )
+        }
+
+        return Either.Right(
+            ProcessSuccess(exitCode = result.exitValue, output = processOutputCaptor)
+        )
+    }
 
     private fun ProcessExecutor.addOsSpecificCommands(vararg command: String): ProcessExecutor {
         val linuxCommand = listOf(*command)

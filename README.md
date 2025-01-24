@@ -29,7 +29,7 @@ Here is quick guide on how to get started using this plugin.
 2. Version properties file: A file with a containing a key `version` and as value the current project version (like in
    this example[example](version.properties)). By default, the file should be located in the root project and be named
    `version.properties`. You can change the name and location with the configuration.
-3. Gradle: Version 6.1 or higher
+3. Gradle: Version 8.2 or higher
 
 ### Configuration
 

@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("build.common.kotlin-conventions")
@@ -12,7 +12,6 @@ version = readVersionFromFile(rootProject.file("../version.properties"))
 
 dependencies {
     implementation(libs.ztExec)
-    implementation(libs.arrowKt)
 
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.junit)

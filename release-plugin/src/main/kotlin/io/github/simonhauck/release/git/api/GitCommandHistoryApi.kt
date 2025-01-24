@@ -1,6 +1,6 @@
 package io.github.simonhauck.release.git.api
 
-import arrow.core.Either
+import io.github.simonhauck.release.util.Either
 
 interface GitCommandHistoryApi {
     fun registerRevertCommand(command: RevertCommand)
