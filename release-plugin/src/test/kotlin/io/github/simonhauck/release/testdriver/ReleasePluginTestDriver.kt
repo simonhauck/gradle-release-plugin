@@ -82,6 +82,10 @@ internal class SemanticVersioningProjectBuilder(
         }
     }
 
+    fun getTestResourceFile(resource: String): File {
+        return Paths.get("src/test/resources").resolve(resource).toFile()
+    }
+
     fun appendContentToBuildGradle(content: String) {
         val buildGradlePath = Paths.get(client1WorkDir.absolutePath, "build.gradle.kts")
         val buildGradleFile = buildGradlePath.toFile()

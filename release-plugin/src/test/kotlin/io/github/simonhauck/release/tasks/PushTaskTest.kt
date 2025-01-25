@@ -115,4 +115,58 @@ internal class PushTaskTest {
             val actual = runner.task(":testPush")?.outcome
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
         }
+
+    @Test
+    fun `should be successful when specifying an ssh key`() =
+        testDriver(tmpDir) {
+            val sshKeyFile = getTestResourceFile("ssh-key/id_ed25519")
+
+            createValidRepositoryWithRemote()
+
+            val absolutePath = sshKeyFile.canonicalFile.absolutePath.replace("\\", "\\\\")
+            appendContentToBuildGradle(
+                """
+                |tasks.register<PushTask>("testPush"){
+                |   sshKeyFile = file("$absolutePath")
+                |}
+                """
+                    .trimMargin()
+            )
+            client1Api.add("build.gradle.kts")
+            client1Api.commit("pushTaskMessage")
+
+            val runner = testKitRunner().withArguments("testPush").build()
+
+            val actual = runner.task(":testPush")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+        }
+
+    @Test
+    fun `should be successful when specifying an ssh key with a whitespace in the folder name`() =
+        testDriver(tmpDir) {
+            val sshKeyFolder = tmpDir.resolve("folder with whitespaces/id_ed25519")
+            val sshKeyFile = getTestResourceFile("ssh-key/id_ed25519").copyTo(sshKeyFolder)
+
+            createValidRepositoryWithRemote()
+
+            val absolutePath = sshKeyFile.canonicalFile.absolutePath.replace("\\", "\\\\")
+
+            println(absolutePath)
+
+            appendContentToBuildGradle(
+                """
+                |tasks.register<PushTask>("testPush"){
+                |   sshKeyFile = file("$absolutePath")
+                |}
+                """
+                    .trimMargin()
+            )
+            client1Api.add("build.gradle.kts")
+            client1Api.commit("pushTaskMessage")
+
+            val runner = testKitRunner().withArguments("testPush").build()
+
+            val actual = runner.task(":testPush")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+        }
 }
