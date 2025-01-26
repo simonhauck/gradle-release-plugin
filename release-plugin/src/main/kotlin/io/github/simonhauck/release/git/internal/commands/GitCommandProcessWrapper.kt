@@ -23,11 +23,12 @@ import io.github.simonhauck.release.util.onLeft
 import java.io.File
 import org.gradle.api.logging.Logging
 
-internal class GitCommandProcessWrapper(
+internal open class GitCommandProcessWrapper(
     private val rootGitDirectory: File?,
     private val gitUser: GitUser?,
     // TODO Simon.Hauck 2024-06-02 - How to test authentication
     private val sshKeyFile: File?,
+    private val disableStrictHostKeyChecking: Boolean = false,
     private val processWrapper: ProcessWrapper = ProcessWrapper(),
 ) : GitCommandApi {
 
@@ -158,12 +159,12 @@ internal class GitCommandProcessWrapper(
         }
     }
 
-    private fun gitVoidCommand(command: List<String>): Either<GitError, GitOk> {
+    protected fun gitVoidCommand(command: List<String>): Either<GitError, GitOk> {
         val runCommand = gitCommand(command)
         return runCommand.map { GitOk }
     }
 
-    private fun gitCommand(command: List<String>): Either<GitError, ProcessSuccess> {
+    protected fun gitCommand(command: List<String>): Either<GitError, ProcessSuccess> {
         val gitCommand = listOf("git").plus(command)
         log.info("Running git command: '${gitCommand.joinToString(" ")}'")
 
@@ -185,9 +186,17 @@ internal class GitCommandProcessWrapper(
 
     private fun sshKeyEnvironment(sshKeyFile: File?): Map<String, String> {
         if (sshKeyFile == null) return emptyMap()
+
+        val strictHostKeySetting =
+            if (disableStrictHostKeyChecking)
+                "-o StrictHostKeyChecking=no -o \"UserKnownHostsFile=/dev/null\""
+            else ""
+
+        // Escape filename for windows
+        val escapedPath = sshKeyFile.absolutePath.replace("\\", "\\\\")
         return mapOf(
             "GIT_SSH_VARIANT" to "ssh",
-            "GIT_SSH_COMMAND" to "ssh -i ${sshKeyFile.absolutePath} -o IdentitiesOnly=yes",
+            "GIT_SSH_COMMAND" to "ssh -i $escapedPath -o IdentitiesOnly=yes $strictHostKeySetting",
         )
     }
 
