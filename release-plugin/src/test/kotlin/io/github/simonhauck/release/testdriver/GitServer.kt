@@ -1,7 +1,9 @@
 package io.github.simonhauck.release.testdriver
 
+import com.sun.security.auth.module.UnixSystem
 import io.github.simonhauck.release.git.internal.process.ProcessWrapper
 import java.io.File
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.Container.ExecResult
 import org.testcontainers.containers.ExecConfig
@@ -63,6 +65,9 @@ class DockerGitServer(private val authorizedPublicFile: File?, tmpDir: File) : G
         val authorizedKeyFile =
             serverDir.resolve("authorized_keys").apply { writeText(publicKeyContent) }
 
+        // Prevent issues of deleting the temporary directories
+        val uid = if (Os.isFamily(Os.FAMILY_UNIX)) UnixSystem().uid else 1000
+
         val gitRepoMount = serverDir.resolve("mount").apply { mkdirs() }
 
         return GenericContainer(DockerImageName.parse("rockstorm/git-server"))
@@ -73,7 +78,7 @@ class DockerGitServer(private val authorizedPublicFile: File?, tmpDir: File) : G
                 BindMode.READ_WRITE,
             )
             .withFileSystemBind(gitRepoMount.canonicalPath, "/srv/git", BindMode.READ_WRITE)
-            .withEnv(mapOf("SSH_AUTH_METHODS" to "publickey"))
+            .withEnv(mapOf("SSH_AUTH_METHODS" to "publickey", "GIT_USER_UID" to "$uid"))
             .withCommand("/usr/sbin/sshd", "-D", "-e")
     }
 
