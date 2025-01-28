@@ -78,11 +78,7 @@ internal class ReleasePluginAuthenticationTest {
 
         println(privateKey.canonicalFile)
         val api =
-            GitTestCommandService(
-                tmpDir,
-                privateKey.canonicalFile,
-                strictHostKeyChecking = false,
-            )
+            GitTestCommandService(tmpDir, privateKey.canonicalFile, strictHostKeyChecking = false)
 
         try {
             api.clone("ssh://git@${host}:${port}/srv/git/your-repo.git", "client2").assertIsOk()
@@ -122,4 +118,80 @@ internal class ReleasePluginAuthenticationTest {
             val actual = runner.task(":release")?.outcome
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
         }
+
+    @Test
+    fun `release fails if the client 1 uses an unauthorized private key`() =
+        testDriver(
+            tmpDir,
+            gitServer = DockerGitServer(publicKey, tmpDir),
+            client1Config = ClientConfig(privateKey, false),
+        ) {
+            val privateKey2 = getTestResourceFile("ssh-key/id_rsa2")
+            val sanitizedPath = privateKey2.absolutePath.replace("\\", "\\\\")
+
+            appendContentToBuildGradle(
+                """
+                |release {
+                |   sshKeyFile = file("$sanitizedPath")
+                |}
+                |
+                |tasks.withType<GitTask>{
+                |   strictHostKeyChecking = false
+                |}
+                """
+                    .trimMargin()
+            )
+
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("release", "-PreleaseType=major").buildAndFail()
+
+            val actual = runner.task(":pushRelease")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .containsSequence(
+                    "  git@localhost: Permission denied (publickey).",
+                    "  fatal: Could not read from remote repository.",
+                    "  Please make sure you have the correct access rights",
+                    "  and the repository exists.",
+                )
+        }
+
+    @Test
+    fun `release fails if the git server is not in the known hosts file`() =
+        testDriver(
+            tmpDir,
+            gitServer = DockerGitServer(publicKey, tmpDir),
+            client1Config = ClientConfig(privateKey, false),
+        ) {
+            val sanitizedPath = privateKey.absolutePath.replace("\\", "\\\\")
+
+            appendContentToBuildGradle(
+                """
+                |release {
+                |   sshKeyFile = file("$sanitizedPath")
+                |}
+                |
+                |tasks.withType<GitTask>{
+                |   strictHostKeyChecking = true
+                |}
+                """
+                    .trimMargin()
+            )
+
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("release", "-PreleaseType=major").buildAndFail()
+
+            val actual = runner.task(":pushRelease")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .containsSequence(
+                    "  Host key verification failed.",
+                    "  fatal: Could not read from remote repository.",
+                    "  Please make sure you have the correct access rights",
+                    "  and the repository exists.",
+                )
+        }
+
 }
