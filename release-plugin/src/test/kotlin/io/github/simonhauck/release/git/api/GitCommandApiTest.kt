@@ -1,11 +1,14 @@
 package io.github.simonhauck.release.git.api
 
+import io.github.simonhauck.release.testdriver.*
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import io.github.simonhauck.release.testdriver.assertIsOk
 import io.github.simonhauck.release.util.leftOrNull
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 
 internal class GitCommandApiTest {
@@ -396,5 +399,62 @@ internal class GitCommandApiTest {
             val actual = client1Api.status().assertIsOk()
             assertThat(actual.unstaged)
                 .containsExactlyInAnyOrder("version.properties", "build.gradle.kts")
+        }
+
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to use the ssh key file with different line separators`():
+        List<DynamicTest> {
+        val pathWithSystemFileSeparator = getTestResourceFile("ssh-key/id_rsa").absolutePath
+
+        val pathWithForwardSlash = pathWithSystemFileSeparator.replace(File.separator, "/")
+        val pathWithDoubleForwardSlash = pathWithSystemFileSeparator.replace(File.separator, "//")
+        val pathWithBackwardsSlash = pathWithSystemFileSeparator.replace(File.separator, "\\")
+        val pathWithDoubleBackwardsSlash =
+            pathWithSystemFileSeparator.replace(File.separator, "\\\\")
+
+        return listOf(
+                pathWithForwardSlash,
+                pathWithDoubleForwardSlash,
+                pathWithBackwardsSlash,
+                pathWithDoubleBackwardsSlash,
+            )
+            .mapIndexed { index: Int, path: String -> testSshKeyFileWithPath(path, index) }
+    }
+
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to handle ssh key files with whitespaces in the path`(): List<DynamicTest> {
+        val pathWithWhitespaces =
+            getTestResourceFile("ssh-key/id_rsa")
+                .copyTo(tmpDir.resolve("path with whitespaces").resolve("id_rsa"))
+                .absolutePath
+
+        val pathWithForwardSlash = pathWithWhitespaces.replace(File.separator, "/")
+        val pathWithDoubleForwardSlash = pathWithWhitespaces.replace(File.separator, "//")
+        val pathWithBackwardsSlash = pathWithWhitespaces.replace(File.separator, "\\")
+        val pathWithDoubleBackwardsSlash = pathWithWhitespaces.replace(File.separator, "\\\\")
+
+        return listOf(
+                pathWithForwardSlash,
+                pathWithDoubleForwardSlash,
+                pathWithBackwardsSlash,
+                pathWithDoubleBackwardsSlash,
+            )
+            .mapIndexed { index: Int, path: String -> testSshKeyFileWithPath(path, index) }
+    }
+
+    private fun testSshKeyFileWithPath(path: String, index: Int): DynamicTest =
+        DynamicTest.dynamicTest("using path $path") {
+            val tmpDirDynamicTest = tmpDir.resolve("test$index")
+
+            testDriver(
+                tmpDirDynamicTest,
+                client1Config = ClientConfig(File(path), false),
+                gitServer =
+                    DockerGitServer(getTestResourceFile("ssh-key/id_rsa.pub"), tmpDirDynamicTest),
+            ) {
+                createValidRepositoryWithRemote()
+            }
         }
 }

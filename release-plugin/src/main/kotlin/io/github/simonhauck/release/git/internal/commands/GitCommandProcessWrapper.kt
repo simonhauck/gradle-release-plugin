@@ -196,7 +196,7 @@ internal open class GitCommandProcessWrapper(
         val escapedPath = sshKeyFile.absolutePath.replace("\\", "\\\\")
         return mapOf(
             "GIT_SSH_VARIANT" to "ssh",
-            "GIT_SSH_COMMAND" to "ssh -i $escapedPath -o IdentitiesOnly=yes $strictHostKeySetting",
+            "GIT_SSH_COMMAND" to "ssh -i \"$escapedPath\" -o IdentitiesOnly=yes $strictHostKeySetting",
         )
     }
 

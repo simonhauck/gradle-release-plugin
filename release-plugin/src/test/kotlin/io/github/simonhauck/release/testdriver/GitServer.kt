@@ -1,12 +1,12 @@
 package io.github.simonhauck.release.testdriver
 
 import io.github.simonhauck.release.git.internal.process.ProcessWrapper
-import java.io.File
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.Container.ExecResult
 import org.testcontainers.containers.ExecConfig
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.DockerImageName
+import java.io.File
 
 sealed interface GitServer : AutoCloseable {
 

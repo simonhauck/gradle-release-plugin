@@ -152,8 +152,6 @@ internal class PushTaskTest {
 
             val absolutePath = sshKeyFile.canonicalFile.absolutePath.replace("\\", "\\\\")
 
-            println(absolutePath)
-
             appendContentToBuildGradle(
                 """
                 |tasks.register<PushTask>("testPush"){
