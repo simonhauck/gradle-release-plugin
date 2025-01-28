@@ -26,7 +26,6 @@ import org.gradle.api.logging.Logging
 internal open class GitCommandProcessWrapper(
     private val rootGitDirectory: File?,
     private val gitUser: GitUser?,
-    // TODO Simon.Hauck 2024-06-02 - How to test authentication
     private val sshKeyFile: File?,
     private val strictHostKeyChecking: Boolean,
     private val processWrapper: ProcessWrapper = ProcessWrapper(),
