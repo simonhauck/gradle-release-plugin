@@ -9,6 +9,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 
 internal class GitCommandApiTest {
@@ -403,45 +405,74 @@ internal class GitCommandApiTest {
 
     @RequiresDocker
     @TestFactory
-    fun `should be able to use the ssh key file with different line separators`():
+    fun `should be able to use the ssh key file with slashes as file separators`():
         List<DynamicTest> {
-        val pathWithSystemFileSeparator = getTestResourceFile("ssh-key/id_rsa").absolutePath
+        val pathWithSystemFileSeparator =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(tmpDir).absolutePath
 
         val pathWithForwardSlash = pathWithSystemFileSeparator.replace(File.separator, "/")
         val pathWithDoubleForwardSlash = pathWithSystemFileSeparator.replace(File.separator, "//")
+
+        return listOf(pathWithForwardSlash, pathWithDoubleForwardSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to use ssh key files with backslashes on windows`(): List<DynamicTest> {
+        val pathWithSystemFileSeparator =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(tmpDir).absolutePath
+
         val pathWithBackwardsSlash = pathWithSystemFileSeparator.replace(File.separator, "\\")
         val pathWithDoubleBackwardsSlash =
             pathWithSystemFileSeparator.replace(File.separator, "\\\\")
 
-        return listOf(
-                pathWithForwardSlash,
-                pathWithDoubleForwardSlash,
-                pathWithBackwardsSlash,
-                pathWithDoubleBackwardsSlash,
-            )
-            .mapIndexed { index: Int, path: String -> testSshKeyFileWithPath(path, index) }
+        return listOf(pathWithBackwardsSlash, pathWithDoubleBackwardsSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
     }
 
     @RequiresDocker
     @TestFactory
-    fun `should be able to handle ssh key files with whitespaces in the path`(): List<DynamicTest> {
+    fun `should be able to handle ssh key files with whitespaces and slashes in the path`():
+        List<DynamicTest> {
+        val folderWithWhiteSpaces = tmpDir.resolve("path with whitespaces")
         val pathWithWhitespaces =
-            getTestResourceFile("ssh-key/id_rsa")
-                .copyTo(tmpDir.resolve("path with whitespaces").resolve("id_rsa"))
-                .absolutePath
+            getRSAKeyInTempDirectoryWithCorrectPermissions(folderWithWhiteSpaces).absolutePath
 
         val pathWithForwardSlash = pathWithWhitespaces.replace(File.separator, "/")
         val pathWithDoubleForwardSlash = pathWithWhitespaces.replace(File.separator, "//")
+
+        return listOf(pathWithForwardSlash, pathWithDoubleForwardSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to handle ssh key files with whitespaces and backslashes in the path on windows`():
+        List<DynamicTest> {
+        val folderWithWhiteSpaces = tmpDir.resolve("path with whitespaces")
+        val pathWithWhitespaces =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(folderWithWhiteSpaces).absolutePath
+
         val pathWithBackwardsSlash = pathWithWhitespaces.replace(File.separator, "\\")
         val pathWithDoubleBackwardsSlash = pathWithWhitespaces.replace(File.separator, "\\\\")
 
-        return listOf(
-                pathWithForwardSlash,
-                pathWithDoubleForwardSlash,
-                pathWithBackwardsSlash,
-                pathWithDoubleBackwardsSlash,
-            )
-            .mapIndexed { index: Int, path: String -> testSshKeyFileWithPath(path, index) }
+        return listOf(pathWithBackwardsSlash, pathWithDoubleBackwardsSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
     }
 
     private fun testSshKeyFileWithPath(path: String, index: Int): DynamicTest =

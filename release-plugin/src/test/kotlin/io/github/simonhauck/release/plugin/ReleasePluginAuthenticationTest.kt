@@ -5,6 +5,7 @@ import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -15,8 +16,14 @@ internal class ReleasePluginAuthenticationTest {
 
     private val testDriver = ReleasePluginTestDriver()
 
-    private val publicKey = getTestResourceFile("ssh-key/id_rsa.pub")
-    private val privateKey = getTestResourceFile("ssh-key/id_rsa")
+    private lateinit var publicKey: File
+    private lateinit var privateKey: File
+
+    @BeforeEach
+    fun setUp() {
+        publicKey = getRSAPublicKey()
+        privateKey = getRSAKeyInTempDirectoryWithCorrectPermissions(tmpDir)
+    }
 
     @Test
     fun `release does work with an authenticated user`() =

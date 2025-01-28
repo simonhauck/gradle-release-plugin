@@ -106,7 +106,4 @@ internal class SemanticVersioningProjectBuilder(
     }
 }
 
-data class ClientConfig(
-    val privateKey: File? = null,
-    val strictHostKeyChecking: Boolean = false,
-)
+data class ClientConfig(val privateKey: File? = null, val strictHostKeyChecking: Boolean = false)

@@ -1,12 +1,12 @@
 package io.github.simonhauck.release.testdriver
 
 import io.github.simonhauck.release.git.internal.process.ProcessWrapper
+import java.io.File
 import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.Container.ExecResult
 import org.testcontainers.containers.ExecConfig
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.DockerImageName
-import java.io.File
 
 sealed interface GitServer : AutoCloseable {
 
@@ -87,7 +87,6 @@ class DockerGitServer(private val authorizedPublicFile: File?, tmpDir: File) : G
                     .build()
             )
             .printOutput()
-
     }
 
     override fun initBareRepository(repositoryName: String): RepositoryUrl {
@@ -96,7 +95,7 @@ class DockerGitServer(private val authorizedPublicFile: File?, tmpDir: File) : G
         container
             .execInContainer(
                 ExecConfig.builder()
-                    .command(arrayOf("git", "init", "-b", "main",  "--bare", directory))
+                    .command(arrayOf("git", "init", "-b", "main", "--bare", directory))
                     .user("git")
                     .workDir("/home/git")
                     .build()
