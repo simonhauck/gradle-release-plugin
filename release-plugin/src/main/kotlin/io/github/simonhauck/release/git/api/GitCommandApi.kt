@@ -51,8 +51,14 @@ interface GitCommandApi {
             gitRootDirectory: File? = null,
             user: GitUser? = null,
             sshKeyFile: File? = null,
+            strictHostKeyChecking: Boolean = true,
         ): GitCommandApi {
-            return GitCommandProcessWrapper(gitRootDirectory, user, sshKeyFile)
+            return GitCommandProcessWrapper(
+                gitRootDirectory,
+                user,
+                sshKeyFile,
+                strictHostKeyChecking,
+            )
         }
     }
 }

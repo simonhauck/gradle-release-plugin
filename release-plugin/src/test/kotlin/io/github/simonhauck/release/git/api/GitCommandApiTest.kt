@@ -1,11 +1,16 @@
 package io.github.simonhauck.release.git.api
 
+import io.github.simonhauck.release.testdriver.*
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import io.github.simonhauck.release.testdriver.assertIsOk
 import io.github.simonhauck.release.util.leftOrNull
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 
 internal class GitCommandApiTest {
@@ -217,14 +222,14 @@ internal class GitCommandApiTest {
     @Test
     fun `should set a remote branch and push a git commit that is remote available`() =
         testDriver(tmpDir) {
-            serverApi.initBareRepository()
+            val repository = gitServer.initBareRepository()
 
             createLocalRepository()
-            client1Api.addRemoteAndSetUpstream("origin", serverWorkDir.absolutePath, "main")
+            client1Api.addRemoteAndSetUpstream("origin", repository.url, "main")
             client1Api.push().assertIsOk()
 
             // Check can the branch be checked out
-            client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+            client2Api.clone(repository.url, ".", "main").assertIsOk()
             assertThat(client2WorkDir.resolve("build.gradle.kts")).exists()
         }
 
@@ -302,7 +307,7 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
-            client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+            client2Api.clone(gitServer.lastRepository!!.url, ".", "main").assertIsOk()
             client2Api.fetchRemoteTags().assertIsOk()
             val initialTags = client2Api.listTags().assertIsOk()
             assertThat(initialTags).isEmpty()
@@ -396,5 +401,91 @@ internal class GitCommandApiTest {
             val actual = client1Api.status().assertIsOk()
             assertThat(actual.unstaged)
                 .containsExactlyInAnyOrder("version.properties", "build.gradle.kts")
+        }
+
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to use the ssh key file with slashes as file separators`():
+        List<DynamicTest> {
+        val pathWithSystemFileSeparator =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(tmpDir).absolutePath
+
+        val pathWithForwardSlash = pathWithSystemFileSeparator.replace(File.separator, "/")
+        val pathWithDoubleForwardSlash = pathWithSystemFileSeparator.replace(File.separator, "//")
+
+        return listOf(pathWithForwardSlash, pathWithDoubleForwardSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to use ssh key files with backslashes on windows`(): List<DynamicTest> {
+        val pathWithSystemFileSeparator =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(tmpDir).absolutePath
+
+        val pathWithBackwardsSlash = pathWithSystemFileSeparator.replace(File.separator, "\\")
+        val pathWithDoubleBackwardsSlash =
+            pathWithSystemFileSeparator.replace(File.separator, "\\\\")
+
+        return listOf(pathWithBackwardsSlash, pathWithDoubleBackwardsSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
+    }
+
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to handle ssh key files with whitespaces and slashes in the path`():
+        List<DynamicTest> {
+        val folderWithWhiteSpaces = tmpDir.resolve("path with whitespaces")
+        val pathWithWhitespaces =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(folderWithWhiteSpaces).absolutePath
+
+        val pathWithForwardSlash = pathWithWhitespaces.replace(File.separator, "/")
+        val pathWithDoubleForwardSlash = pathWithWhitespaces.replace(File.separator, "//")
+
+        return listOf(pathWithForwardSlash, pathWithDoubleForwardSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
+    }
+
+    @EnabledOnOs(OS.WINDOWS)
+    @RequiresDocker
+    @TestFactory
+    fun `should be able to handle ssh key files with whitespaces and backslashes in the path on windows`():
+        List<DynamicTest> {
+        val folderWithWhiteSpaces = tmpDir.resolve("path with whitespaces")
+        val pathWithWhitespaces =
+            getRSAKeyInTempDirectoryWithCorrectPermissions(folderWithWhiteSpaces).absolutePath
+
+        val pathWithBackwardsSlash = pathWithWhitespaces.replace(File.separator, "\\")
+        val pathWithDoubleBackwardsSlash = pathWithWhitespaces.replace(File.separator, "\\\\")
+
+        return listOf(pathWithBackwardsSlash, pathWithDoubleBackwardsSlash).mapIndexed {
+            index: Int,
+            path: String ->
+            testSshKeyFileWithPath(path, index)
+        }
+    }
+
+    private fun testSshKeyFileWithPath(path: String, index: Int): DynamicTest =
+        DynamicTest.dynamicTest("using path $path") {
+            val tmpDirDynamicTest = tmpDir.resolve("test$index")
+
+            testDriver(
+                tmpDirDynamicTest,
+                client1Config = ClientConfig(File(path), false),
+                gitServer =
+                    DockerGitServer(getTestResourceFile("ssh-key/id_rsa.pub"), tmpDirDynamicTest),
+            ) {
+                createValidRepositoryWithRemote()
+            }
         }
 }

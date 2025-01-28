@@ -10,54 +10,61 @@ import org.gradle.testkit.runner.GradleRunner
 internal class ReleasePluginTestDriver {
     private val log = Logging.getLogger(ReleasePluginTestDriver::class.java)
 
-    operator fun invoke(tmpDir: File, action: SemanticVersioningProjectBuilder.() -> Unit) {
+    operator fun invoke(
+        tmpDir: File,
+        gitServer: GitServer = LocalGitServer(tmpDir),
+        client1Config: ClientConfig = ClientConfig(null),
+        client2Config: ClientConfig = ClientConfig(null),
+        action: SemanticVersioningProjectBuilder.() -> Unit,
+    ) {
         log.lifecycle("Current test directory is $tmpDir")
 
-        SemanticVersioningProjectBuilder(
-                tmpDir.resolve("client1"),
-                tmpDir.resolve("client2"),
-                tmpDir.resolve("server"),
-            )
-            .apply {
+        gitServer.use {
+            gitServer.setup()
+            val client1Api =
+                GitTestCommandService(
+                    tmpDir.resolve("client1"),
+                    client1Config.privateKey,
+                    client1Config.strictHostKeyChecking,
+                )
+            val client2Api =
+                GitTestCommandService(
+                    tmpDir.resolve("client2"),
+                    client2Config.privateKey,
+                    client2Config.strictHostKeyChecking,
+                )
+
+            SemanticVersioningProjectBuilder(client1Api, client2Api, it).apply {
                 createProjectScaffold()
                 action()
             }
+        }
     }
 }
 
 internal class SemanticVersioningProjectBuilder(
-    val client1WorkDir: File,
-    val client2WorkDir: File,
-    val serverWorkDir: File,
+    val client1Api: GitTestCommandService,
+    val client2Api: GitTestCommandService,
+    val gitServer: GitServer,
 ) {
 
-    init {
-        client1WorkDir.mkdirs()
-        client2WorkDir.mkdirs()
-        serverWorkDir.mkdirs()
-    }
-
-    val client1Api = GitTestCommandService(client1WorkDir)
-    val client2Api = GitTestCommandService(client2WorkDir)
-    val serverApi = GitTestCommandService(serverWorkDir)
+    val client1WorkDir = client1Api.workDir
+    val client2WorkDir = client2Api.workDir
 
     fun testKitRunner(): GradleRunner {
         return GradleRunner.create()
-            .withProjectDir(client1WorkDir)
+            .withProjectDir(client1Api.workDir)
             .withPluginClasspath()
             .withDebug(false)
             .forwardOutput()
     }
 
     fun createValidRepositoryWithRemote() {
-        serverApi.initBareRepository().assertIsOk()
-        client1Api.init("main").assertIsOk()
-        client1Api.configureNameAndEmailLocally("user1", "user1@mail.com").assertIsOk()
-        client1Api.add(".").assertIsOk()
-        client1Api.commit("Initial commit").assertIsOk()
-        client1Api
-            .addRemoteAndSetUpstream("origin", serverWorkDir.absolutePath, "main")
-            .assertIsOk()
+        val cloneUrl = gitServer.initBareRepository("testRepo")
+
+        createLocalRepository()
+
+        client1Api.addRemoteAndSetUpstream("origin", cloneUrl.url, "main").assertIsOk()
         client1Api.push().assertIsOk()
     }
 
@@ -69,7 +76,7 @@ internal class SemanticVersioningProjectBuilder(
     }
 
     fun cloneForClient2() {
-        client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+        client2Api.clone(gitServer.lastRepository!!.url, ".", "main").assertIsOk()
         client2Api.configureNameAndEmailLocally("user2", "user2@mail.com").assertIsOk()
     }
 
@@ -98,3 +105,5 @@ internal class SemanticVersioningProjectBuilder(
         return resolve("version.properties").readText()
     }
 }
+
+data class ClientConfig(val privateKey: File? = null, val strictHostKeyChecking: Boolean = false)
