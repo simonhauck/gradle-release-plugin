@@ -28,7 +28,7 @@ internal open class GitCommandProcessWrapper(
     private val gitUser: GitUser?,
     // TODO Simon.Hauck 2024-06-02 - How to test authentication
     private val sshKeyFile: File?,
-    private val disableStrictHostKeyChecking: Boolean = false,
+    private val strictHostKeyChecking: Boolean,
     private val processWrapper: ProcessWrapper = ProcessWrapper(),
 ) : GitCommandApi {
 
@@ -188,7 +188,7 @@ internal open class GitCommandProcessWrapper(
         if (sshKeyFile == null) return emptyMap()
 
         val strictHostKeySetting =
-            if (disableStrictHostKeyChecking)
+            if (!strictHostKeyChecking)
                 "-o StrictHostKeyChecking=no -o \"UserKnownHostsFile=/dev/null\""
             else ""
 

@@ -1,10 +1,12 @@
 package io.github.simonhauck.release.plugin
 
+import io.github.simonhauck.release.testdriver.*
 import io.github.simonhauck.release.testdriver.GitTestCommandService
 import io.github.simonhauck.release.testdriver.ReleasePluginTestDriver
 import io.github.simonhauck.release.testdriver.assertIsOk
-import io.github.simonhauck.release.testdriver.getTestResourceFile
 import java.io.File
+import org.assertj.core.api.Assertions.assertThat
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.testcontainers.containers.BindMode
@@ -18,15 +20,15 @@ internal class ReleasePluginAuthenticationTest {
 
     private val testDriver = ReleasePluginTestDriver()
 
+    private val publicKey = getTestResourceFile("ssh-key/id_rsa.pub")
+    private val privateKey = getTestResourceFile("ssh-key/id_rsa")
+
     @Test
     fun `test Git server container`() {
 
-        val publicKeyContent = getTestResourceFile("ssh-key/id_rsa.pub").readText()
-        val privateKey = getTestResourceFile("ssh-key/id_rsa")
-
         val serverWorkDir = tmpDir.resolve("server").apply { mkdirs() }
         val authorizedKeyFile =
-            serverWorkDir.resolve("authorized_keys").apply { writeText(publicKeyContent) }
+            serverWorkDir.resolve("authorized_keys").apply { writeText(publicKey.readText()) }
 
         val gitRepoMount = serverWorkDir.resolve("mount").apply { mkdirs() }
 
@@ -79,7 +81,7 @@ internal class ReleasePluginAuthenticationTest {
             GitTestCommandService(
                 tmpDir,
                 privateKey.canonicalFile,
-                disableStrictHostKeyChecking = true,
+                strictHostKeyChecking = false,
             )
 
         try {
@@ -90,4 +92,34 @@ internal class ReleasePluginAuthenticationTest {
         // Add your test logic here
 
     }
+
+    @Test
+    fun `release does work with an authenticated user`() =
+        testDriver(
+            tmpDir,
+            gitServer = DockerGitServer(publicKey, tmpDir),
+            client1Config = ClientConfig(privateKey, false),
+        ) {
+            val sanitizedPath = privateKey.absolutePath.replace("\\", "\\\\")
+
+            appendContentToBuildGradle(
+                """
+                |release {
+                |   sshKeyFile = file("$sanitizedPath")
+                |}
+                |
+                |tasks.withType<GitTask>{
+                |   strictHostKeyChecking = false
+                |}
+                """
+                    .trimMargin()
+            )
+
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
+
+            val actual = runner.task(":release")?.outcome
+            assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
+        }
 }

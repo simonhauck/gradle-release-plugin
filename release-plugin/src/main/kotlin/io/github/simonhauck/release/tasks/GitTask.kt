@@ -1,15 +1,11 @@
 package io.github.simonhauck.release.tasks
 
-import io.github.simonhauck.release.git.api.GitCommandApi
-import io.github.simonhauck.release.git.api.GitCommandHistoryApi
-import io.github.simonhauck.release.git.api.GitError
-import io.github.simonhauck.release.git.api.GitResult
-import io.github.simonhauck.release.git.api.GitUser
-import io.github.simonhauck.release.git.api.RevertCommand
+import io.github.simonhauck.release.git.api.*
 import io.github.simonhauck.release.util.Either
 import io.github.simonhauck.release.util.onLeft
 import io.github.simonhauck.release.util.onRight
 import java.io.File
+import org.gradle.api.Incubating
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -22,6 +18,7 @@ interface GitTask : Task {
 
     @get:Input val gitRootDirectory: Property<File>
     @get:InputFile @get:Optional val sshKeyFile: RegularFileProperty
+    @get:Input @get:Optional @get:Incubating val strictHostKeyChecking: Property<Boolean>
     @get:Input @get:Optional val gitName: Property<String>
     @get:Input @get:Optional val gitEmail: Property<String>
 
@@ -31,7 +28,12 @@ interface GitTask : Task {
         val userName = gitName.orNull
         val email = gitEmail.orNull
         val user = if (userName != null && email != null) GitUser(userName, email) else null
-        return GitCommandApi.create(gitRootDirectory.get(), user, sshKeyFile.asFile.orNull)
+        return GitCommandApi.create(
+            gitRootDirectory.get(),
+            user,
+            sshKeyFile.asFile.orNull,
+            strictHostKeyChecking.orNull ?: true,
+        )
     }
 
     fun <T> GitResult<T>.revertHistoryOnError(): Either<GitError, T> {

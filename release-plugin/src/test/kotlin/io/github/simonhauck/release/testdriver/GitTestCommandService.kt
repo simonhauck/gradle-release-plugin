@@ -10,10 +10,14 @@ import io.github.simonhauck.release.util.map
 import java.io.File
 
 internal class GitTestCommandService(
-    private val workDir: File,
+    val workDir: File,
     sshKeyFile: File? = null,
-    disableStrictHostKeyChecking: Boolean = false,
-) : GitCommandProcessWrapper(workDir, null, sshKeyFile, disableStrictHostKeyChecking) {
+    strictHostKeyChecking: Boolean = false,
+) : GitCommandProcessWrapper(workDir, null, sshKeyFile, strictHostKeyChecking) {
+
+    init {
+        workDir.mkdirs()
+    }
 
     fun clone(repositoryUrl: String, directoryName: String, branchName: String): GitVoidResult {
         return gitVoidCommand(listOf("clone", repositoryUrl, directoryName, "-b", branchName))
@@ -22,7 +26,6 @@ internal class GitTestCommandService(
     fun clone(repositoryUrl: String, directoryName: String): GitVoidResult {
         return gitVoidCommand(listOf("clone", repositoryUrl, directoryName))
     }
-
 
     fun checkOutTag(tagName: String): GitVoidResult {
         return gitVoidCommand(listOf("checkout", tagName))
