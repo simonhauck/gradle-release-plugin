@@ -217,14 +217,14 @@ internal class GitCommandApiTest {
     @Test
     fun `should set a remote branch and push a git commit that is remote available`() =
         testDriver(tmpDir) {
-            serverApi.initBareRepository()
+            val repository = gitServer.initBareRepository()
 
             createLocalRepository()
-            client1Api.addRemoteAndSetUpstream("origin", serverWorkDir.absolutePath, "main")
+            client1Api.addRemoteAndSetUpstream("origin", repository.url, "main")
             client1Api.push().assertIsOk()
 
             // Check can the branch be checked out
-            client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+            client2Api.clone(repository.url, ".", "main").assertIsOk()
             assertThat(client2WorkDir.resolve("build.gradle.kts")).exists()
         }
 
@@ -302,7 +302,7 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             createValidRepositoryWithRemote()
 
-            client2Api.clone(serverWorkDir.absolutePath, ".", "main").assertIsOk()
+            client2Api.clone(gitServer.lastRepository!!.url, ".", "main").assertIsOk()
             client2Api.fetchRemoteTags().assertIsOk()
             val initialTags = client2Api.listTags().assertIsOk()
             assertThat(initialTags).isEmpty()

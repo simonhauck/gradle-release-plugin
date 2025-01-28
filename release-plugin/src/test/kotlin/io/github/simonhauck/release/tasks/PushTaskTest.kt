@@ -120,7 +120,7 @@ internal class PushTaskTest {
     @Test
     fun `should be successful when specifying an ssh key`() =
         testDriver(tmpDir) {
-            val sshKeyFile = getTestResourceFile("ssh-key/id_ed25519")
+            val sshKeyFile = getTestResourceFile("ssh-key/id_rsa")
 
             createValidRepositoryWithRemote()
 
@@ -145,8 +145,8 @@ internal class PushTaskTest {
     @Test
     fun `should be successful when specifying an ssh key with a whitespace in the folder name`() =
         testDriver(tmpDir) {
-            val sshKeyFolder = tmpDir.resolve("folder with whitespaces/id_ed25519")
-            val sshKeyFile = getTestResourceFile("ssh-key/id_ed25519").copyTo(sshKeyFolder)
+            val sshKeyFolder = tmpDir.resolve("folder with whitespaces/id_rsa")
+            val sshKeyFile = getTestResourceFile("ssh-key/id_rsa").copyTo(sshKeyFolder)
 
             createValidRepositoryWithRemote()
 

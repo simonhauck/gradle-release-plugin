@@ -10,14 +10,10 @@ import io.github.simonhauck.release.util.map
 import java.io.File
 
 internal class GitTestCommandService(
-    workDir: File,
+    private val workDir: File,
     sshKeyFile: File? = null,
     disableStrictHostKeyChecking: Boolean = false,
 ) : GitCommandProcessWrapper(workDir, null, sshKeyFile, disableStrictHostKeyChecking) {
-
-    fun initBareRepository(): GitVoidResult {
-        return gitVoidCommand(listOf("init", "--bare"))
-    }
 
     fun clone(repositoryUrl: String, directoryName: String, branchName: String): GitVoidResult {
         return gitVoidCommand(listOf("clone", repositoryUrl, directoryName, "-b", branchName))
