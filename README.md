@@ -116,6 +116,7 @@ release {
 
     // Check for snapshot / pre-release versions
     checkForPreReleaseVersions.set(true) // Enable/disable pre-release version checks
+    checkRecursiveForPreReleaseVersions.set(true) // Check submodules for pre-release versions
     ignorePreReleaseDependenciesFile.set(null) // File listing dependencies to ignore for pre-release checks in form of group:name
     ignorePreReleaseDependencies.set(emptyList()) // List of dependencies to ignore for pre-release checks in form of group:name
 

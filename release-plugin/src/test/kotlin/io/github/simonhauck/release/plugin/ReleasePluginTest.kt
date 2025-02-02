@@ -540,7 +540,73 @@ internal class ReleasePluginTest {
     }
 
     @Test
-    fun `release should succeed without any snapshot dependencies`() {
+    fun `release should fail if a subproject is using a snapshot dependency`() =
+        testDriver(tmpDir) {
+            appendContentToSettingsGradle("""include("subproject")""")
+
+            client1WorkDir
+                .resolve("subproject/build.gradle.kts")
+                .apply { parentFile.mkdirs() }
+                .writeText(
+                    """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+            """
+                        .trimMargin()
+                )
+
+            createLocalRepository()
+
+            val runner = testKitRunner().withArguments("release").buildAndFail()
+
+            assertThat(runner.task(":checkForPreReleaseVersions")?.outcome)
+                .isEqualTo(TaskOutcome.FAILED)
+            assertThat(runner.output.lines())
+                .contains(
+                    "> Found 1 dependencies with a pre-release version that are not allowed",
+                    "   - io.github.simonhauck.release:release-plugin:1.0.0-RC1",
+                    "  Change the versions or add them to the ignore list.",
+                )
+        }
+
+    @Test
+    fun `release should not fail if a subproject is using a snapshot dependency when subprojects are not included in the search`() =
+        testDriver(tmpDir) {
+            appendContentToSettingsGradle("""include("subproject")""")
+            appendContentToBuildGradle(
+                """
+                |release {
+                |    checkRecursiveForPreReleaseVersions.set(false)
+                |}
+            """
+                    .trimMargin()
+            )
+
+            client1WorkDir
+                .resolve("subproject/build.gradle.kts")
+                .apply { parentFile.mkdirs() }
+                .writeText(
+                    """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+            """
+                        .trimMargin()
+                )
+
+            createValidRepositoryWithRemote()
+
+            val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
+
+            assertThat(runner.task(":checkForPreReleaseVersions")?.outcome)
+                .isEqualTo(TaskOutcome.SUCCESS)
+        }
+
+    @Test
+    fun `release should succeed without any snapshot dependencies`() =
         testDriver(tmpDir) {
             appendContentToBuildGradle(
                 """
@@ -559,7 +625,6 @@ internal class ReleasePluginTest {
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         }
-    }
 
     @Test
     fun `release should not fail with snapshot dependencies if the check is disabled`() =

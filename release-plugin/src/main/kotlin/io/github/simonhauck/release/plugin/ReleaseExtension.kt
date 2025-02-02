@@ -19,6 +19,7 @@ abstract class ReleaseExtension(
 
     // Check for snapshot / pre-release versions
     val checkForPreReleaseVersions: Property<Boolean> = booleanProperty(true)
+    val checkRecursiveForPreReleaseVersions: Property<Boolean> = booleanProperty(true)
     val ignorePreReleaseDependenciesFile: RegularFileProperty = fileProperty()
     val ignorePreReleaseDependencies: ListProperty<String> = stringListProperty()
 

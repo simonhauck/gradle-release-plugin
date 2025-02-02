@@ -2,6 +2,7 @@ package io.github.simonhauck.release.plugin
 
 import io.github.simonhauck.release.git.internal.commands.GitCommandHistoryService
 import io.github.simonhauck.release.tasks.*
+import io.github.simonhauck.release.util.ProjectVersionCollector
 import java.time.Duration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,7 +21,7 @@ class ReleasePlugin : Plugin<Project> {
         val releaseVersionStore =
             project.layout.buildDirectory.file("release/tmpVersion.properties")
 
-        val projectDependencies = project.getDependenciesAsProvider()
+        val projectDependencies = project.getDependenciesAsProvider(extension)
 
         val checkForPreReleaseVersionsTask =
             project.tasks.register(
@@ -85,11 +86,13 @@ class ReleasePlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.getDependenciesAsProvider(): Provider<List<String>> = provider {
-        configurations
-            .flatMap { configuration -> configuration.dependencies }
-            .filter { it.group != null && it.version != null }
-            .map { "${it.group}:${it.name}:${it.version}" }
+    private fun Project.getDependenciesAsProvider(
+        extension: ReleaseExtension
+    ): Provider<List<String>> = provider {
+        val versionCollector = ProjectVersionCollector()
+        if (extension.checkRecursiveForPreReleaseVersions.get())
+            versionCollector.getProjectDependenciesRecursive(this)
+        else versionCollector.getProjectDependencies(this)
     }
 
     private fun Project.checkForUncommittedFiles(
