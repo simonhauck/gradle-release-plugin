@@ -95,6 +95,12 @@ internal class SemanticVersioningProjectBuilder(
         buildGradleFile.appendText(content)
     }
 
+    fun appendContentToSettingsGradle(content: String) {
+        val settingsGradlePath = Paths.get(client1WorkDir.absolutePath, "settings.gradle.kts")
+        val settingsGradleFile = settingsGradlePath.toFile()
+        settingsGradleFile.appendText(content)
+    }
+
     fun updateVersionProperties(version: String) {
         val versionPropertiesPath = Paths.get(client1WorkDir.absolutePath, "version.properties")
         val versionPropertiesFile = versionPropertiesPath.toFile()
