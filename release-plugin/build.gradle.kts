@@ -16,6 +16,7 @@ dependencies {
     testImplementation(gradleTestKit())
     testImplementation(libs.bundles.junit)
     testImplementation(libs.testContainers)
+    testRuntimeOnly(libs.junitPlatforLauncher)
 }
 
 @Suppress("UnstableApiUsage")

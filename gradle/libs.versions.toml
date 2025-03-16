@@ -1,6 +1,6 @@
 [versions]
 kotlionVersion = "2.1.10"
-junitVersion = "5.11.4"
+junitVersion = "5.12.1"
 
 [libraries]
 # Plugins that are used in buildLogic
@@ -14,6 +14,7 @@ ztExec = { module = "org.zeroturnaround:zt-exec", version = "1.12" }
 # Testing related
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
+junitPlatforLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 assertJCore = { module = "org.assertj:assertj-core", version = "3.27.3" }
 testContainers = { module = "org.testcontainers:testcontainers", version = "1.20.6" }
 
