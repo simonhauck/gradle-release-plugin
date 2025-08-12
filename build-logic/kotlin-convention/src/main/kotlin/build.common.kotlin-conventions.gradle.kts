@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     jvmToolchain {
-        this.languageVersion.set(JavaLanguageVersion.of(11))
+        this.languageVersion.set(JavaLanguageVersion.of(17))
         this.vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
