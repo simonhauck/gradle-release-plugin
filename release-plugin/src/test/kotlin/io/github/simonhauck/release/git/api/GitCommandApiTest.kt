@@ -66,7 +66,7 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             createLocalRepository()
 
-            updateVersionProperties("1.2.0")
+            updateVersionInGradleProperties("1.2.0")
             client1Api.add(".").assertIsOk()
             client1Api.commit("Second commit").assertIsOk()
 
@@ -86,7 +86,7 @@ internal class GitCommandApiTest {
             val user = GitUser("new user", "new_user@mail.com")
             val localGitApi = GitCommandApi.create(client1WorkDir, user)
 
-            updateVersionProperties("1.2.0")
+            updateVersionInGradleProperties("1.2.0")
             localGitApi.add(".")
             localGitApi.commit("Second commit").assertIsOk()
 
@@ -198,7 +198,7 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             createLocalRepository()
 
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             val unstagedFile =
                 client1WorkDir.resolve("unstaged.txt").apply { writeText("Unstaged") }
             val stagedFile = client1WorkDir.resolve("staged.txt").apply { writeText("Staged") }
@@ -357,13 +357,13 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             createLocalRepository()
 
-            updateVersionProperties("stagedFile")
+            updateVersionInGradleProperties("stagedFile")
             client1Api.add(".")
             appendContentToBuildGradle("unstagedContent")
             client1WorkDir.resolve("tmpFile").createNewFile()
 
             val beforeStash = client1Api.status().assertIsOk()
-            assertThat(beforeStash.staged).containsExactly("version.properties")
+            assertThat(beforeStash.staged).containsExactly("gradle.properties")
             assertThat(beforeStash.unstaged).containsExactly("build.gradle.kts")
             assertThat(beforeStash.untracked).containsExactly("tmpFile")
 
@@ -391,7 +391,7 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             createLocalRepository()
 
-            updateVersionProperties("stagedFile")
+            updateVersionInGradleProperties("stagedFile")
             client1Api.add(".")
             appendContentToBuildGradle("unstagedContent")
 
@@ -400,7 +400,7 @@ internal class GitCommandApiTest {
 
             val actual = client1Api.status().assertIsOk()
             assertThat(actual.unstaged)
-                .containsExactlyInAnyOrder("version.properties", "build.gradle.kts")
+                .containsExactlyInAnyOrder("gradle.properties", "build.gradle.kts")
         }
 
     @RequiresDocker

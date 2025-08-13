@@ -32,14 +32,14 @@ internal class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(client1WorkDir.readVersionPropertiesFile())
+            assertThat(client1WorkDir.findVersionInGradleProperties())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
     @Test
     fun `releasing with releaseType strategy should be successful`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.1-SNAPSHOT")
+            updateVersionInGradleProperties("1.0.1-SNAPSHOT")
             createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=minor").build()
@@ -47,14 +47,14 @@ internal class ReleasePluginTest {
             val actual = runner.task(":release")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SUCCESS)
-            assertThat(client1WorkDir.readVersionPropertiesFile())
+            assertThat(client1WorkDir.findVersionInGradleProperties())
                 .isEqualTo("version=1.1.1-SNAPSHOT")
         }
 
     @Test
     fun `releasing multiple types with the same pre release type should increment the counter for the pre-release versions`() {
         testDriver(tmpDir) {
-            updateVersionProperties("0.0.1-SNAPSHOT")
+            updateVersionInGradleProperties("0.0.1-SNAPSHOT")
             createValidRepositoryWithRemote()
 
             // First release
@@ -71,7 +71,7 @@ internal class ReleasePluginTest {
                 .apply { assertThat(task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS) }
             assertThat(client1Api.listTags().assertIsOk())
                 .containsExactly("v1.0.0-pre1", "v1.0.0-pre2")
-            assertThat(client1WorkDir.readVersionPropertiesFile())
+            assertThat(client1WorkDir.findVersionInGradleProperties())
                 .isEqualTo("version=0.0.1-SNAPSHOT")
         }
     }
@@ -102,7 +102,7 @@ internal class ReleasePluginTest {
             appendContentToBuildGradle(
                 """
                 |release {
-                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
+                |    releaseCommitAddFiles.set(listOf(file("gradle.properties"), file("otherFile.txt")))
                 |}
             """
                     .trimMargin()
@@ -158,8 +158,8 @@ internal class ReleasePluginTest {
             appendContentToBuildGradle(
                 """
                 |release {
-                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("release-file.txt")))
-                |    postReleaseCommitAddFiles.set(listOf(file("version.properties"), file("post-release-file.txt")))
+                |    releaseCommitAddFiles.set(listOf(file("gradle.properties"), file("release-file.txt")))
+                |    postReleaseCommitAddFiles.set(listOf(file("gradle.properties"), file("post-release-file.txt")))
                 |}
                 |
                 |val writeReleaseFileTask = tasks.register("writeReleaseFile") {
@@ -239,7 +239,7 @@ internal class ReleasePluginTest {
     @Test
     fun `should revert all changes when the tag is already used`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             createValidRepositoryWithRemote()
             client1Api.tag("v1.2.0", "this tag is already existing")
             client1Api.push().assertIsOk()
@@ -256,7 +256,7 @@ internal class ReleasePluginTest {
             val actual = runner.task(":commitReleaseVersion")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
-            assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
+            assertThat(client1WorkDir.findVersionInGradleProperties()).isEqualTo("version=1.0.0")
         }
 
     @Test
@@ -273,7 +273,7 @@ internal class ReleasePluginTest {
                 .build()
 
             cloneForClient2()
-            val version = client2WorkDir.readVersionPropertiesFile()
+            val version = client2WorkDir.findVersionInGradleProperties()
             assertThat(version).isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
@@ -292,14 +292,14 @@ internal class ReleasePluginTest {
 
             cloneForClient2()
             client2Api.checkOutTag("v1.2.0").assertIsOk()
-            val version = client2WorkDir.readVersionPropertiesFile()
+            val version = client2WorkDir.findVersionInGradleProperties()
             assertThat(version).isEqualTo("version=1.2.0")
         }
 
     @Test
     fun `should revert the version file if no valid remote is available`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
 
             createLocalRepository()
 
@@ -313,7 +313,7 @@ internal class ReleasePluginTest {
                     .buildAndFail()
 
             val actual = runner.task(":pushRelease")?.outcome
-            val actualVersion = client1WorkDir.readVersionPropertiesFile()
+            val actualVersion = client1WorkDir.findVersionInGradleProperties()
 
             assertThat(actual).isEqualTo(TaskOutcome.FAILED)
             assertThat(actualVersion).isEqualTo("version=1.0.0")
@@ -356,7 +356,7 @@ internal class ReleasePluginTest {
     @Test
     fun `should return a descriptive error message if the tag is already used`() {
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             createValidRepositoryWithRemote()
             client1Api.tag("v1.2.0", "this tag is already existing")
             client1Api.push().assertIsOk()
@@ -387,7 +387,7 @@ internal class ReleasePluginTest {
     @Test
     fun `should by default fail the release if an uncommitted file is in the repository and revert the local changes`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             createLocalRepository()
 
             client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
@@ -409,13 +409,13 @@ internal class ReleasePluginTest {
                     "> The repository contains uncommitted files:",
                     "   - untracked: uncommittedFile.txt",
                 )
-            assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
+            assertThat(client1WorkDir.findVersionInGradleProperties()).isEqualTo("version=1.0.0")
         }
 
     @Test
     fun `should skip the check for uncommitted files when the check is disabled`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             appendContentToBuildGradle(
                 """
                 |release {
@@ -440,7 +440,7 @@ internal class ReleasePluginTest {
             val actual = runner.task(":checkForUncommittedFiles")?.outcome
 
             assertThat(actual).isEqualTo(TaskOutcome.SKIPPED)
-            assertThat(client1WorkDir.readVersionPropertiesFile())
+            assertThat(client1WorkDir.findVersionInGradleProperties())
                 .isEqualTo("version=1.2.1-SNAPSHOT")
         }
 
@@ -479,36 +479,6 @@ internal class ReleasePluginTest {
             assertThat(lastCommit.message).isEqualTo("Post release commit: v1.1.1-SNAPSHOT")
             assertThat(lastCommit.commiterName).isEqualTo("user1")
             assertThat(lastCommit.commiterEmail).isEqualTo("user1@mail.com")
-        }
-    }
-
-    @Test
-    fun `should support property files with colon as separator and other unrelated properties`() {
-        testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
-
-            val versionFile =
-                client1WorkDir.resolve("version.properties").apply {
-                    writeText(
-                        """
-                    |# Some comment
-                    |unrelatedProperty: unrelatedValue
-                    |version: 1.0.0
-                    |someProperty: value
-                """
-                            .trimMargin()
-                    )
-                }
-
-            testKitRunner().withArguments("release", "-PreleaseType=major").build()
-
-            assertThat(versionFile.readLines())
-                .containsExactly(
-                    "# Some comment",
-                    "unrelatedProperty: unrelatedValue",
-                    "version: 2.0.1-SNAPSHOT",
-                    "someProperty: value",
-                )
         }
     }
 
@@ -671,4 +641,65 @@ internal class ReleasePluginTest {
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(runner.task(":release")?.outcome).isEqualTo(TaskOutcome.SUCCESS)
         }
+
+    @Test
+    fun `should support custom version property files`() {
+        testDriver(tmpDir) {
+            val versionFile =
+                client1WorkDir.resolve("version.properties").apply { writeText("version=1.0.0") }
+
+            appendContentToBuildGradle(
+                """
+                |release {
+                |    versionPropertyFile.set(layout.projectDirectory.file("version.properties"))
+                |}
+            """
+                    .trimMargin()
+            )
+
+            createValidRepositoryWithRemote()
+
+            testKitRunner().withArguments("release", "-PreleaseType=major").build()
+
+            assertThat(versionFile.readLines()).containsExactly("version=2.0.1-SNAPSHOT")
+        }
+    }
+
+    @Test
+    fun `should support custom version property files with colon as separator and other unrelated properties`() {
+        testDriver(tmpDir) {
+            val versionFile =
+                client1WorkDir.resolve("version.properties").apply {
+                    writeText(
+                        """
+                    |# Some comment
+                    |unrelatedProperty: unrelatedValue
+                    |version: 1.0.0
+                    |someProperty: value
+                """
+                            .trimMargin()
+                    )
+                }
+
+            appendContentToBuildGradle(
+                """
+                |release {
+                |    versionPropertyFile.set(layout.projectDirectory.file("version.properties"))
+                |}
+            """
+                    .trimMargin()
+            )
+            createValidRepositoryWithRemote()
+
+            testKitRunner().withArguments("release", "-PreleaseType=major").build()
+
+            assertThat(versionFile.readLines())
+                .containsExactly(
+                    "# Some comment",
+                    "unrelatedProperty: unrelatedValue",
+                    "version: 2.0.1-SNAPSHOT",
+                    "someProperty: value",
+                )
+        }
+    }
 }

@@ -138,7 +138,7 @@ internal class ReleaseTypeSelectionStrategyTest {
     fun `should fetch the remote tags before calculate the release version`() {
         testDriver(tmpDir) {
             val currentVersion = "0.0.1"
-            updateVersionProperties(currentVersion)
+            updateVersionInGradleProperties(currentVersion)
 
             createValidRepositoryWithRemote()
 

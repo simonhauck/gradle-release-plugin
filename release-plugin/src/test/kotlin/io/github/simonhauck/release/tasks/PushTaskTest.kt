@@ -87,7 +87,7 @@ internal class PushTaskTest {
 
             createValidRepositoryWithRemote()
 
-            updateVersionProperties("untracked-file.txt")
+            updateVersionInGradleProperties("untracked-file.txt")
 
             val runner = testKitRunner().withArguments("testPush").build()
 
@@ -107,7 +107,7 @@ internal class PushTaskTest {
 
             createValidRepositoryWithRemote()
 
-            updateVersionProperties("untracked-file.txt")
+            updateVersionInGradleProperties("untracked-file.txt")
             client1Api.add("version.properties")
 
             val runner = testKitRunner().withArguments("testPush").build()

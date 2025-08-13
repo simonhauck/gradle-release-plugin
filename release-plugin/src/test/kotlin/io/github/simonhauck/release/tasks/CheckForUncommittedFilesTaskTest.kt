@@ -47,7 +47,7 @@ internal class CheckForUncommittedFilesTaskTest {
             )
 
             createLocalRepository()
-            updateVersionProperties("some-other-version")
+            updateVersionInGradleProperties("some-other-version")
 
             // Create the files
             client1WorkDir.resolve("newFile.txt").createNewFile()
@@ -64,7 +64,7 @@ internal class CheckForUncommittedFilesTaskTest {
                 .containsSequence(
                     "> The repository contains uncommitted files:",
                     "   - staged: stagedFile.txt",
-                    "   - unstaged: version.properties",
+                    "   - unstaged: gradle.properties",
                     "   - untracked: newFile.txt",
                 )
         }
@@ -77,7 +77,7 @@ internal class CheckForUncommittedFilesTaskTest {
                     |
                     |val commitTask = tasks.register<CommitAndTagTask>("commitAndTagVersion") {
                     |    commitMessage.set("testCommit")
-                    |    gitAddFilePattern.set(listOf(file("version.properties")))
+                    |    gitAddFilePattern.set(listOf(file("gradle.properties")))
                     |}
                     |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
                     |   dependsOn(commitTask)
@@ -86,11 +86,11 @@ internal class CheckForUncommittedFilesTaskTest {
                     .trimMargin()
             )
 
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             createLocalRepository()
 
             // The version file is committed, the other file triggers the failed build
-            updateVersionProperties("1.1.0")
+            updateVersionInGradleProperties("1.1.0")
             client1WorkDir.resolve("notCommittedFile.txt").createNewFile()
 
             val runner =
@@ -99,6 +99,6 @@ internal class CheckForUncommittedFilesTaskTest {
             val actual = runner.task(":testCheckForUncommittedFiles")
 
             assertThat(actual?.outcome).isEqualTo(TaskOutcome.FAILED)
-            assertThat(client1WorkDir.readVersionPropertiesFile()).isEqualTo("version=1.0.0")
+            assertThat(client1WorkDir.findVersionInGradleProperties()).isEqualTo("version=1.0.0")
         }
 }

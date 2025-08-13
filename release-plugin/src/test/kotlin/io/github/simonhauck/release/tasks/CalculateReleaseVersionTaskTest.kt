@@ -19,7 +19,7 @@ internal class CalculateReleaseVersionTaskTest {
             appendContentToBuildGradle(
                 """
                 |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
+                |    versionPropertyFile = file("gradle.properties")
                 |    commandLineParameters = mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
@@ -40,11 +40,11 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `should write the calculated release and post release version in the file`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             appendContentToBuildGradle(
                 """
                 |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
+                |    versionPropertyFile = file("gradle.properties")
                 |    commandLineParameters = mapOf("releaseType" to "major")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
@@ -65,11 +65,11 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `should create a pre-release version if a pre-release type is provided`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            updateVersionInGradleProperties("1.0.0")
             appendContentToBuildGradle(
                 """
                 |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
+                |    versionPropertyFile = file("gradle.properties")
                 |    commandLineParameters = mapOf("releaseType" to "major", "preReleaseType" to "rc")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
@@ -93,7 +93,7 @@ internal class CalculateReleaseVersionTaskTest {
             appendContentToBuildGradle(
                 """
                 |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
+                |    versionPropertyFile = file("gradle.properties")
                 |    commandLineParameters = mapOf("someRandomProperties" to "xy")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
@@ -125,7 +125,7 @@ internal class CalculateReleaseVersionTaskTest {
             appendContentToBuildGradle(
                 """
                 |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
+                |    versionPropertyFile = file("gradle.properties")
                 |    commandLineParameters = mapOf("releaseType" to "major")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")

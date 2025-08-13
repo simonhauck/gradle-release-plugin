@@ -1,7 +1,6 @@
 import Build_common_lifecycle_gradle.CheckJvmArgsCompatibilityTask
 import Build_common_lifecycle_gradle.LifeCycleUtility.dependsOnSameTaskInIncludedBuilds
 import Build_common_lifecycle_gradle.LifeCycleUtility.dependsOnSameTaskInSubmodules
-import io.github.simonhauck.release.version.api.Version
 
 plugins {
     id("build.common.lifecycle")
@@ -9,10 +8,7 @@ plugins {
     id("io.github.simonhauck.release")
 }
 
-allprojects {
-    group = "io.github.simonhauck.release"
-    version = Version.fromPropertiesFile(rootProject.file("version.properties"))
-}
+allprojects { group = "io.github.simonhauck.release" }
 
 // To prevent accidental release commits, a separate property must be set
 release {
