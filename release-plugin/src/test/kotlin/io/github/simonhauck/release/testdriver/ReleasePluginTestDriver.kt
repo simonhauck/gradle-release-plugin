@@ -1,5 +1,6 @@
 package io.github.simonhauck.release.testdriver
 
+import io.github.simonhauck.release.file.internal.PropertiesFileUtil
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -101,14 +102,14 @@ internal class SemanticVersioningProjectBuilder(
         settingsGradleFile.appendText(content)
     }
 
-    fun updateVersionProperties(version: String) {
-        val versionPropertiesPath = Paths.get(client1WorkDir.absolutePath, "version.properties")
-        val versionPropertiesFile = versionPropertiesPath.toFile()
-        versionPropertiesFile.writeText("version=$version")
+    fun updateVersionInGradleProperties(version: String) {
+        val versionPropertiesPath = Paths.get(client1WorkDir.absolutePath, "gradle.properties")
+        PropertiesFileUtil()
+            .updatePropertiesFile(versionPropertiesPath.toFile(), mapOf("version" to version))
     }
 
-    fun File.readVersionPropertiesFile(): String {
-        return resolve("version.properties").readText()
+    fun File.findVersionInGradleProperties(): String {
+        return resolve("gradle.properties").readLines().first { it.startsWith("version=") }
     }
 }
 

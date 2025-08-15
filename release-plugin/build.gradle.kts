@@ -8,7 +8,7 @@ plugins {
 
 group = "io.github.simonhauck.release"
 
-version = readVersionFromFile(rootProject.file("../version.properties"))
+version = readVersionFromFile(rootProject.file("../gradle.properties"))
 
 dependencies {
     implementation(libs.ztExec)

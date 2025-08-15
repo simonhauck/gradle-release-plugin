@@ -7,10 +7,11 @@ plugins {
     id("io.github.simonhauck.release")
 }
 
-val versionFile = layout.projectDirectory.file("version.properties")
+// You can specify a custom version file or place the version the gradle.properties
+val gradleFile = rootProject.file("gradle.properties")
 
 // You can set the version from the version.properties file. You can utilize this helper method
-version = Version.fromPropertiesFile(versionFile.asFile)
+version = Version.fromPropertiesFile(gradleFile)
 
 // This is the configuration object
 release {

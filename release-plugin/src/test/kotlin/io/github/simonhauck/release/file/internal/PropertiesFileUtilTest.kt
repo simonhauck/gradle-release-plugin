@@ -164,6 +164,39 @@ class PropertiesFileUtilTest {
         assertThat(actual).isEqualTo(null)
     }
 
+    @Test
+    fun `should respect empty lines in the property file when updating`() {
+        val file =
+            tempDir.resolve("test.properties").apply {
+                writeText(
+                    """
+                    |someProperty=value
+                    |
+                    |someOtherProperty=anotherValue
+                    |
+                    |#comment=this should be filtered
+                    """
+                        .trimMargin()
+                )
+            }
+
+        val properties = mapOf("someOtherProperty" to "newValue")
+
+        PropertiesFileUtil().updatePropertiesFile(file, properties)
+
+        val actual = file.readLines()
+
+        val expected =
+            listOf(
+                "someProperty=value",
+                "",
+                "someOtherProperty=newValue",
+                "",
+                "#comment=this should be filtered",
+            )
+        assertThat(actual).isEqualTo(expected)
+    }
+
     private fun shouldDetectPropertiesSeparator(fileContent: String, expected: String) {
         val actual = PropertiesFileUtil().detectSeparatorForProperties(fileContent)
 

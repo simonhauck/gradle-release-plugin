@@ -15,7 +15,8 @@ abstract class ReleaseExtension(
 ) {
     // Project properties
     val rootGitDirectory: RegularFileProperty = projectFileProperty("./")
-    val versionPropertyFile: RegularFileProperty = projectFileProperty("version.properties")
+
+    val versionPropertyFile: RegularFileProperty = projectFileProperty("gradle.properties")
 
     // Check for snapshot / pre-release versions
     val checkForPreReleaseVersions: Property<Boolean> = booleanProperty(true)
