@@ -9,13 +9,18 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
+private const val DEFAULT_VERSION_PROPERTY_FILE = "version.properties"
+
+private const val GRADLE_PROPERTIES_FILE = "gradle.properties"
+
 abstract class ReleaseExtension(
     private val objects: ObjectFactory,
     private val layout: ProjectLayout,
 ) {
     // Project properties
     val rootGitDirectory: RegularFileProperty = projectFileProperty("./")
-    val versionPropertyFile: RegularFileProperty = projectFileProperty("version.properties")
+    val versionPropertyFile: RegularFileProperty =
+        projectFileProperty(DEFAULT_VERSION_PROPERTY_FILE)
 
     // Check for snapshot / pre-release versions
     val checkForPreReleaseVersions: Property<Boolean> = booleanProperty(true)
@@ -54,7 +59,23 @@ abstract class ReleaseExtension(
         objects.listProperty(String::class.java).convention(default)
 
     private fun projectFileProperty(default: String?): RegularFileProperty =
-        objects.fileProperty().convention(default?.let { layout.projectDirectory.file(it) })
+        objects
+            .fileProperty()
+            .convention(
+                default?.let { defaultPath ->
+                    val defaultFile = layout.projectDirectory.file(defaultPath)
+                    when {
+                        defaultPath == DEFAULT_VERSION_PROPERTY_FILE &&
+                            !defaultFile.asFile.exists() -> {
+                            val gradlePropertiesFile =
+                                layout.projectDirectory.file(GRADLE_PROPERTIES_FILE)
+                            if (gradlePropertiesFile.asFile.exists()) gradlePropertiesFile
+                            else defaultFile
+                        }
+                        else -> defaultFile
+                    }
+                }
+            )
 
     private fun fileProperty(): RegularFileProperty = objects.fileProperty()
 
