@@ -27,9 +27,8 @@ Here is quick guide on how to get started using this plugin.
 
 1. Git: In order to perform the different git operations the plugin requires git to be available in the path
 2. Version properties file: A file with a containing a key `version` and as value the current project version (like in
-   this [example](version.properties)). By default, the plugin will look for a file named `version.properties` in the 
-   root project. If this file is not present, the plugin will check for `gradle.properties` instead. You can change 
-   the name and location with the configuration.
+   this [example](version.properties)). By default, the plugin will look for the value in a `version.properties` or
+   `gradle.properties` file. You can change the name and location with the configuration.
 3. Gradle: Version 8.2 or higher
 4. Java: Version 17 or higher
 

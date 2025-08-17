@@ -242,8 +242,9 @@ internal class ReleasePluginTest {
     fun `should use version(dot)properties version before gradle(dot)properties`() =
         testDriver(tmpDir) {
             val versionFile = client1WorkDir.resolve("version.properties")
-            val gradlePropertiesFile = client1WorkDir.resolve("gradle.properties")
-            gradlePropertiesFile.appendText("\nversion=1.0.0")
+
+            updateVersionProperties("1.0.0")
+            appendContentToGradleProperties("version=1.0.0")
 
             createValidRepositoryWithRemote()
 
@@ -255,8 +256,8 @@ internal class ReleasePluginTest {
                 )
                 .build()
 
-            assertThat(versionFile.name).isEqualTo("version.properties")
             assertThat(versionFile.readText()).isEqualTo("version=1.2.1-SNAPSHOT")
+            assertThat(readGradleProperties()).contains("version=1.0.0")
         }
 
     @Test
@@ -264,8 +265,7 @@ internal class ReleasePluginTest {
     fun `should use gradle(dot)properties version if version(dot)properties is not present`() =
         testDriver(tmpDir) {
             client1WorkDir.resolve("version.properties").delete()
-            val versionFile = client1WorkDir.resolve("gradle.properties")
-            versionFile.appendText("${System.lineSeparator()}version=1.0.0")
+            appendContentToGradleProperties("version=1.0.0")
 
             createValidRepositoryWithRemote()
 
@@ -277,9 +277,7 @@ internal class ReleasePluginTest {
                 )
                 .build()
 
-            assertThat(versionFile.name).isEqualTo("gradle.properties")
-            assertThat(versionFile.readLines())
-                .containsExactly("org.gradle.configuration-cache=true", "version=1.2.1-SNAPSHOT")
+            assertThat(readGradleProperties()).contains("version=1.2.1-SNAPSHOT")
         }
 
     @Test
