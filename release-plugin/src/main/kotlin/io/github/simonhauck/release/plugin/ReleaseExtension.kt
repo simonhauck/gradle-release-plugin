@@ -8,14 +8,26 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 
 abstract class ReleaseExtension(
     private val objects: ObjectFactory,
     private val layout: ProjectLayout,
+    private val providers: ProviderFactory,
 ) {
+
     // Project properties
     val rootGitDirectory: RegularFileProperty = projectFileProperty("./")
-    val versionPropertyFile: RegularFileProperty = projectFileProperty("version.properties")
+    val versionPropertyFile: RegularFileProperty =
+        objects
+            .fileProperty()
+            .convention(
+                providers.provider {
+                    val versionFile = layout.projectDirectory.file("version.properties")
+                    val gradlePropertiesFile = layout.projectDirectory.file("gradle.properties")
+                    versionFile.takeIf { it.asFile.exists() } ?: gradlePropertiesFile
+                }
+            )
 
     // Check for snapshot / pre-release versions
     val checkForPreReleaseVersions: Property<Boolean> = booleanProperty(true)
