@@ -265,7 +265,7 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.resolve("version.properties").delete()
             val versionFile = client1WorkDir.resolve("gradle.properties")
-            versionFile.appendText("\nversion=1.0.0")
+            versionFile.appendText("${System.lineSeparator()}version=1.0.0")
 
             createValidRepositoryWithRemote()
 
@@ -278,8 +278,8 @@ internal class ReleasePluginTest {
                 .build()
 
             assertThat(versionFile.name).isEqualTo("gradle.properties")
-            assertThat(versionFile.readText())
-                .isEqualTo("org.gradle.configuration-cache=true\nversion=1.2.1-SNAPSHOT")
+            assertThat(versionFile.readLines())
+                .containsExactly("org.gradle.configuration-cache=true", "version=1.2.1-SNAPSHOT")
         }
 
     @Test
