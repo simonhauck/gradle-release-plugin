@@ -27,8 +27,9 @@ Here is quick guide on how to get started using this plugin.
 
 1. Git: In order to perform the different git operations the plugin requires git to be available in the path
 2. Version properties file: A file with a containing a key `version` and as value the current project version (like in
-   this [example](version.properties)). By default, the file should be located in the root project and be named
-   `version.properties`. You can change the name and location with the configuration.
+   this [example](version.properties)). By default, the plugin will look for a file named `version.properties` in the 
+   root project. If this file is not present, the plugin will check for `gradle.properties` instead. You can change 
+   the name and location with the configuration.
 3. Gradle: Version 8.2 or higher
 4. Java: Version 17 or higher
 
@@ -113,7 +114,7 @@ properties and if not optional their default values:
 release {
     // Project properties
     rootGitDirectory.set(layout.projectDirectory.file("./")) // Root directory of the Git repository
-    versionPropertyFile.set(layout.projectDirectory.file("version.properties")) // File containing the version information
+    versionPropertyFile.set(layout.projectDirectory.file("version.properties")) // File containing the version information. Defaults to version.properties, falls back to gradle.properties if not present
 
     // Check for snapshot / pre-release versions
     checkForPreReleaseVersions.set(true) // Enable/disable pre-release version checks
