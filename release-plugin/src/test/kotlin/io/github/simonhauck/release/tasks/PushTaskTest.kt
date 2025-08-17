@@ -16,12 +16,12 @@ internal class PushTaskTest {
     @Test
     fun `should push the commit to the remote repository`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<PushTask>("testPush"){}
-                """
+                        |tasks.register<PushTask>("testPush"){}
+                        """
                     .trimMargin()
             )
             client1Api.add("build.gradle.kts")
@@ -40,14 +40,14 @@ internal class PushTaskTest {
     @Test
     fun `should fail if there is no remote origin available`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<PushTask>("testPush"){}
-                """
+                        |tasks.register<PushTask>("testPush"){}
+                        """
                     .trimMargin()
             )
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val runner = testKitRunner().withArguments("testPush").buildAndFail()
 
@@ -58,16 +58,16 @@ internal class PushTaskTest {
     @Test
     fun `should not fail if no valid repository is available but disable push is true`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-            |tasks.register<PushTask>("testPush"){
-            |   disablePush = true
-            |}
-            """
+                    |tasks.register<PushTask>("testPush"){
+                    |   disablePush = true
+                    |}
+                    """
                     .trimMargin()
             )
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val runner = testKitRunner().withArguments("testPush").build()
 
@@ -78,16 +78,16 @@ internal class PushTaskTest {
     @Test
     fun `should not fail to pull the remote changes when unstaged files are available`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<PushTask>("testPush"){}
-                """
+                        |tasks.register<PushTask>("testPush"){}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
-            updateVersionProperties("untracked-file.txt")
+            client1WorkDir.updateVersionProperties("untracked-file.txt")
 
             val runner = testKitRunner().withArguments("testPush").build()
 
@@ -98,16 +98,16 @@ internal class PushTaskTest {
     @Test
     fun `should not fail to pull the remote changes when staged files are available`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<PushTask>("testPush"){}
-                """
+                        |tasks.register<PushTask>("testPush"){}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
-            updateVersionProperties("untracked-file.txt")
+            client1WorkDir.updateVersionProperties("untracked-file.txt")
             client1Api.add("version.properties")
 
             val runner = testKitRunner().withArguments("testPush").build()

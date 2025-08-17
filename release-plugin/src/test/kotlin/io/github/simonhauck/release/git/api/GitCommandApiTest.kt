@@ -51,9 +51,9 @@ internal class GitCommandApiTest {
     @Test
     fun `git log should return the newest commit as last element`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
-            appendContentToBuildGradle("some content")
+            client1WorkDir.appendContentToBuildGradle("some content")
             client1Api.add(".").assertIsOk()
             client1Api.commit("Second commit").assertIsOk()
 
@@ -64,9 +64,9 @@ internal class GitCommandApiTest {
     @Test
     fun `should return the locally configure user when no explicit user is set`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
-            updateVersionProperties("1.2.0")
+            client1WorkDir.updateVersionProperties("1.2.0")
             client1Api.add(".").assertIsOk()
             client1Api.commit("Second commit").assertIsOk()
 
@@ -81,12 +81,12 @@ internal class GitCommandApiTest {
     @Test
     fun `should overwrite the local git user name and email for commits`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val user = GitUser("new user", "new_user@mail.com")
             val localGitApi = GitCommandApi.create(client1WorkDir, user)
 
-            updateVersionProperties("1.2.0")
+            client1WorkDir.updateVersionProperties("1.2.0")
             localGitApi.add(".")
             localGitApi.commit("Second commit").assertIsOk()
 
@@ -101,7 +101,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should correctly resolve the status of multiple files`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             File("$client1WorkDir/unstaged.txt").writeText("unstaged")
             client1Api.add(".").assertIsOk()
@@ -121,7 +121,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should reset the local changes so that the file is untracked again`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             File("$client1WorkDir/someFile.txt").writeText("Hello World")
             client1Api.add("someFile.txt").assertIsOk()
@@ -138,7 +138,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should contain the names of all local created branches`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             client1Api.createBranch("feature-1").assertIsOk()
             client1Api.createBranch("feature-2").assertIsOk()
@@ -150,7 +150,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should remove a branch from the repository`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             client1Api.createBranch("feature-1").assertIsOk()
             client1Api.createBranch("feature-2").assertIsOk()
@@ -164,7 +164,7 @@ internal class GitCommandApiTest {
     @Test
     fun `the file should contain the original content after the commit was deleted`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             repeat(2) {
                 File("$client1WorkDir/newFile.txt").writeText("Commit number $it")
@@ -182,7 +182,7 @@ internal class GitCommandApiTest {
     @Test
     fun `the file should be deleted when the commit is reverted where the file was added`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val createdFile = File("$client1WorkDir/newFile.txt").apply { writeText("Hello World") }
             client1Api.add("newFile.txt").assertIsOk()
@@ -196,9 +196,9 @@ internal class GitCommandApiTest {
     @Test
     fun `should leave unstaged, untracked and staged unchanged when dropping the last commit`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
-            updateVersionProperties("1.0.0")
+            client1WorkDir.updateVersionProperties("1.0.0")
             val unstagedFile =
                 client1WorkDir.resolve("unstaged.txt").apply { writeText("Unstaged") }
             val stagedFile = client1WorkDir.resolve("staged.txt").apply { writeText("Staged") }
@@ -224,7 +224,7 @@ internal class GitCommandApiTest {
         testDriver(tmpDir) {
             val repository = gitServer.initBareRepository()
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
             client1Api.addRemoteAndSetUpstream("origin", repository.url, "main")
             client1Api.push().assertIsOk()
 
@@ -236,7 +236,7 @@ internal class GitCommandApiTest {
     @Test
     fun `git push should fail if another client has already pushed a commit`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             // Push from another client
             cloneForClient2()
@@ -257,7 +257,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should rebase the commits if another client has already pushed changes`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             cloneForClient2()
             client2WorkDir.resolve("other.txt").apply { writeText("Hello World") }
@@ -265,7 +265,7 @@ internal class GitCommandApiTest {
             client2Api.commit("Client2 commit")
             client2Api.push()
 
-            appendContentToBuildGradle("some content")
+            client1WorkDir.appendContentToBuildGradle("some content")
             client1Api.add(".").assertIsOk()
             client1Api.commit("Client1 commit")
             client1Api.pullRebase()
@@ -278,7 +278,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should create and list tags`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             client1Api.tag("v1.0", "Initial release").assertIsOk()
             client1Api.tag("v1.1", "Second release").assertIsOk()
@@ -291,7 +291,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should delete a tag`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             client1Api.tag("v1.0", "Initial release").assertIsOk()
             client1Api.tag("v1.1", "Second release").assertIsOk()
@@ -305,7 +305,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should fetch remote tags`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             client2Api.clone(gitServer.lastRepository!!.url, ".", "main").assertIsOk()
             client2Api.fetchRemoteTags().assertIsOk()
@@ -355,11 +355,11 @@ internal class GitCommandApiTest {
     @Test
     fun `should not contain any changes staged, unstaged or untracked files after stash was called`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
-            updateVersionProperties("stagedFile")
+            client1WorkDir.updateVersionProperties("stagedFile")
             client1Api.add(".")
-            appendContentToBuildGradle("unstagedContent")
+            client1WorkDir.appendContentToBuildGradle("unstagedContent")
             client1WorkDir.resolve("tmpFile").createNewFile()
 
             val beforeStash = client1Api.status().assertIsOk()
@@ -376,7 +376,7 @@ internal class GitCommandApiTest {
     @Test
     fun `should not stash untracked files if the flag is set to false`() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             client1WorkDir.resolve("tmpFile").createNewFile()
 
@@ -389,11 +389,11 @@ internal class GitCommandApiTest {
     @Test
     fun `should restore local changes after pop `() =
         testDriver(tmpDir) {
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
-            updateVersionProperties("stagedFile")
+            client1WorkDir.updateVersionProperties("stagedFile")
             client1Api.add(".")
-            appendContentToBuildGradle("unstagedContent")
+            client1WorkDir.appendContentToBuildGradle("unstagedContent")
 
             client1Api.stash(false).assertIsOk()
             client1Api.stashPop()
@@ -485,7 +485,7 @@ internal class GitCommandApiTest {
                 gitServer =
                     DockerGitServer(getTestResourceFile("ssh-key/id_rsa.pub"), tmpDirDynamicTest),
             ) {
-                createValidRepositoryWithRemote()
+                client1Api.createValidRepositoryWithRemote()
             }
         }
 }

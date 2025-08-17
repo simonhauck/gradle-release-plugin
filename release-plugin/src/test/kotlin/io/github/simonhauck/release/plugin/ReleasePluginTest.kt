@@ -19,7 +19,7 @@ internal class ReleasePluginTest {
     @Test
     fun `the version file should contain the next development version at the end when the versions are set directly`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -40,8 +40,8 @@ internal class ReleasePluginTest {
     @Test
     fun `releasing with releaseType strategy should be successful`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.1-SNAPSHOT")
-            createValidRepositoryWithRemote()
+            client1WorkDir.updateVersionProperties("1.0.1-SNAPSHOT")
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=minor").build()
 
@@ -55,8 +55,8 @@ internal class ReleasePluginTest {
     @Test
     fun `releasing multiple types with the same pre release type should increment the counter for the pre-release versions`() {
         testDriver(tmpDir) {
-            updateVersionProperties("0.0.1-SNAPSHOT")
-            createValidRepositoryWithRemote()
+            client1WorkDir.updateVersionProperties("0.0.1-SNAPSHOT")
+            client1Api.createValidRepositoryWithRemote()
 
             // First release
             testKitRunner()
@@ -80,7 +80,7 @@ internal class ReleasePluginTest {
     @Test
     fun `no files should be changed, untracked or commited when the release plugin has finished successful`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -100,15 +100,15 @@ internal class ReleasePluginTest {
     @Test
     fun `should successfully add additional configured files to the git commit`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
-                |}
-            """
+                        |release {
+                        |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
+                        |}
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
             client1WorkDir.resolve("otherFile.txt").writeText("Hello World")
 
             val runner =
@@ -129,16 +129,16 @@ internal class ReleasePluginTest {
     @Test
     fun `should fail the task if an unknown file is added to git`() {
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
-                |}
-            """
+                        |release {
+                        |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
+                        |}
+                    """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -156,38 +156,38 @@ internal class ReleasePluginTest {
     @Test
     fun `should add different files for release and post release commit that are created at runtime`() {
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("release-file.txt")))
-                |    postReleaseCommitAddFiles.set(listOf(file("version.properties"), file("post-release-file.txt")))
-                |}
-                |
-                |val writeReleaseFileTask = tasks.register("writeReleaseFile") {
-                |   dependsOn(tasks.writeReleaseVersion)
-                |   inputs.property("fileContent", "value")
-                |   val outputFile = layout.projectDirectory.file("release-file.txt")
-                |   outputs.file(outputFile)
-                |
-                |   doLast { outputFile.asFile.writeText("value") }
-                |}
-                |
-                |val writePostReleaseFileTask = tasks.register("writePostReleaseFile") {
-                |   dependsOn(tasks.writePostReleaseVersion)
-                |   inputs.property("fileContent", "value")
-                |   val outputFile = layout.projectDirectory.file("post-release-file.txt")
-                |   outputs.file(outputFile)
-                |
-                |   doLast { outputFile.asFile.writeText("value") }
-                |}
-                |
-                |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
-                |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }
-            """
+                        |release {
+                        |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("release-file.txt")))
+                        |    postReleaseCommitAddFiles.set(listOf(file("version.properties"), file("post-release-file.txt")))
+                        |}
+                        |
+                        |val writeReleaseFileTask = tasks.register("writeReleaseFile") {
+                        |   dependsOn(tasks.writeReleaseVersion)
+                        |   inputs.property("fileContent", "value")
+                        |   val outputFile = layout.projectDirectory.file("release-file.txt")
+                        |   outputs.file(outputFile)
+                        |
+                        |   doLast { outputFile.asFile.writeText("value") }
+                        |}
+                        |
+                        |val writePostReleaseFileTask = tasks.register("writePostReleaseFile") {
+                        |   dependsOn(tasks.writePostReleaseVersion)
+                        |   inputs.property("fileContent", "value")
+                        |   val outputFile = layout.projectDirectory.file("post-release-file.txt")
+                        |   outputs.file(outputFile)
+                        |
+                        |   doLast { outputFile.asFile.writeText("value") }
+                        |}
+                        |
+                        |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
+                        |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }
+                    """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()
@@ -215,16 +215,16 @@ internal class ReleasePluginTest {
             val versionFile = client1WorkDir.resolve(fileName)
             versionFile.writeText("version=1.0.0")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                    |release {
-                    |    versionPropertyFile.set(layout.projectDirectory.file("$fileName"))
-                    |}
-                """
+                            |release {
+                            |    versionPropertyFile.set(layout.projectDirectory.file("$fileName"))
+                            |}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
@@ -243,10 +243,10 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             val versionFile = client1WorkDir.resolve("version.properties")
 
-            updateVersionProperties("1.0.0")
-            appendContentToGradleProperties("version=1.0.0")
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1WorkDir.appendContentToGradleProperties("version=1.0.0")
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
@@ -257,7 +257,7 @@ internal class ReleasePluginTest {
                 .build()
 
             assertThat(versionFile.readText()).isEqualTo("version=1.2.1-SNAPSHOT")
-            assertThat(readGradleProperties()).contains("version=1.0.0")
+            assertThat(client1WorkDir.readGradleProperties()).contains("version=1.0.0")
         }
 
     @Test
@@ -265,9 +265,9 @@ internal class ReleasePluginTest {
     fun `should use gradle(dot)properties version if version(dot)properties is not present`() =
         testDriver(tmpDir) {
             client1WorkDir.resolve("version.properties").delete()
-            appendContentToGradleProperties("version=1.0.0")
+            client1WorkDir.appendContentToGradleProperties("version=1.0.0")
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
@@ -277,14 +277,14 @@ internal class ReleasePluginTest {
                 )
                 .build()
 
-            assertThat(readGradleProperties()).contains("version=1.2.1-SNAPSHOT")
+            assertThat(client1WorkDir.readGradleProperties()).contains("version=1.2.1-SNAPSHOT")
         }
 
     @Test
     fun `should revert all changes when the tag is already used`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
-            createValidRepositoryWithRemote()
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1Api.createValidRepositoryWithRemote()
             client1Api.tag("v1.2.0", "this tag is already existing")
             client1Api.push().assertIsOk()
 
@@ -306,7 +306,7 @@ internal class ReleasePluginTest {
     @Test
     fun `the version file should contain the snapshot version after a successful release`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
@@ -324,7 +324,7 @@ internal class ReleasePluginTest {
     @Test
     fun `the version with the release tag should contain the release version in the version file`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner()
                 .withArguments(
@@ -343,9 +343,9 @@ internal class ReleasePluginTest {
     @Test
     fun `should revert the version file if no valid remote is available`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
+            client1WorkDir.updateVersionProperties("1.0.0")
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val runner =
                 testKitRunner()
@@ -369,16 +369,16 @@ internal class ReleasePluginTest {
     fun `should not revert unrelated files if a push fails`() =
         testDriver(tmpDir) {
             val file = client1WorkDir.resolve("testFile.txt").apply { writeText("hello") }
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |    checkForUncommittedFiles.set(false)
-                |}
-                """
+                        |release {
+                        |    checkForUncommittedFiles.set(false)
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             file.writeText("unrelated change")
 
@@ -400,8 +400,8 @@ internal class ReleasePluginTest {
     @Test
     fun `should return a descriptive error message if the tag is already used`() {
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
-            createValidRepositoryWithRemote()
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1Api.createValidRepositoryWithRemote()
             client1Api.tag("v1.2.0", "this tag is already existing")
             client1Api.push().assertIsOk()
 
@@ -431,8 +431,8 @@ internal class ReleasePluginTest {
     @Test
     fun `should by default fail the release if an uncommitted file is in the repository and revert the local changes`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
-            createLocalRepository()
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1Api.createLocalRepository()
 
             client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
 
@@ -459,16 +459,16 @@ internal class ReleasePluginTest {
     @Test
     fun `should skip the check for uncommitted files when the check is disabled`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
-            appendContentToBuildGradle(
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |   checkForUncommittedFiles.set(false)
-                |}
-                """
+                        |release {
+                        |   checkForUncommittedFiles.set(false)
+                        |}
+                        """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             client1WorkDir.resolve("uncommittedFile.txt").createNewFile()
 
@@ -491,17 +491,17 @@ internal class ReleasePluginTest {
     @Test
     fun `should commit the files with the configured user`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |   gitName.set("Test User")
-                |   gitEmail.set("test@mail.de")
-                |}
-                """
+                        |release {
+                        |   gitName.set("Test User")
+                        |   gitEmail.set("test@mail.de")
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner().withArguments("release", "-PreleaseType=minor").build()
 
@@ -514,7 +514,7 @@ internal class ReleasePluginTest {
     @Test
     fun `should use the default user if the git user is not fully configured`() {
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             testKitRunner().withArguments("release", "-PreleaseType=minor").build()
 
@@ -529,7 +529,7 @@ internal class ReleasePluginTest {
     @Test
     fun `should support property files with colon as separator and other unrelated properties`() {
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val versionFile =
                 client1WorkDir.resolve("version.properties").apply {
@@ -559,16 +559,16 @@ internal class ReleasePluginTest {
     @Test
     fun `release should fail it the project uses a snapshot dependency`() {
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |val implementation by configurations.creating{}
-                |
-                |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-            """
+                        |val implementation by configurations.creating{}
+                        |
+                        |repositories { gradlePluginPortal() }
+                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                    """
                     .trimMargin()
             )
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val runner = testKitRunner().withArguments("release").buildAndFail()
 
@@ -586,7 +586,7 @@ internal class ReleasePluginTest {
     @Test
     fun `release should fail if a subproject is using a snapshot dependency`() =
         testDriver(tmpDir) {
-            appendContentToSettingsGradle("""include("subproject")""")
+            client1WorkDir.appendContentToSettingsGradle("""include("subproject")""")
 
             client1WorkDir
                 .resolve("subproject/build.gradle.kts")
@@ -601,7 +601,7 @@ internal class ReleasePluginTest {
                         .trimMargin()
                 )
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val runner = testKitRunner().withArguments("release").buildAndFail()
 
@@ -618,13 +618,13 @@ internal class ReleasePluginTest {
     @Test
     fun `release should not fail if a subproject is using a snapshot dependency when subprojects are not included in the search`() =
         testDriver(tmpDir) {
-            appendContentToSettingsGradle("""include("subproject")""")
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToSettingsGradle("""include("subproject")""")
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |    checkRecursiveForPreReleaseVersions.set(false)
-                |}
-            """
+                        |release {
+                        |    checkRecursiveForPreReleaseVersions.set(false)
+                        |}
+                    """
                     .trimMargin()
             )
 
@@ -641,7 +641,7 @@ internal class ReleasePluginTest {
                         .trimMargin()
                 )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
 
@@ -652,16 +652,16 @@ internal class ReleasePluginTest {
     @Test
     fun `release should succeed without any snapshot dependencies`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |val implementation by configurations.creating{}
-                |
-                |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }
-            """
+                        |val implementation by configurations.creating{}
+                        |
+                        |repositories { gradlePluginPortal() }
+                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
 
@@ -673,18 +673,18 @@ internal class ReleasePluginTest {
     @Test
     fun `release should not fail with snapshot dependencies if the check is disabled`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |val implementation by configurations.creating{}
-                |
-                |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-                |
-                |release { checkForPreReleaseVersions.set(false) }
-                """
+                        |val implementation by configurations.creating{}
+                        |
+                        |repositories { gradlePluginPortal() }
+                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                        |
+                        |release { checkForPreReleaseVersions.set(false) }
+                        """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
 
@@ -696,18 +696,18 @@ internal class ReleasePluginTest {
     @Test
     fun `release should not fail if the snapshot dependency is on the ignore list`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |val implementation by configurations.creating{}
-                |
-                |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-                |
-                |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }
-                """
+                        |val implementation by configurations.creating{}
+                        |
+                        |repositories { gradlePluginPortal() }
+                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                        |
+                        |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }
+                        """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
 

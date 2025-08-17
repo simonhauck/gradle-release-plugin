@@ -35,7 +35,7 @@ internal class ReleasePluginTestDriver {
                 )
 
             SemanticVersioningProjectBuilder(client1Api, client2Api, it).apply {
-                createProjectScaffold()
+                client1WorkDir.createProjectScaffold()
                 action()
             }
         }
@@ -59,20 +59,20 @@ internal class SemanticVersioningProjectBuilder(
             .forwardOutput()
     }
 
-    fun createValidRepositoryWithRemote() {
+    fun GitTestCommandService.createValidRepositoryWithRemote() {
         val cloneUrl = gitServer.initBareRepository("testRepo")
 
-        createLocalRepository()
+        this.createLocalRepository()
 
-        client1Api.addRemoteAndSetUpstream("origin", cloneUrl.url, "main").assertIsOk()
-        client1Api.push().assertIsOk()
+        addRemoteAndSetUpstream("origin", cloneUrl.url, "main").assertIsOk()
+        push().assertIsOk()
     }
 
-    fun createLocalRepository() {
-        client1Api.init("main").assertIsOk()
-        client1Api.configureNameAndEmailLocally("user1", "user1@mail.com").assertIsOk()
-        client1Api.add(".").assertIsOk()
-        client1Api.commit("Initial commit").assertIsOk()
+    fun GitTestCommandService.createLocalRepository() {
+        init("main").assertIsOk()
+        configureNameAndEmailLocally("user1", "user1@mail.com").assertIsOk()
+        add(".").assertIsOk()
+        commit("Initial commit").assertIsOk()
     }
 
     fun cloneForClient2() {
@@ -80,39 +80,39 @@ internal class SemanticVersioningProjectBuilder(
         client2Api.configureNameAndEmailLocally("user2", "user2@mail.com").assertIsOk()
     }
 
-    fun createProjectScaffold() {
+    fun File.createProjectScaffold() {
         val sourceDir = Paths.get("src/test/resources/scaffold-project")
 
         Files.list(sourceDir).forEach { file ->
-            val targetPath = Paths.get(client1WorkDir.absolutePath, file.fileName.toString())
+            val targetPath = Paths.get(this.absolutePath, file.fileName.toString())
             Files.copy(file, targetPath, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
-    fun appendContentToBuildGradle(content: String) {
-        val buildGradlePath = Paths.get(client1WorkDir.absolutePath, "build.gradle.kts")
+    fun File.appendContentToBuildGradle(content: String) {
+        val buildGradlePath = Paths.get(this.absolutePath, "build.gradle.kts")
         val buildGradleFile = buildGradlePath.toFile()
         buildGradleFile.appendText(content)
     }
 
-    fun appendContentToSettingsGradle(content: String) {
-        val settingsGradlePath = Paths.get(client1WorkDir.absolutePath, "settings.gradle.kts")
+    fun File.appendContentToSettingsGradle(content: String) {
+        val settingsGradlePath = Paths.get(this.absolutePath, "settings.gradle.kts")
         val settingsGradleFile = settingsGradlePath.toFile()
         settingsGradleFile.appendText(content)
     }
 
-    fun readGradleProperties(): List<String> {
-        return Paths.get(client1WorkDir.absolutePath, "gradle.properties").toFile().readLines()
+    fun File.readGradleProperties(): List<String> {
+        return Paths.get(this.absolutePath, "gradle.properties").toFile().readLines()
     }
 
-    fun appendContentToGradleProperties(content: String) {
-        val gradlePropertiesPath = Paths.get(client1WorkDir.absolutePath, "gradle.properties")
+    fun File.appendContentToGradleProperties(content: String) {
+        val gradlePropertiesPath = Paths.get(this.absolutePath, "gradle.properties")
         val gradlePropertiesFile = gradlePropertiesPath.toFile()
         gradlePropertiesFile.appendText(content)
     }
 
-    fun updateVersionProperties(version: String) {
-        val versionPropertiesPath = Paths.get(client1WorkDir.absolutePath, "version.properties")
+    fun File.updateVersionProperties(version: String) {
+        val versionPropertiesPath = Paths.get(this.absolutePath, "version.properties")
         val versionPropertiesFile = versionPropertiesPath.toFile()
         versionPropertiesFile.writeText("version=$version")
     }

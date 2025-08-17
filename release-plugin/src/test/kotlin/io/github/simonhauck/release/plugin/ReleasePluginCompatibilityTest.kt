@@ -40,7 +40,7 @@ internal class ReleasePluginCompatibilityTest {
     @Test
     fun `plugin can not be applied to projects with gradle 8(dot)1`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             runCatching {
                     testKitRunner()
@@ -56,7 +56,7 @@ internal class ReleasePluginCompatibilityTest {
     @Test
     fun `release is successful with gradle 8(dot)2`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner()

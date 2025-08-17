@@ -16,16 +16,16 @@ internal class CheckForUncommittedFilesTaskTest {
     @Test
     fun `should not fail the action if all files are commited`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
-                |    
-                |}
-                """
+                        |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
+                        |    
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createLocalRepository()
+            client1Api.createLocalRepository()
 
             val runner = testKitRunner().withArguments("testCheckForUncommittedFiles").build()
 
@@ -37,17 +37,17 @@ internal class CheckForUncommittedFilesTaskTest {
     @Test
     fun `the task should fail and list the untracked, unstaged and staged files correctly`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
-                |    
-                |}
-                """
+                        |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
+                        |    
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createLocalRepository()
-            updateVersionProperties("some-other-version")
+            client1Api.createLocalRepository()
+            client1WorkDir.updateVersionProperties("some-other-version")
 
             // Create the files
             client1WorkDir.resolve("newFile.txt").createNewFile()
@@ -72,25 +72,25 @@ internal class CheckForUncommittedFilesTaskTest {
     @Test
     fun `should revert changes with the GitCommandHistory if the command fails`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                    |
-                    |val commitTask = tasks.register<CommitAndTagTask>("commitAndTagVersion") {
-                    |    commitMessage.set("testCommit")
-                    |    gitAddFilePattern.set(listOf(file("version.properties")))
-                    |}
-                    |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
-                    |   dependsOn(commitTask)
-                    |}
-                """
+                            |
+                            |val commitTask = tasks.register<CommitAndTagTask>("commitAndTagVersion") {
+                            |    commitMessage.set("testCommit")
+                            |    gitAddFilePattern.set(listOf(file("version.properties")))
+                            |}
+                            |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
+                            |   dependsOn(commitTask)
+                            |}
+                        """
                     .trimMargin()
             )
 
-            updateVersionProperties("1.0.0")
-            createLocalRepository()
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1Api.createLocalRepository()
 
             // The version file is committed, the other file triggers the failed build
-            updateVersionProperties("1.1.0")
+            client1WorkDir.updateVersionProperties("1.1.0")
             client1WorkDir.resolve("notCommittedFile.txt").createNewFile()
 
             val runner =
