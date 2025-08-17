@@ -16,18 +16,18 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `should write the provided release and post release version to the releaseVersionStore`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
-                |    commandLineParameters = mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
-                |    releaseTagName = "v{version}"
-                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}
-            """
+                        |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                        |    versionPropertyFile = file("version.properties")
+                        |    commandLineParameters = mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
+                        |    releaseTagName = "v{version}"
+                        |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                        |}
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
             val actual = runner.task(":testCalculateReleaseVersion")
@@ -40,19 +40,19 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `should write the calculated release and post release version in the file`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
-            appendContentToBuildGradle(
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
-                |    commandLineParameters = mapOf("releaseType" to "major")
-                |    releaseTagName = "v{version}"
-                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}
-            """
+                        |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                        |    versionPropertyFile = file("version.properties")
+                        |    commandLineParameters = mapOf("releaseType" to "major")
+                        |    releaseTagName = "v{version}"
+                        |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                        |}
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
             val actual = runner.task(":testCalculateReleaseVersion")
@@ -65,19 +65,19 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `should create a pre-release version if a pre-release type is provided`() =
         testDriver(tmpDir) {
-            updateVersionProperties("1.0.0")
-            appendContentToBuildGradle(
+            client1WorkDir.updateVersionProperties("1.0.0")
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
-                |    commandLineParameters = mapOf("releaseType" to "major", "preReleaseType" to "rc")
-                |    releaseTagName = "v{version}"
-                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}
-            """
+                        |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                        |    versionPropertyFile = file("version.properties")
+                        |    commandLineParameters = mapOf("releaseType" to "major", "preReleaseType" to "rc")
+                        |    releaseTagName = "v{version}"
+                        |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                        |}
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()
             val actual = runner.task(":testCalculateReleaseVersion")
@@ -90,18 +90,18 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `task should fail if no versions are provided`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
-                |    commandLineParameters = mapOf("someRandomProperties" to "xy")
-                |    releaseTagName = "v{version}"
-                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}
-            """
+                        |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                        |    versionPropertyFile = file("version.properties")
+                        |    commandLineParameters = mapOf("someRandomProperties" to "xy")
+                        |    releaseTagName = "v{version}"
+                        |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                        |}
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("testCalculateReleaseVersion").buildAndFail()
             val actual = runner.task(":testCalculateReleaseVersion")
@@ -122,19 +122,19 @@ internal class CalculateReleaseVersionTaskTest {
     @Test
     fun `task should not be up to date when invoked twice because the git repository could change`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
-                |    versionPropertyFile = file("version.properties")
-                |    commandLineParameters = mapOf("releaseType" to "major")
-                |    releaseTagName = "v{version}"
-                |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}
-            """
+                        |tasks.register<CalculateReleaseVersionTask>("testCalculateReleaseVersion") {
+                        |    versionPropertyFile = file("version.properties")
+                        |    commandLineParameters = mapOf("releaseType" to "major")
+                        |    releaseTagName = "v{version}"
+                        |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
+                        |}
+                    """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             repeat(2) {
                 val runner = testKitRunner().withArguments("testCalculateReleaseVersion").build()

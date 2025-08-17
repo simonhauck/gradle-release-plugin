@@ -34,20 +34,20 @@ internal class ReleasePluginAuthenticationTest {
         ) {
             val sanitizedPath = privateKey.absolutePath.replace("\\", "\\\\")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |   sshKeyFile = file("$sanitizedPath")
-                |}
-                |
-                |tasks.withType<GitTask>{
-                |   strictHostKeyChecking = false
-                |}
-                """
+                        |release {
+                        |   sshKeyFile = file("$sanitizedPath")
+                        |}
+                        |
+                        |tasks.withType<GitTask>{
+                        |   strictHostKeyChecking = false
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner = testKitRunner().withArguments("release", "-PreleaseType=major").build()
 
@@ -65,20 +65,20 @@ internal class ReleasePluginAuthenticationTest {
             val privateKey2 = getTestResourceFile("ssh-key/id_rsa2")
             val sanitizedPath = privateKey2.absolutePath.replace("\\", "\\\\")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |   sshKeyFile = file("$sanitizedPath")
-                |}
-                |
-                |tasks.withType<GitTask>{
-                |   strictHostKeyChecking = false
-                |}
-                """
+                        |release {
+                        |   sshKeyFile = file("$sanitizedPath")
+                        |}
+                        |
+                        |tasks.withType<GitTask>{
+                        |   strictHostKeyChecking = false
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner().withArguments("release", "-PreleaseType=major").buildAndFail()
@@ -103,20 +103,20 @@ internal class ReleasePluginAuthenticationTest {
         ) {
             val sanitizedPath = privateKey.absolutePath.replace("\\", "\\\\")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |release {
-                |   sshKeyFile = file("$sanitizedPath")
-                |}
-                |
-                |tasks.withType<GitTask>{
-                |   strictHostKeyChecking = true
-                |}
-                """
+                        |release {
+                        |   sshKeyFile = file("$sanitizedPath")
+                        |}
+                        |
+                        |tasks.withType<GitTask>{
+                        |   strictHostKeyChecking = true
+                        |}
+                        """
                     .trimMargin()
             )
 
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             val runner =
                 testKitRunner().withArguments("release", "-PreleaseType=major").buildAndFail()

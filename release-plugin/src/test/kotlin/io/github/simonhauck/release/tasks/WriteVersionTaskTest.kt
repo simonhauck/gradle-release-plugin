@@ -21,14 +21,14 @@ internal class WriteVersionTaskTest {
         testDriver(tempDir) {
             val storeFile = createVersionStoreFile()
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.name}"))
-                |   versionType.set(VersionType.RELEASE)
-                |   versionFile.set(layout.projectDirectory.file("version.properties"))
-                |}
-                 """
+                        |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
+                        |   releaseVersionStore.set(file("${storeFile.name}"))
+                        |   versionType.set(VersionType.RELEASE)
+                        |   versionFile.set(layout.projectDirectory.file("version.properties"))
+                        |}
+                         """
                     .trimMargin()
             )
 
@@ -46,15 +46,15 @@ internal class WriteVersionTaskTest {
         testDriver(tempDir) {
             val storeFile = createVersionStoreFile()
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |
-                |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.name}"))
-                |   versionType.set(VersionType.NEXT_DEV)
-                |   versionFile.set(layout.projectDirectory.file("version.properties"))
-                |}
-                 """
+                        |
+                        |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
+                        |   releaseVersionStore.set(file("${storeFile.name}"))
+                        |   versionType.set(VersionType.NEXT_DEV)
+                        |   versionFile.set(layout.projectDirectory.file("version.properties"))
+                        |}
+                         """
                     .trimMargin()
             )
 
@@ -72,15 +72,15 @@ internal class WriteVersionTaskTest {
         testDriver(tempDir) {
             val storeFile = createVersionStoreFile()
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |
-                |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
-                |   releaseVersionStore.set(file("${storeFile.name}"))
-                |   versionType.set(VersionType.NEXT_DEV)
-                |   versionFile.set(layout.projectDirectory.file("version.properties"))
-                |}
-                 """
+                        |
+                        |tasks.register<WriteVersionTask>("writeTestReleaseVersion") {
+                        |   releaseVersionStore.set(file("${storeFile.name}"))
+                        |   versionType.set(VersionType.NEXT_DEV)
+                        |   versionFile.set(layout.projectDirectory.file("version.properties"))
+                        |}
+                         """
                     .trimMargin()
             )
         }

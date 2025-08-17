@@ -20,16 +20,16 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `should fail and list the dependencies that are a pre-release version`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       $alphaVersionDependency,
-                |       $snapshotVersionDependency,
-                |       $releaseVersionDependency,
-                |    )
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       $alphaVersionDependency,
+                        |       $snapshotVersionDependency,
+                        |       $releaseVersionDependency,
+                        |    )
+                        |}
+                        """
                     .trimMargin()
             )
 
@@ -51,14 +51,14 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `task should be successful if no pre-release version is used`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       $releaseVersionDependency,
-                |    )
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       $releaseVersionDependency,
+                        |    )
+                        |}
+                        """
                     .trimMargin()
             )
 
@@ -71,15 +71,15 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `should not list snapshot dependencies that are specified in the ignore list`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       $snapshotVersionDependency,
-                |    )
-                |    ignorePreReleaseDependencies = listOf($snapshotVersionDependency)
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       $snapshotVersionDependency,
+                        |    )
+                        |    ignorePreReleaseDependencies = listOf($snapshotVersionDependency)
+                        |}
+                        """
                     .trimMargin()
             )
 
@@ -92,15 +92,15 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `task should not fail because of snapshot dependencies that are only listed with group and name in the ignore list`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       $snapshotVersionDependency,
-                |    )
-                |    ignorePreReleaseDependencies = listOf("other.xy:lib2")
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       $snapshotVersionDependency,
+                        |    )
+                        |    ignorePreReleaseDependencies = listOf("other.xy:lib2")
+                        |}
+                        """
                     .trimMargin()
             )
 
@@ -114,15 +114,15 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `should not list snapshot dependencies that are specified in the ignore file`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-            |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-            |    usedDependencies = setOf(
-            |       $snapshotVersionDependency,
-            |    )
-            |    ignorePreReleaseDependenciesFile = file("ignore.txt")
-            |}
-            """
+                    |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                    |    usedDependencies = setOf(
+                    |       $snapshotVersionDependency,
+                    |    )
+                    |    ignorePreReleaseDependenciesFile = file("ignore.txt")
+                    |}
+                    """
                     .trimMargin()
             )
             client1WorkDir
@@ -138,16 +138,16 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `should not fail if a version has an unexpected format`() {
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       "some.group:lib:1.0.0.a1",
-                |       "other.xy:lib2:1.0",
-                |       "released.dep:great:1.0.0-1.2.6",
-                |    )
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       "some.group:lib:1.0.0.a1",
+                        |       "other.xy:lib2:1.0",
+                        |       "released.dep:great:1.0.0-1.2.6",
+                        |    )
+                        |}
+                        """
                     .trimMargin()
             )
 
@@ -161,22 +161,22 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `should fail and list dependencies that are not following the semver standard but still indicate pre-release versions`() {
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       "some.group:lib:1.0.0.v1-SNAPSHOT",
-                |       "some.group:lib:1.0.0.v1-RC",
-                |       "some.group:lib:1.0.0.v1-RC1",
-                |       "some.group:lib:1.0.0.v1-alpha",
-                |       "some.group:lib:1.0.0.v1-ALPHA",
-                |       "some.group:lib:1.0.0.v1-BETA",
-                |       "some.group:lib:1.0.0.v1-pre",
-                |       "some.group:lib:1.0.0.v1-m3",
-                |       "some.group:lib:1.0.0.v1-M2",
-                |    )
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       "some.group:lib:1.0.0.v1-SNAPSHOT",
+                        |       "some.group:lib:1.0.0.v1-RC",
+                        |       "some.group:lib:1.0.0.v1-RC1",
+                        |       "some.group:lib:1.0.0.v1-alpha",
+                        |       "some.group:lib:1.0.0.v1-ALPHA",
+                        |       "some.group:lib:1.0.0.v1-BETA",
+                        |       "some.group:lib:1.0.0.v1-pre",
+                        |       "some.group:lib:1.0.0.v1-m3",
+                        |       "some.group:lib:1.0.0.v1-M2",
+                        |    )
+                        |}
+                        """
                     .trimMargin()
             )
 
@@ -205,14 +205,14 @@ class CheckForPreReleaseDependenciesTaskTest {
     @Test
     fun `task should be up to date when invoked twice`() {
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                |    usedDependencies = setOf(
-                |       $releaseVersionDependency,
-                |    )
-                |}
-                """
+                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                        |    usedDependencies = setOf(
+                        |       $releaseVersionDependency,
+                        |    )
+                        |}
+                        """
                     .trimMargin()
             )
 

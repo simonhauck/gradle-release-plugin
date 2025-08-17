@@ -17,23 +17,23 @@ internal class CommitAndTagTaskTest {
     @Test
     fun `should add, commit and tag the selected file`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             File(client1WorkDir, "newFile.txt").writeText("Hello World")
             File(client1WorkDir, "otherFile.txt").writeText("Hello World")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                    |tasks.register<CommitAndTagTask>("commitAndTag") {
-                    |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                    |    commitMessagePrefix.set("feat: ")
-                    |    tagName.set("1.0.0")
-                    |    tagPrefix.set("v")
-                    |    tagMessage.set("Initial tag")
-                    |    tagMessagePrefix.set("tag: ")
-                    |}
-                """
+                            |tasks.register<CommitAndTagTask>("commitAndTag") {
+                            |    commitMessage.set("new commit")
+                            |    gitAddFilePattern.set(listOf(file("newFile.txt")))
+                            |    commitMessagePrefix.set("feat: ")
+                            |    tagName.set("1.0.0")
+                            |    tagPrefix.set("v")
+                            |    tagMessage.set("Initial tag")
+                            |    tagMessagePrefix.set("tag: ")
+                            |}
+                        """
                     .trimMargin()
             )
 
@@ -51,18 +51,18 @@ internal class CommitAndTagTaskTest {
     @Test
     fun `should add and commit multiple files`() {
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             File(client1WorkDir, "newFile.txt").writeText("Hello World")
             File(client1WorkDir, "otherFile.txt").writeText("Hello World")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                    |tasks.register<CommitAndTagTask>("commitAndTag") {
-                    |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
-                    |}
-                """
+                            |tasks.register<CommitAndTagTask>("commitAndTag") {
+                            |    commitMessage.set("new commit")
+                            |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
+                            |}
+                        """
                     .trimMargin()
             )
 
@@ -78,17 +78,17 @@ internal class CommitAndTagTaskTest {
     @Test
     fun `should not tag the commit if tagName is not set`() =
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
             File(client1WorkDir, "newFile.txt").writeText("Hello World")
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                    |tasks.register<CommitAndTagTask>("commitAndTag") {
-                    |    commitMessage.set("new commit")
-                    |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                    |}
-                """
+                            |tasks.register<CommitAndTagTask>("commitAndTag") {
+                            |    commitMessage.set("new commit")
+                            |    gitAddFilePattern.set(listOf(file("newFile.txt")))
+                            |}
+                        """
                     .trimMargin()
             )
 
@@ -103,17 +103,17 @@ internal class CommitAndTagTaskTest {
     @Test
     fun `git tag should fail and revert the previous commands when the tag is already set`() =
         testDriver(tmpDir) {
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CommitAndTagTask>("commitAndTag") {
-                |    commitMessage.set("new commit")
-                |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                |    tagName.set("v1.0.0")
-                |}
-            """
+                        |tasks.register<CommitAndTagTask>("commitAndTag") {
+                        |    commitMessage.set("new commit")
+                        |    gitAddFilePattern.set(listOf(file("newFile.txt")))
+                        |    tagName.set("v1.0.0")
+                        |}
+                    """
                     .trimMargin()
             )
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
             client1Api.tag("v1.0.0", "Initial tag").assertIsOk()
             File(client1WorkDir, "newFile.txt").writeText("Hello World")
 
@@ -131,21 +131,21 @@ internal class CommitAndTagTaskTest {
     @Test
     fun `should replace the template variables with the values from the properties file`() {
         testDriver(tmpDir) {
-            createValidRepositoryWithRemote()
+            client1Api.createValidRepositoryWithRemote()
 
-            appendContentToBuildGradle(
+            client1WorkDir.appendContentToBuildGradle(
                 """
-                |tasks.register<CommitAndTagTask>("commitAndTag") {
-                |    commitMessage.set("{var1} message")
-                |    gitAddFilePattern.set(listOf(file(".")))
-                |    commitMessagePrefix.set("Prefix {var2}: ")
-                |    tagName.set("v-{var3}")
-                |    tagPrefix.set("{var4}-")
-                |    tagMessage.set("{var5} ")
-                |    tagMessagePrefix.set("{var6}: ")
-                |    templateVariables.set(file("variables.properties"))
-                |}
-            """
+                        |tasks.register<CommitAndTagTask>("commitAndTag") {
+                        |    commitMessage.set("{var1} message")
+                        |    gitAddFilePattern.set(listOf(file(".")))
+                        |    commitMessagePrefix.set("Prefix {var2}: ")
+                        |    tagName.set("v-{var3}")
+                        |    tagPrefix.set("{var4}-")
+                        |    tagMessage.set("{var5} ")
+                        |    tagMessagePrefix.set("{var6}: ")
+                        |    templateVariables.set(file("variables.properties"))
+                        |}
+                    """
                     .trimMargin()
             )
 
