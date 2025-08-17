@@ -20,7 +20,10 @@ fun getRSAPublicKey2(): File {
 
 fun getRSAKeyInTempDirectoryWithCorrectPermissions(tmpDir: File): File {
     return getTestResourceFile("ssh-key/id_rsa").copyTo(tmpDir.resolve("id_rsa")).apply {
-        if (DefaultNativePlatform.getCurrentOperatingSystem().isLinux) {
+        if (
+            DefaultNativePlatform.getCurrentOperatingSystem().isLinux ||
+                DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX
+        ) {
             Files.setPosixFilePermissions(
                 toPath(),
                 setOf(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE),
