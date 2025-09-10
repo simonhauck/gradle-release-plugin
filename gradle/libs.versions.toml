@@ -1,5 +1,5 @@
 [versions]
-kotlinVersion = "2.2.10"
+kotlinVersion = "2.2.20"
 junitVersion = "5.13.4"
 
 [libraries]
