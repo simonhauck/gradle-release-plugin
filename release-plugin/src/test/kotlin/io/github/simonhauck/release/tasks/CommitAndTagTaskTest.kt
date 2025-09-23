@@ -24,16 +24,15 @@ internal class CommitAndTagTaskTest {
 
             client1WorkDir.appendContentToBuildGradle(
                 """
-                            |tasks.register<CommitAndTagTask>("commitAndTag") {
-                            |    commitMessage.set("new commit")
-                            |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                            |    commitMessagePrefix.set("feat: ")
-                            |    tagName.set("1.0.0")
-                            |    tagPrefix.set("v")
-                            |    tagMessage.set("Initial tag")
-                            |    tagMessagePrefix.set("tag: ")
-                            |}
-                        """
+                |tasks.register<CommitAndTagTask>("commitAndTag") {
+                |    commitMessage.set("new commit")
+                |    gitAddFilePattern.set(listOf(file("newFile.txt")))
+                |    commitMessagePrefix.set("feat: ")
+                |    tagName.set("1.0.0")
+                |    tagPrefix.set("v")
+                |    tagMessage.set("Initial tag")
+                |    tagMessagePrefix.set("tag: ")
+                |}"""
                     .trimMargin()
             )
 
@@ -58,11 +57,10 @@ internal class CommitAndTagTaskTest {
 
             client1WorkDir.appendContentToBuildGradle(
                 """
-                            |tasks.register<CommitAndTagTask>("commitAndTag") {
-                            |    commitMessage.set("new commit")
-                            |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
-                            |}
-                        """
+                |tasks.register<CommitAndTagTask>("commitAndTag") {
+                |    commitMessage.set("new commit")
+                |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
+                |}"""
                     .trimMargin()
             )
 
@@ -84,11 +82,10 @@ internal class CommitAndTagTaskTest {
 
             client1WorkDir.appendContentToBuildGradle(
                 """
-                            |tasks.register<CommitAndTagTask>("commitAndTag") {
-                            |    commitMessage.set("new commit")
-                            |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                            |}
-                        """
+                |tasks.register<CommitAndTagTask>("commitAndTag") {
+                |    commitMessage.set("new commit")
+                |    gitAddFilePattern.set(listOf(file("newFile.txt")))
+                |}"""
                     .trimMargin()
             )
 
@@ -105,12 +102,11 @@ internal class CommitAndTagTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<CommitAndTagTask>("commitAndTag") {
-                        |    commitMessage.set("new commit")
-                        |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                        |    tagName.set("v1.0.0")
-                        |}
-                    """
+                |tasks.register<CommitAndTagTask>("commitAndTag") {
+                |    commitMessage.set("new commit")
+                |    gitAddFilePattern.set(listOf(file("newFile.txt")))
+                |    tagName.set("v1.0.0")
+                |}"""
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -135,17 +131,16 @@ internal class CommitAndTagTaskTest {
 
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<CommitAndTagTask>("commitAndTag") {
-                        |    commitMessage.set("{var1} message")
-                        |    gitAddFilePattern.set(listOf(file(".")))
-                        |    commitMessagePrefix.set("Prefix {var2}: ")
-                        |    tagName.set("v-{var3}")
-                        |    tagPrefix.set("{var4}-")
-                        |    tagMessage.set("{var5} ")
-                        |    tagMessagePrefix.set("{var6}: ")
-                        |    templateVariables.set(file("variables.properties"))
-                        |}
-                    """
+                |tasks.register<CommitAndTagTask>("commitAndTag") {
+                |    commitMessage.set("{var1} message")
+                |    gitAddFilePattern.set(listOf(file(".")))
+                |    commitMessagePrefix.set("Prefix {var2}: ")
+                |    tagName.set("v-{var3}")
+                |    tagPrefix.set("{var4}-")
+                |    tagMessage.set("{var5} ")
+                |    tagMessagePrefix.set("{var6}: ")
+                |    templateVariables.set(file("variables.properties"))
+                |}"""
                     .trimMargin()
             )
 
@@ -153,13 +148,12 @@ internal class CommitAndTagTaskTest {
                 .resolve("variables.properties")
                 .writeText(
                     """
-                |var1=template commit
-                |var2=feat
-                |var3=some-template-version
-                |var4=tag-prefix
-                |var5=some-tag
-                |var6=some-tag-prefix
-                """
+                    |var1=template commit
+                    |var2=feat
+                    |var3=some-template-version
+                    |var4=tag-prefix
+                    |var5=some-tag
+                    |var6=some-tag-prefix"""
                         .trimMargin()
                 )
 

@@ -140,14 +140,13 @@ class CheckForPreReleaseDependenciesTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                        |    usedDependencies = setOf(
-                        |       "some.group:lib:1.0.0.a1",
-                        |       "other.xy:lib2:1.0",
-                        |       "released.dep:great:1.0.0-1.2.6",
-                        |    )
-                        |}
-                        """
+                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                |    usedDependencies = setOf(
+                |       "some.group:lib:1.0.0.a1",
+                |       "other.xy:lib2:1.0",
+                |       "released.dep:great:1.0.0-1.2.6",
+                |    )
+                |}"""
                     .trimMargin()
             )
 
@@ -163,20 +162,19 @@ class CheckForPreReleaseDependenciesTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
-                        |    usedDependencies = setOf(
-                        |       "some.group:lib:1.0.0.v1-SNAPSHOT",
-                        |       "some.group:lib:1.0.0.v1-RC",
-                        |       "some.group:lib:1.0.0.v1-RC1",
-                        |       "some.group:lib:1.0.0.v1-alpha",
-                        |       "some.group:lib:1.0.0.v1-ALPHA",
-                        |       "some.group:lib:1.0.0.v1-BETA",
-                        |       "some.group:lib:1.0.0.v1-pre",
-                        |       "some.group:lib:1.0.0.v1-m3",
-                        |       "some.group:lib:1.0.0.v1-M2",
-                        |    )
-                        |}
-                        """
+                |tasks.register<CheckForPreReleaseDependenciesTask>("testCheckForPreReleaseDependencies") {
+                |    usedDependencies = setOf(
+                |       "some.group:lib:1.0.0.v1-SNAPSHOT",
+                |       "some.group:lib:1.0.0.v1-RC",
+                |       "some.group:lib:1.0.0.v1-RC1",
+                |       "some.group:lib:1.0.0.v1-alpha",
+                |       "some.group:lib:1.0.0.v1-ALPHA",
+                |       "some.group:lib:1.0.0.v1-BETA",
+                |       "some.group:lib:1.0.0.v1-pre",
+                |       "some.group:lib:1.0.0.v1-m3",
+                |       "some.group:lib:1.0.0.v1-M2",
+                |    )
+                |}"""
                     .trimMargin()
             )
 

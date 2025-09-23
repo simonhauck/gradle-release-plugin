@@ -102,10 +102,9 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
-                        |}
-                    """
+                |release {
+                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
+                |}"""
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -131,10 +130,9 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
-                        |}
-                    """
+                |release {
+                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
+                |}"""
                     .trimMargin()
             )
 
@@ -158,32 +156,31 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("release-file.txt")))
-                        |    postReleaseCommitAddFiles.set(listOf(file("version.properties"), file("post-release-file.txt")))
-                        |}
-                        |
-                        |val writeReleaseFileTask = tasks.register("writeReleaseFile") {
-                        |   dependsOn(tasks.writeReleaseVersion)
-                        |   inputs.property("fileContent", "value")
-                        |   val outputFile = layout.projectDirectory.file("release-file.txt")
-                        |   outputs.file(outputFile)
-                        |
-                        |   doLast { outputFile.asFile.writeText("value") }
-                        |}
-                        |
-                        |val writePostReleaseFileTask = tasks.register("writePostReleaseFile") {
-                        |   dependsOn(tasks.writePostReleaseVersion)
-                        |   inputs.property("fileContent", "value")
-                        |   val outputFile = layout.projectDirectory.file("post-release-file.txt")
-                        |   outputs.file(outputFile)
-                        |
-                        |   doLast { outputFile.asFile.writeText("value") }
-                        |}
-                        |
-                        |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
-                        |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }
-                    """
+                |release {
+                |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("release-file.txt")))
+                |    postReleaseCommitAddFiles.set(listOf(file("version.properties"), file("post-release-file.txt")))
+                |}
+                |
+                |val writeReleaseFileTask = tasks.register("writeReleaseFile") {
+                |   dependsOn(tasks.writeReleaseVersion)
+                |   inputs.property("fileContent", "value")
+                |   val outputFile = layout.projectDirectory.file("release-file.txt")
+                |   outputs.file(outputFile)
+                |
+                |   doLast { outputFile.asFile.writeText("value") }
+                |}
+                |
+                |val writePostReleaseFileTask = tasks.register("writePostReleaseFile") {
+                |   dependsOn(tasks.writePostReleaseVersion)
+                |   inputs.property("fileContent", "value")
+                |   val outputFile = layout.projectDirectory.file("post-release-file.txt")
+                |   outputs.file(outputFile)
+                |
+                |   doLast { outputFile.asFile.writeText("value") }
+                |}
+                |
+                |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
+                |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }"""
                     .trimMargin()
             )
 
@@ -371,10 +368,9 @@ internal class ReleasePluginTest {
             val file = client1WorkDir.resolve("testFile.txt").apply { writeText("hello") }
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |    checkForUncommittedFiles.set(false)
-                        |}
-                        """
+                |release {
+                |    checkForUncommittedFiles.set(false)
+                |}"""
                     .trimMargin()
             )
 
@@ -462,10 +458,9 @@ internal class ReleasePluginTest {
             client1WorkDir.updateVersionProperties("1.0.0")
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |   checkForUncommittedFiles.set(false)
-                        |}
-                        """
+                |release {
+                |   checkForUncommittedFiles.set(false)
+                |}"""
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -493,11 +488,10 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |   gitName.set("Test User")
-                        |   gitEmail.set("test@mail.de")
-                        |}
-                        """
+                |release {
+                |   gitName.set("Test User")
+                |   gitEmail.set("test@mail.de")
+                |}"""
                     .trimMargin()
             )
 
@@ -535,11 +529,10 @@ internal class ReleasePluginTest {
                 client1WorkDir.resolve("version.properties").apply {
                     writeText(
                         """
-                    |# Some comment
-                    |unrelatedProperty: unrelatedValue
-                    |version: 1.0.0
-                    |someProperty: value
-                """
+                        |# Some comment
+                        |unrelatedProperty: unrelatedValue
+                        |version: 1.0.0
+                        |someProperty: value"""
                             .trimMargin()
                     )
                 }
@@ -561,11 +554,10 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |val implementation by configurations.creating{}
-                        |
-                        |repositories { gradlePluginPortal() }
-                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-                    """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }"""
                     .trimMargin()
             )
             client1Api.createLocalRepository()
@@ -593,11 +585,10 @@ internal class ReleasePluginTest {
                 .apply { parentFile.mkdirs() }
                 .writeText(
                     """
-                |val implementation by configurations.creating{}
-                |
-                |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-            """
+                    |val implementation by configurations.creating{}
+                    |
+                    |repositories { gradlePluginPortal() }
+                    |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }"""
                         .trimMargin()
                 )
 
@@ -621,10 +612,9 @@ internal class ReleasePluginTest {
             client1WorkDir.appendContentToSettingsGradle("""include("subproject")""")
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |release {
-                        |    checkRecursiveForPreReleaseVersions.set(false)
-                        |}
-                    """
+                |release {
+                |    checkRecursiveForPreReleaseVersions.set(false)
+                |}"""
                     .trimMargin()
             )
 
@@ -633,11 +623,10 @@ internal class ReleasePluginTest {
                 .apply { parentFile.mkdirs() }
                 .writeText(
                     """
-                |val implementation by configurations.creating{}
-                |
-                |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-            """
+                    |val implementation by configurations.creating{}
+                    |
+                    |repositories { gradlePluginPortal() }
+                    |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }"""
                         .trimMargin()
                 )
 
@@ -654,11 +643,10 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |val implementation by configurations.creating{}
-                        |
-                        |repositories { gradlePluginPortal() }
-                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }
-                    """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }"""
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -675,13 +663,12 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |val implementation by configurations.creating{}
-                        |
-                        |repositories { gradlePluginPortal() }
-                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-                        |
-                        |release { checkForPreReleaseVersions.set(false) }
-                        """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                |
+                |release { checkForPreReleaseVersions.set(false) }"""
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -698,13 +685,12 @@ internal class ReleasePluginTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |val implementation by configurations.creating{}
-                        |
-                        |repositories { gradlePluginPortal() }
-                        |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
-                        |
-                        |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }
-                        """
+                |val implementation by configurations.creating{}
+                |
+                |repositories { gradlePluginPortal() }
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                |
+                |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }"""
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
