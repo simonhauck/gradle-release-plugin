@@ -18,10 +18,9 @@ internal class CheckForUncommittedFilesTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
-                        |    
-                        |}
-                        """
+                |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
+                |    
+                |}"""
                     .trimMargin()
             )
 
@@ -39,10 +38,9 @@ internal class CheckForUncommittedFilesTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
-                        |    
-                        |}
-                        """
+                |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
+                |    
+                |}"""
                     .trimMargin()
             )
 
@@ -74,15 +72,14 @@ internal class CheckForUncommittedFilesTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                            |
-                            |val commitTask = tasks.register<CommitAndTagTask>("commitAndTagVersion") {
-                            |    commitMessage.set("testCommit")
-                            |    gitAddFilePattern.set(listOf(file("version.properties")))
-                            |}
-                            |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
-                            |   dependsOn(commitTask)
-                            |}
-                        """
+                |
+                |val commitTask = tasks.register<CommitAndTagTask>("commitAndTagVersion") {
+                |    commitMessage.set("testCommit")
+                |    gitAddFilePattern.set(listOf(file("version.properties")))
+                |}
+                |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
+                |   dependsOn(commitTask)
+                |}"""
                     .trimMargin()
             )
 
