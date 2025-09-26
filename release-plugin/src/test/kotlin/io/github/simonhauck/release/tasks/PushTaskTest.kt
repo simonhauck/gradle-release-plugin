@@ -20,8 +20,7 @@ internal class PushTaskTest {
 
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<PushTask>("testPush"){}
-                        """
+                |tasks.register<PushTask>("testPush"){}"""
                     .trimMargin()
             )
             client1Api.add("build.gradle.kts")
@@ -42,8 +41,7 @@ internal class PushTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<PushTask>("testPush"){}
-                        """
+                |tasks.register<PushTask>("testPush"){}"""
                     .trimMargin()
             )
 
@@ -60,10 +58,9 @@ internal class PushTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                    |tasks.register<PushTask>("testPush"){
-                    |   disablePush = true
-                    |}
-                    """
+                |tasks.register<PushTask>("testPush"){
+                |   disablePush = true
+                |}"""
                     .trimMargin()
             )
 
@@ -80,8 +77,7 @@ internal class PushTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<PushTask>("testPush"){}
-                        """
+                |tasks.register<PushTask>("testPush"){}"""
                     .trimMargin()
             )
 
@@ -100,8 +96,7 @@ internal class PushTaskTest {
         testDriver(tmpDir) {
             client1WorkDir.appendContentToBuildGradle(
                 """
-                        |tasks.register<PushTask>("testPush"){}
-                        """
+                |tasks.register<PushTask>("testPush"){}"""
                     .trimMargin()
             )
 
