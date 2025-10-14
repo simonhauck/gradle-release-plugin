@@ -16,7 +16,7 @@ junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "juni
 junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
 junitPlatforLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 assertJCore = { module = "org.assertj:assertj-core", version = "3.27.6" }
-testContainers = { module = "org.testcontainers:testcontainers", version = "1.21.3" }
+testContainers = { module = "org.testcontainers:testcontainers", version = "2.0.0" }
 
 [plugins]
 gradlePublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
