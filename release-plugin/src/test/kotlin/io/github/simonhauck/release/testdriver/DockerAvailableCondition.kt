@@ -8,7 +8,7 @@ import org.testcontainers.DockerClientFactory
 
 class DockerAvailableCondition : ExecutionCondition {
 
-    override fun evaluateExecutionCondition(context: ExtensionContext?): ConditionEvaluationResult {
+    override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
         return if (DockerClientFactory.instance().isDockerAvailable) {
             ConditionEvaluationResult.enabled("Docker is available")
         } else {
