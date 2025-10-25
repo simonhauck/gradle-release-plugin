@@ -104,7 +104,8 @@ internal class ReleasePluginTest {
                 """
                 |release {
                 |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("otherFile.txt")))
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -132,7 +133,8 @@ internal class ReleasePluginTest {
                 """
                 |release {
                 |    releaseCommitAddFiles.set(listOf(file("version.properties"), file("unknownFile.txt")))
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -180,7 +182,8 @@ internal class ReleasePluginTest {
                 |}
                 |
                 |tasks.commitReleaseVersion { dependsOn(writeReleaseFileTask) }
-                |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }"""
+                |tasks.commitPostReleaseVersion{ dependsOn(writePostReleaseFileTask) }
+                """
                     .trimMargin()
             )
 
@@ -370,7 +373,8 @@ internal class ReleasePluginTest {
                 """
                 |release {
                 |    checkForUncommittedFiles.set(false)
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -460,7 +464,8 @@ internal class ReleasePluginTest {
                 """
                 |release {
                 |   checkForUncommittedFiles.set(false)
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -491,7 +496,8 @@ internal class ReleasePluginTest {
                 |release {
                 |   gitName.set("Test User")
                 |   gitEmail.set("test@mail.de")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -532,7 +538,8 @@ internal class ReleasePluginTest {
                         |# Some comment
                         |unrelatedProperty: unrelatedValue
                         |version: 1.0.0
-                        |someProperty: value"""
+                        |someProperty: value
+                        """
                             .trimMargin()
                     )
                 }
@@ -557,7 +564,8 @@ internal class ReleasePluginTest {
                 |val implementation by configurations.creating{}
                 |
                 |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }"""
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                """
                     .trimMargin()
             )
             client1Api.createLocalRepository()
@@ -588,7 +596,8 @@ internal class ReleasePluginTest {
                     |val implementation by configurations.creating{}
                     |
                     |repositories { gradlePluginPortal() }
-                    |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }"""
+                    |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                    """
                         .trimMargin()
                 )
 
@@ -614,7 +623,8 @@ internal class ReleasePluginTest {
                 """
                 |release {
                 |    checkRecursiveForPreReleaseVersions.set(false)
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -626,7 +636,8 @@ internal class ReleasePluginTest {
                     |val implementation by configurations.creating{}
                     |
                     |repositories { gradlePluginPortal() }
-                    |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }"""
+                    |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
+                    """
                         .trimMargin()
                 )
 
@@ -646,7 +657,8 @@ internal class ReleasePluginTest {
                 |val implementation by configurations.creating{}
                 |
                 |repositories { gradlePluginPortal() }
-                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }"""
+                |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0") }
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -668,7 +680,8 @@ internal class ReleasePluginTest {
                 |repositories { gradlePluginPortal() }
                 |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
                 |
-                |release { checkForPreReleaseVersions.set(false) }"""
+                |release { checkForPreReleaseVersions.set(false) }
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -690,7 +703,8 @@ internal class ReleasePluginTest {
                 |repositories { gradlePluginPortal() }
                 |dependencies { implementation("io.github.simonhauck.release:release-plugin:1.0.0-RC1") }
                 |
-                |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }"""
+                |release { ignorePreReleaseDependencies = listOf("io.github.simonhauck.release:release-plugin") }
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()

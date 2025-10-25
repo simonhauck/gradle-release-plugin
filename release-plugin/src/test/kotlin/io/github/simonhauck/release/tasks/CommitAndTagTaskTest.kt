@@ -32,7 +32,8 @@ internal class CommitAndTagTaskTest {
                 |    tagPrefix.set("v")
                 |    tagMessage.set("Initial tag")
                 |    tagMessagePrefix.set("tag: ")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -60,7 +61,8 @@ internal class CommitAndTagTaskTest {
                 |tasks.register<CommitAndTagTask>("commitAndTag") {
                 |    commitMessage.set("new commit")
                 |    gitAddFilePattern.set(listOf(file("newFile.txt"), file("otherFile.txt")))
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -85,7 +87,8 @@ internal class CommitAndTagTaskTest {
                 |tasks.register<CommitAndTagTask>("commitAndTag") {
                 |    commitMessage.set("new commit")
                 |    gitAddFilePattern.set(listOf(file("newFile.txt")))
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -106,7 +109,8 @@ internal class CommitAndTagTaskTest {
                 |    commitMessage.set("new commit")
                 |    gitAddFilePattern.set(listOf(file("newFile.txt")))
                 |    tagName.set("v1.0.0")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -140,7 +144,8 @@ internal class CommitAndTagTaskTest {
                 |    tagMessage.set("{var5} ")
                 |    tagMessagePrefix.set("{var6}: ")
                 |    templateVariables.set(file("variables.properties"))
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -153,7 +158,8 @@ internal class CommitAndTagTaskTest {
                     |var3=some-template-version
                     |var4=tag-prefix
                     |var5=some-tag
-                    |var6=some-tag-prefix"""
+                    |var6=some-tag-prefix
+                    """
                         .trimMargin()
                 )
 

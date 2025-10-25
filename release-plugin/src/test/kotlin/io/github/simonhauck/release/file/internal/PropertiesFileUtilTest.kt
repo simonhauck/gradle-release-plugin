@@ -23,7 +23,8 @@ class PropertiesFileUtilTest {
                     |propertyWithOtherSeparator: dot
                     |    whiteSpace: yes
                     |
-                    |#comment=this should be filtered"""
+                    |#comment=this should be filtered
+                    """
                         .trimMargin()
                 )
             }
@@ -62,7 +63,8 @@ class PropertiesFileUtilTest {
                     """
                     |someProperty=value
                     |# Some comment
-                    |someOtherProperty=anotherValue"""
+                    |someOtherProperty=anotherValue
+                    """
                         .trimMargin()
                 )
             }
@@ -91,7 +93,8 @@ class PropertiesFileUtilTest {
                 writeText(
                     """
                     |someProperty: value
-                    |someOtherProperty: anotherValue"""
+                    |someOtherProperty: anotherValue
+                    """
                         .trimMargin()
                 )
             }
@@ -118,7 +121,8 @@ class PropertiesFileUtilTest {
             tempDir.resolve("test.properties").apply {
                 writeText(
                     """
-                    |someProperty=value"""
+                    |someProperty=value
+                    """
                         .trimMargin()
                 )
             }
@@ -170,7 +174,8 @@ class PropertiesFileUtilTest {
                     |
                     |someOtherProperty=anotherValue
                     |
-                    |#comment=this should be filtered"""
+                    |#comment=this should be filtered
+                    """
                         .trimMargin()
                 )
             }

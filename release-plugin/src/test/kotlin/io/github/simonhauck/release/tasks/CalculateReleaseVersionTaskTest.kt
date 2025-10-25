@@ -23,7 +23,8 @@ internal class CalculateReleaseVersionTaskTest {
                 |    commandLineParameters = mapOf("releaseVersion" to "1.1.0", "postReleaseVersion" to "1.2.0-SNAPSHOT")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -47,7 +48,8 @@ internal class CalculateReleaseVersionTaskTest {
                 |    commandLineParameters = mapOf("releaseType" to "major")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -71,7 +73,8 @@ internal class CalculateReleaseVersionTaskTest {
                 |    commandLineParameters = mapOf("releaseType" to "major", "preReleaseType" to "rc")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -94,7 +97,8 @@ internal class CalculateReleaseVersionTaskTest {
                 |    commandLineParameters = mapOf("someRandomProperties" to "xy")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
             client1Api.createValidRepositoryWithRemote()
@@ -125,7 +129,8 @@ internal class CalculateReleaseVersionTaskTest {
                 |    commandLineParameters = mapOf("releaseType" to "major")
                 |    releaseTagName = "v{version}"
                 |    releaseVersionStore= layout.buildDirectory.file("release-version-store.txt")
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
