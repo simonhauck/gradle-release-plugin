@@ -20,7 +20,8 @@ internal class CheckForUncommittedFilesTaskTest {
                 """
                 |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
                 |    
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -40,7 +41,8 @@ internal class CheckForUncommittedFilesTaskTest {
                 """
                 |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
                 |    
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -79,7 +81,8 @@ internal class CheckForUncommittedFilesTaskTest {
                 |}
                 |tasks.register<CheckForUncommittedFilesTask>("testCheckForUncommittedFiles") {
                 |   dependsOn(commitTask)
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 

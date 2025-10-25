@@ -146,7 +146,8 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |       "other.xy:lib2:1.0",
                 |       "released.dep:great:1.0.0-1.2.6",
                 |    )
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
@@ -174,7 +175,8 @@ class CheckForPreReleaseDependenciesTaskTest {
                 |       "some.group:lib:1.0.0.v1-m3",
                 |       "some.group:lib:1.0.0.v1-M2",
                 |    )
-                |}"""
+                |}
+                """
                     .trimMargin()
             )
 
