@@ -192,7 +192,7 @@ jobs:
       # This is optional if you use the gitName & gitEmail properties from the plugin
       - name: Set Git User and Email
         run: |
-          git config --global user.email "no-replay@github-action.de"
+          git config --global user.email "no-reply@github-action.de"
           git config --global user.name "GitHub Action"
 
       - name: Run gradle release task

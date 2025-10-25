@@ -18,7 +18,7 @@ allprojects {
 release {
     disablePush = !project.properties["enablePush"].toString().toBoolean()
     gitName = "Release Bot"
-    gitEmail = "no-replay@release-bot.com"
+    gitEmail = "no-reply@release-bot.com"
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
