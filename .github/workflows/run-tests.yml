@@ -3,8 +3,8 @@ name: run-tests
 on: workflow_call
 
 jobs:
-  tests:
-    name: Run Tests
+  checks:
+    name: check
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
