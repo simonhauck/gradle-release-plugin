@@ -19,7 +19,7 @@ assertJCore = { module = "org.assertj:assertj-core", version = "3.27.7" }
 testContainers = { module = "org.testcontainers:testcontainers", version = "2.0.4" }
 
 [plugins]
-gradlePublish = { id = "com.gradle.plugin-publish", version = "2.1.0" }
+gradlePublish = { id = "com.gradle.plugin-publish", version = "2.1.1" }
 
 [bundles]
 junit = ["junitApi", "junitEngine", "assertJCore"]
