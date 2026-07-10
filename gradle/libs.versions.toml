@@ -9,7 +9,7 @@ ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.25.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 
 # Kotlin related
-ztExec = { module = "org.zeroturnaround:zt-exec", version = "1.12" }
+ztExec = { module = "org.zeroturnaround:zt-exec", version = "1.13.0" }
 
 # Testing related
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
