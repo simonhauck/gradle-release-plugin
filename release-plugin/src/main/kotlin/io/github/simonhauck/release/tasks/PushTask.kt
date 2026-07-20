@@ -10,7 +10,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Release tasks have side effects and should not be cached")
 abstract class PushTask : BaseReleaseTask(), GitTask {
     private val log = Logging.getLogger(PushTask::class.java)
 

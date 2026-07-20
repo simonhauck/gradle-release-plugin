@@ -4,7 +4,9 @@ import io.github.simonhauck.release.git.api.GitStatusResult
 import io.github.simonhauck.release.git.api.getOrThrowGradleException
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Release tasks have side effects and should not be cached")
 abstract class CheckForUncommittedFilesTask : BaseReleaseTask(), GitTask {
 
     init {
