@@ -10,7 +10,9 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Release tasks have side effects and should not be cached")
 abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
 
     private val log = Logging.getLogger(CalculateReleaseVersionTask::class.java)
@@ -21,7 +23,9 @@ abstract class CalculateReleaseVersionTask : BaseReleaseTask(), GitTask {
         outputs.upToDateWhen { false }
     }
 
-    @get:InputFile abstract val versionPropertyFile: RegularFileProperty
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val versionPropertyFile: RegularFileProperty
     @get:Deprecated("Use releaseVersionStore instead")
     @get:Input
     @get:Optional

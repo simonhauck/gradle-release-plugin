@@ -418,7 +418,7 @@ internal class ReleasePluginTest {
 
             assertThat(actual)
                 .containsSequence(
-                    "Execution failed for task ':commitReleaseVersion'.",
+                    "Execution failed for task ':commitReleaseVersion' (registered by plugin 'io.github.simonhauck.release').",
                     "> Failed to execute command: 'tag -a v1.2.0 -m Release commit: v1.2.0'",
                     "  Command finished with non zero exit code (code=128)",
                     "  --- Git output ---",

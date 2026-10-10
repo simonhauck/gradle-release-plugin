@@ -13,11 +13,16 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 
 interface GitTask : Task {
 
     @get:Input val gitRootDirectory: Property<File>
-    @get:InputFile @get:Optional val sshKeyFile: RegularFileProperty
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    val sshKeyFile: RegularFileProperty
     @get:Input @get:Optional @get:Incubating val strictHostKeyChecking: Property<Boolean>
     @get:Input @get:Optional val gitName: Property<String>
     @get:Input @get:Optional val gitEmail: Property<String>
