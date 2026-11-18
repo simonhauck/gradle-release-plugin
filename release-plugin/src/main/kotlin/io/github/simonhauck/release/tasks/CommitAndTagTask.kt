@@ -8,17 +8,24 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Release tasks have side effects and should not be cached")
 abstract class CommitAndTagTask : BaseReleaseTask(), GitTask {
 
     @get:Input abstract val commitMessage: Property<String>
-    @get:InputFiles abstract val gitAddFilePattern: ListProperty<File>
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val gitAddFilePattern: ListProperty<File>
     @get:Input @get:Optional abstract val commitMessagePrefix: Property<String>
     @get:Input @get:Optional abstract val tagName: Property<String>
     @get:Input @get:Optional abstract val tagPrefix: Property<String>
     @get:Input @get:Optional abstract val tagMessage: Property<String>
     @get:Input @get:Optional abstract val tagMessagePrefix: Property<String>
-    @get:InputFile @get:Optional abstract val templateVariables: RegularFileProperty
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val templateVariables: RegularFileProperty
 
     init {
         description = "Add the specified files to git, commit them and optionally tag the commit"

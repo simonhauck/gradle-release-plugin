@@ -8,13 +8,20 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Release tasks have side effects and should not be cached")
 abstract class CheckForPreReleaseDependenciesTask : BaseReleaseTask() {
 
     private val log = Logging.getLogger(CheckForPreReleaseDependenciesTask::class.java)
 
-    @get:InputFile @get:Optional abstract val ignorePreReleaseDependenciesFile: RegularFileProperty
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val ignorePreReleaseDependenciesFile: RegularFileProperty
     @get:Input @get:Optional abstract val ignorePreReleaseDependencies: ListProperty<String>
 
     @get:Input abstract val usedDependencies: SetProperty<String>

@@ -9,14 +9,20 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
+@DisableCachingByDefault(because = "Release tasks have side effects and should not be cached")
 abstract class WriteVersionTask : BaseReleaseTask() {
 
     private val log = Logging.getLogger(WriteVersionTask::class.java)
 
     @get:Input abstract val versionType: Property<VersionType>
-    @get:InputFile abstract val releaseVersionStore: RegularFileProperty
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val releaseVersionStore: RegularFileProperty
     @get:OutputFile abstract val versionFile: RegularFileProperty
 
     init {
